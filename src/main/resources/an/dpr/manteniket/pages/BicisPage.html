@@ -1,0 +1,45 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+<meta charset="utf-8" />
+<title>Apache Wicket Quickstart</title>
+<link
+	href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular,bold'
+	rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="style.css" type="text/css" media="screen"
+	title="Stylesheet" />
+</head>
+<body>
+	<wicket:extend>
+		<div class="container">
+			<div wicket:id="feedback">
+				<ul class="feedbackPanel">
+					<li class="feedbackPanelERROR"><span
+						class="feedbackPanelERROR">Field 'Username' is required.</span></li>
+				</ul>
+			</div>
+			<form wicket:id="form">
+				<input wicket:id="txtId" type="text" />
+				<p>
+					<label><wicket:message key="lbl.name" /></label> <input
+						wicket:id="txtCod" type="text" />
+				</p>
+				<p>
+					<label><wicket:message key="lbl.tipo" /></label> <select
+						wicket:id="cmbType" />
+				</p>
+				<div wicket:id="dropdown">dropdown</div>
+				<p>
+					<label><wicket:message key="lbl.desc" /></label> <input
+						wicket:id="txtDesc" size="50" />
+				</p>
+				<button wicket:id="saveBtn">
+					<wicket:message key="btn.save" />
+				</button>
+				<button wicket:id="retBtn">
+					<wicket:message key="btn.return" />
+				</button>
+			</form>
+		</div>
+	</wicket:extend>
+</body>
+</html>

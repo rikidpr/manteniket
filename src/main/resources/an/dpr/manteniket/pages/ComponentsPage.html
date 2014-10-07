@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<wicket:extend>
+		<div wicket:id="feedback">
+			<ul class="feedbackPanel">
+				<li class="feedbackPanelERROR"><span class="feedbackPanelERROR">Field
+						'Username' is required.</span></li>
+			</ul>
+		</div>
+		<form wicket:id="form">
+		<input wicket:id="txtId" type="text"/>
+		<p>
+			<label><wicket:message key="lbl.name"/></label> 
+			<input wicket:id="txtName" type="text" size="20"/>
+		</p>
+
+		<p>
+			<label><wicket:message key="lbl.type"/></label> 
+			<select wicket:id="cmbType" ></select>
+		</p>
+
+		<p>
+			<label><wicket:message key="lbl.desc"/></label> 
+			<input wicket:id="txtDesc" ="text" size="100" />
+		</p>
+		<div class="botonera">
+			<button wicket:id="saveBtn">
+				<wicket:message key="btn.save"/>
+			</button>
+			<button wicket:id="retBtn">
+				<wicket:message key="btn.return"/>
+			</button>
+		</div>
+		</form>
+	</wicket:extend>
+</body>
+</html>

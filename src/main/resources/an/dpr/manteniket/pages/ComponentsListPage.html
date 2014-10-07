@@ -1,0 +1,30 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+<meta charset="utf-8" />
+<title>Manteniket</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<wicket:extend>
+		<div>
+			<a wicket:id="addLnk"><wicket:message key="lbl.add"/></a>
+		</div>
+		<table class="table">
+			<tr>
+				<th><wicket:message key="head.name"/></th>
+				<th><wicket:message key="head.type"/></th>
+				<th><wicket:message key="head.km"/></th>
+				<th colspan="2"><wicket:message key="head.actions" /></th>
+			</tr>
+			<tr wicket:id="rows">
+				<td wicket:id="dataRow"></td>
+			</tr>
+		</table>
+		<ul wicket:id="pagingNavigator">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+		</ul>
+	</wicket:extend>
+</body>
+</html>

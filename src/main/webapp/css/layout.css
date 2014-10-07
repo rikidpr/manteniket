@@ -1,0 +1,57 @@
+@CHARSET "ISO-8859-1";
+
+/* Reset body padding and margins */
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#header_container {
+	background: #eee;
+    float: left;
+	width: 100%;
+}
+
+#header {
+	line-height: 60px;
+	margin: 0 auto;
+	width: 940px;
+	text-align: center;
+}
+
+#center_container {
+	background: #eee;
+	left: 0;
+    float: left;
+	width: 100%;
+}
+
+#menu {
+	float: left;
+	margin: 0 auto;
+	overflow: auto;
+	padding: 10px;
+}
+
+#content {
+	float: left;
+	margin: 0 auto;
+	overflow: auto;
+	padding: 10px;
+}
+
+/* Make Footer Sticky */
+#footer_container {
+	background: #eee;
+	float: left;
+	width: 100%;
+}
+
+#footer {
+	line-height: 60px;
+	margin: 0 auto;
+	width: 940px;
+	text-align: center;
+}
+
+/* Make Header Sticky */

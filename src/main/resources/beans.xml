@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+	
+	<!-- security -->
+	<!-- 
+	 <bean id="messageDigest" class="an.dpr.manteniket.beansfactory.MessageDigestFactoryBean">
+		<property name="algorithmName" value="MD5"/>
+	</bean>
+	<bean id="passService" class="an.dpr.manteniket.security.ManteniketPasswordService">
+		<property name="msgDigest" ref="messageDigest"/>
+	</bean>
+	<bean id="appsecurity" class="an.dpr.manteniket.security.AppSecurity">
+		<property name="passService" ref="passService"/>
+	</bean>
+	 -->
+
+	<!-- Beans del modelo de datos -->
+	<bean id="componentesDAO" class="an.dpr.manteniket.dao.ComponentesDAO"/>
+	<bean id="bicisDAO" class="an.dpr.manteniket.dao.BicisDAO"/>
+	<bean id="activitiesDAO" class="an.dpr.manteniket.dao.ActivitiesDAO"/>
+	<bean id="componentUsesDAO" class="an.dpr.manteniket.dao.ComponentUsesDAO"/>
+	
+	
+</beans>
