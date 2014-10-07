@@ -11,12 +11,16 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import an.dpr.manteniket.bean.ComponentType;
 import an.dpr.manteniket.bean.CyclingType;
 import an.dpr.manteniket.bean.ManteniketContracts;
@@ -89,16 +93,17 @@ public class ComponentsPage extends ManteniketPage {
 
     private void initComponents() {
 	log.debug("iniciando componentes");
-	Form form = new Form("form");
-	Button saveBtn = new Button("saveBtn"){
+	BootstrapForm form = new BootstrapForm("form");
+	BootstrapButton saveBtn = new BootstrapButton("saveBtn", Type.Default){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
 		log.debug("save submit!");
 		guardar();
 	    }
 	};
+	saveBtn.setLabel(new ResourceModel("btn.save"));
 	form.add(saveBtn);
-	Button retBtn = new Button("retBtn"){
+	BootstrapButton retBtn = new BootstrapButton("retBtn", Type.Warning){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
 		log.debug("ret submit!");
@@ -109,6 +114,7 @@ public class ComponentsPage extends ManteniketPage {
 		volver();
 	    }
 	};
+	retBtn.setLabel(new ResourceModel("btn.return"));
 	form.add(retBtn);
 	txtId = new TextField<Long>("txtId");
 	txtId.setVisible(false);

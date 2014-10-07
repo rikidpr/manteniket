@@ -9,6 +9,7 @@ public class BootstrapFooterPanel extends Panel {
 
     public BootstrapFooterPanel(String id) {
 	super(id);
+	add(new Label("manteniket-version", "0.0.1-SNAPSHOT"));//TODO DEFINIR VERSION
 	add(new Label("wicket-version", getApplication().getFrameworkSettings().getVersion()));
     }
 }

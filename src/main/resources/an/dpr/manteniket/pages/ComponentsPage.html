@@ -14,20 +14,20 @@
 		</div>
 		<form wicket:id="form">
 		<input wicket:id="txtId" type="text"/>
-		<p>
-			<label><wicket:message key="lbl.name"/></label> 
-			<input wicket:id="txtName" type="text" size="20"/>
-		</p>
+		<div class="form-group">
+			<label for="txtName"><wicket:message key="lbl.name"/></label> 
+			<input class="form-control" wicket:id="txtName" type="text" size="20"  placeholder="Enter name"/>
+		</div>
 
-		<p>
-			<label><wicket:message key="lbl.type"/></label> 
-			<select wicket:id="cmbType" ></select>
-		</p>
+		<div class="form-group">
+			<label for="cmbType"><wicket:message key="lbl.type"/></label> 
+			<select class="form-control" wicket:id="cmbType" ></select>
+		</div>
 
-		<p>
-			<label><wicket:message key="lbl.desc"/></label> 
-			<input wicket:id="txtDesc" ="text" size="100" />
-		</p>
+		<div class="form-group">
+			<label for="txtDesc"><wicket:message key="lbl.desc"/></label> 
+			<input class="form-control"  wicket:id="txtDesc" ="text" size="100" placeholder="descripcion..."/>
+		</div>
 		<div class="botonera">
 			<button wicket:id="saveBtn">
 				<wicket:message key="btn.save"/>

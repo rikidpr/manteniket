@@ -4,6 +4,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import de.agilecoders.wicket.core.Bootstrap;
@@ -27,9 +28,10 @@ public class BootstrapBasePage extends WebPage{
         add(new HtmlTag("html"));
 
         add(new OptimizedMobileViewportMetaTag("viewport"));
-        add(new MetaTag("description", Model.of("description"), Model.of("Manteniket-The webapp")));
-        add(new MetaTag("author", Model.of("author"), Model.of("anDPR Soft")));
-        add(new ChromeFrameMetaTag("chrome-frame"));
+      //TODO PROPIEDADES APP
+        add(new MetaTag("description", Model.of("description"), Model.of("description")));
+        add(new MetaTag("author", Model.of("author"), Model.of("enterprise")));
+//        add(new ChromeFrameMetaTag("chrome-frame"));
 
         //add header panel
         add(new BootstrapHeaderPanel("header"));
