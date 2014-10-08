@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -25,7 +23,7 @@ import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
-import de.agilecoders.wicket.core.markup.html.bootstrap.button.dropdown.DropDownButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 
 public class BicisPage extends ManteniketPage {
 
@@ -88,7 +86,7 @@ public class BicisPage extends ManteniketPage {
 
     private void initComponents() {
 	log.debug("iniciando componentes");
-	Form form = new Form("form");
+	BootstrapForm form = new BootstrapForm("form");
 	BootstrapButton saveBtn = new BootstrapButton("saveBtn", Buttons.Type.Default){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
