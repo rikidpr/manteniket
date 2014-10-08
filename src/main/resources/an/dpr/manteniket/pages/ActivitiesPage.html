@@ -1,42 +1,51 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<meta charset="utf-8" />
+<title>Manteniket</title>
+<link
+	href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular,bold'
+	rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="style.css" type="text/css" media="screen"
+	title="Stylesheet" />
 </head>
 <body>
 	<wicket:extend>
 		<div wicket:id="feedback">
 			<ul class="feedbackPanel">
-				<li class="feedbackPanelERROR"><span class="feedbackPanelERROR">Field
-						'Username' is required.</span></li>
+				<li class="feedbackPanelERROR">
+					<span class="feedbackPanelERROR">Field	'Username' is required.</span>
+				</li>
 			</ul>
 		</div>
-		<form wicket:id="form">
-			<input wicket:id="txtId" type="text" />
-			<p>
-				<label wicket:id="lblKm">Km:</label><input wicket:id="txtKm"
-					type="text" />
-			</p>
-			<p>
-				<label wicket:id="lblDesc">Desc:</label> <input wicket:id="txtDesc"
-					type="text" size="100" />
-			</p>
-			<p>
-				<label wicket:id="lblDate">date:</label> <input wicket:id="txtDate"
-					type="text" size="10" />
-			</p>
-			<p>
-				<label wicket:id="lblTime">time:</label> <span wicket:id="txtTime" />
-			</p>
-			<p>
-				<label wicket:id="lblBike">bike:</label> <select wicket:id="cmbBike"></select>
-			</p>
-			<p>
-				<button wicket:id="btnSave"><wicket:message key="btn.save" /></button>
-				<button wicket:id="btnReturn"><wicket:message key="btn.return" /></button>
-			</p>
-		</form>
+		<div class="col-xs-12 col-md-8">
+			<form wicket:id="form">
+				<input wicket:id="txtId" type="text" />
+				<div class="form-group">
+					<label for="txtKm" wicket:id="lblKm">Km:</label>
+					<input class="form-control" wicket:id="txtKm" type="text" />
+				</div>
+				<div class="form-group">
+					<label for="txtDesc" wicket:id="lblDesc">Desc:</label> 
+					<input class="form-control" wicket:id="txtDesc" type="text" size="100" />
+				</div>
+				<div class="form-group">
+					<label for="txtDate" wicket:id="lblDate">date:</label> 
+					<input class="form-control" wicket:id="txtDate"	type="text" size="10" />
+				</div>
+				<div class="form-group">
+					<label for="txtTime" wicket:id="lblTime">time:</label> 
+					<span class="form-control" wicket:id="txtTime">Tiempo</span>
+				</div>
+				<div class="form-group">
+					<label for="cmbBike" wicket:id="lblBike">bike:</label> 
+					<select class="form-control" wicket:id="cmbBike"></select>
+				</div>
+				<div class="form-group">
+					<button wicket:id="btnSave">Save</button>
+					<button wicket:id="btnReturn">return</button>
+				</div>
+			</form>
+		</div>
 	</wicket:extend>
 </body>
 </html>
