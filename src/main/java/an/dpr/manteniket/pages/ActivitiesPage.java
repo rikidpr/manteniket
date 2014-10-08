@@ -4,19 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxCallListener;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
-import org.apache.wicket.extensions.yui.calendar.DateTimeField;
 import org.apache.wicket.extensions.yui.calendar.TimeField;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
@@ -34,6 +27,9 @@ import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 
 public class ActivitiesPage extends ManteniketPage {
 
@@ -91,8 +87,8 @@ public class ActivitiesPage extends ManteniketPage {
 
     private void initComponents() {
 	log.debug("iniciando componentes");
-	Form form = new Form("form");
-	Button saveBtn = new Button("btnSave"){
+	BootstrapForm form = new BootstrapForm("form");
+	BootstrapButton saveBtn = new BootstrapButton("btnSave", Type.Default){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
 		log.debug("save submit!");
@@ -100,8 +96,9 @@ public class ActivitiesPage extends ManteniketPage {
 	    }
 	    
 	};
+	saveBtn.setLabel(new ResourceModel("btn.save"));
 	form.add(saveBtn);
-	Button retBtn = new Button("btnReturn"){
+	BootstrapButton retBtn = new BootstrapButton("btnReturn", Type.Warning){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
 		log.debug("ret submit!");
@@ -113,6 +110,7 @@ public class ActivitiesPage extends ManteniketPage {
 	    }
 	    
 	};
+	retBtn.setLabel(new ResourceModel("btn.return"));
 	form.add(retBtn);
 	
 	txtId = new TextField<Long>("txtId", Model.of((long)0));
