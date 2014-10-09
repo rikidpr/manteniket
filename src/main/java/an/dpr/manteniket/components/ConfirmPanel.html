@@ -1,18 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org">
 <head>
+<meta charset="utf-8" />
+<title>Manteniket</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
 </head>
 <body>
 	<wicket:panel>
 		<form id="confirmForm" method="get" wicket:id="confirmForm">
-			<wicket:message key="lbl.confirm" />
-			<br />
-			<br />
-			<span wicket:id="confirmDetails"></span> 
-			<br />
-			<br />
+
+				<div wicket:id="confirmDetails"></div>
 			<button wicket:id="acceptBtn">
 				<wicket:message key="btn.accept" />
 			</button>
