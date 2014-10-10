@@ -1,7 +1,6 @@
 package an.dpr.manteniket.components;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
@@ -10,16 +9,19 @@ import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.LoginPage;
 import an.dpr.manteniket.MainPage;
-import an.dpr.manteniket.pages.ComponentsPage;
 import an.dpr.manteniket.security.AppSecurity;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 
-public class LoginForm extends Form {
+public class LoginForm extends BootstrapForm {
 
     private static final Logger log = LoggerFactory.getLogger(LoginForm.class);
 
     private TextField<String> usernameField;
     private PasswordTextField passwordField;
     private Label loginStatus;
+    private BootstrapButton btn;
 
     public LoginForm(String id) {
 	super(id);
@@ -33,9 +35,21 @@ public class LoginForm extends Form {
 	passwordField = new PasswordTextField("password", Model.of(""));
 	loginStatus = new Label("loginStatus", Model.of(""));
 
+	btn= new BootstrapButton("login", Type.Success){
+	    private static final long serialVersionUID = 1L;
+
+	    @Override
+	    public void onSubmit(){
+		log.debug("submit cancel button");
+		LoginForm.this.onSubmit();
+	    }
+	};
+	btn.setLabel(Model.of("LogIn"));
+	
 	add(usernameField);
 	add(passwordField);
 	add(loginStatus);
+	add(btn);
     }
 
     public final void onSubmit() {
