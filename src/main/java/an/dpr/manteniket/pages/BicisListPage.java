@@ -2,10 +2,8 @@ package an.dpr.manteniket.pages;
 
 import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -16,13 +14,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
-import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.LinkPanel;
 import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
+import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 
 public class BicisListPage extends ManteniketPage {
 

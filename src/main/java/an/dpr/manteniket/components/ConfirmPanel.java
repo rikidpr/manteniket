@@ -1,6 +1,5 @@
 package an.dpr.manteniket.components;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -22,19 +21,19 @@ public class ConfirmPanel extends Panel{
     @SpringBean
     private ActivitiesDAO dao;
     //componentes
-    private Alert lblConfirmacion;
-    private BootstrapButton btnAceptar;
-    private BootstrapButton btnCancelar;
-    private BootstrapForm form;
     
     public ConfirmPanel(String id, String texto, final ConfirmAction actions){
 	super(id);
-	form = new BootstrapForm("confirmForm");
-//	lblConfirmacion = new Label("confirmDetails", Model.of(texto));
+	Alert lblConfirmacion;
+	BootstrapButton btnAceptar;
+	BootstrapButton btnCancelar;
+	BootstrapForm form = new BootstrapForm("confirmForm");
 	lblConfirmacion = new Alert("confirmDetails", Model.of(texto), new ResourceModel("lbl.confirm"));
-	lblConfirmacion.type(Alert.Type.Danger);
+	lblConfirmacion.type(Alert.Type.Warning);
+	lblConfirmacion.setCloseButtonVisible(false);
+	lblConfirmacion.useInlineHeader(false);
 	
-	btnAceptar = new BootstrapButton("acceptBtn", Type.Warning){
+	btnAceptar = new BootstrapButton("acceptBtn", Type.Default){
 	    private static final long serialVersionUID = 1L;
 	    @Override
 	    public void onSubmit(){
@@ -44,7 +43,7 @@ public class ConfirmPanel extends Panel{
 
 	};
 	btnAceptar.setLabel(new ResourceModel("btn.accept"));
-	btnCancelar = new BootstrapButton("cancelBtn", Type.Default){
+	btnCancelar = new BootstrapButton("cancelBtn", Type.Warning){
 	    private static final long serialVersionUID = 1L;
 
 	    @Override

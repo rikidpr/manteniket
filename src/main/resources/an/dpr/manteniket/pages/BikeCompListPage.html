@@ -6,8 +6,11 @@
 </head>
 <body>
 	<wicket:extend>
-
-		<a wicket:id="addLnk"><wicket:message key="btn.add"/></a>
+	<form wicket:id="form">
+		<button wicket:id="btnAdd"></button>
+		
+		<button wicket:id="btnReturn"></button>
+	</form>
 		<table class="table">
 			<tr>
 				<th><wicket:message key="head.bike"/></th>
@@ -25,7 +28,6 @@
 			<li>2</li>
 			<li>3</li>
 		</ul>
-		<a wicket:id="retLnk"><wicket:message key="btn.return"/></a>
 	</wicket:extend>
 </body>
 </html>
