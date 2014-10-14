@@ -7,11 +7,12 @@
 <body>
 	<wicket:extend>
 	<form wicket:id="form">
-		<button wicket:id="btnAdd"></button>
-		
-		<button wicket:id="btnReturn"></button>
+		<div class="btn-group">
+			<button wicket:id="btnAdd"></button>
+			<button wicket:id="btnReturn"></button>
+		</div>
 	</form>
-		<table class="table">
+		<table wicket:id="table">
 			<tr>
 				<th><wicket:message key="head.bike"/></th>
 				<th><wicket:message key="head.component"/></th>

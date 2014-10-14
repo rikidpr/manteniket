@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.components.LinkPanel;
+import an.dpr.manteniket.components.ManteniketTable;
 import an.dpr.manteniket.dao.ComponentUsesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.ComponentUse;
@@ -96,7 +97,9 @@ public class BikeCompListPage extends ManteniketPage {
 	    
 	}; 
 	dataView.setItemsPerPage(3);
-	add(dataView);
+	ManteniketTable table = new ManteniketTable("table");
+	table.add(dataView);
+	add(table);
 	add(new BootstrapPagingNavigator("pagingNavigator", dataView));
     }
 

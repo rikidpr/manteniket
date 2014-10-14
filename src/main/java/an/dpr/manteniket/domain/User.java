@@ -19,7 +19,6 @@ public class User {
 
     private Long id;
     private String username;
-    private Boolean esSocio = true;
     private String password;
     
 
@@ -42,19 +41,9 @@ public class User {
 	this.username = username;
     }
 
-    @Column(nullable=false)
-    public Boolean getEsSocio() {
-	return esSocio;
-    }
-    
-    public void setEsSocio(Boolean esSocio) {
-	this.esSocio = esSocio;
-    }
-    
     @Override
     public String toString() {
-	return "User [id=" + id + ", username=" + username
-		+ ", esSocio=" + esSocio + "]";
+	return "User [id=" + id + ", username=" + username+ "]";
     }
 
     @Column(nullable=false)
