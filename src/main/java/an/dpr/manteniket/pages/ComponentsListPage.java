@@ -1,5 +1,7 @@
 package an.dpr.manteniket.pages;
 
+import static an.dpr.manteniket.bean.ManteniketContracts.BTN_ADD;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -15,15 +17,19 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 import an.dpr.manteniket.WicketApplication;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.LinkPanel;
+import an.dpr.manteniket.components.ManteniketTable;
 import an.dpr.manteniket.dao.ActivitiesDAO;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.domain.Activity;
@@ -42,16 +48,20 @@ public class ComponentsListPage extends ManteniketPage {
 
     public ComponentsListPage() {
 	super();
+	BootstrapForm form = new BootstrapForm("form");
+	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD){
 
-	Link addLnk = new Link("addLnk"){
-
+	    private static final long serialVersionUID = 1L;
+	    
 	    @Override
-	    public void onClick() {
+	    public void onSubmit(){
 		setResponsePage(ComponentsPage.class);
 	    }
-	    
+	
 	};
-	add(addLnk);
+	btnAdd.setLabel(new ResourceModel("btn.add"));
+	form.add(btnAdd);
+	add(form);
 	listado();
     }
     
@@ -79,7 +89,9 @@ public class ComponentsListPage extends ManteniketPage {
 	    
 	}; 
 	dataView.setItemsPerPage(3);
-	add(dataView);
+	ManteniketTable table = new ManteniketTable("table");
+	table.add(dataView);
+	add(table);
 	add(new BootstrapPagingNavigator("pagingNavigator", dataView));
     }
 

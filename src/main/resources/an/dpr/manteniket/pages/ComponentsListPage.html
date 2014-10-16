@@ -6,10 +6,10 @@
 </head>
 <body>
 	<wicket:extend>
-		<div>
-			<a wicket:id="addLnk"><wicket:message key="lbl.add"/></a>
-		</div>
-		<table class="table">
+		<form wicket:id="form">
+			<button wicket:id="btnAdd"></button>
+		</form>
+		<table wicket:id="table">
 			<tr>
 				<th><wicket:message key="head.name"/></th>
 				<th><wicket:message key="head.type"/></th>

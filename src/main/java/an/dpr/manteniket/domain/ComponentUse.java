@@ -1,6 +1,7 @@
 package an.dpr.manteniket.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -29,6 +30,7 @@ public class ComponentUse implements Serializable{
     private Component component;
     private Bici bike;
     private String descrip;
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -47,6 +49,11 @@ public class ComponentUse implements Serializable{
 	return init;
     }
 
+    public String getInitFormat(){
+	return SDF.format(init);
+    }
+    public void setInitFormat(String init){}
+    
     public void setInit(Date init) {
 	this.init = init;
     }
@@ -56,6 +63,11 @@ public class ComponentUse implements Serializable{
     public Date getFinish() {
 	return finish;
     }
+
+    public String getFinishFormat() {
+	return SDF.format(finish);
+    }
+    public void setFinishFormat(String finish){}
 
     public void setFinish(Date finish) {
 	this.finish = finish;
@@ -86,6 +98,13 @@ public class ComponentUse implements Serializable{
 
     public void setDescrip(String descrip) {
         this.descrip = descrip;
+    }
+
+    @Override
+    public String toString() {
+	return "ComponentUse [id=" + id + ", init=" + init + ", finish="
+		+ finish /*+ ", component=" + component + ", bike=" + bike*/
+		+ ", descrip=" + descrip + "]";
     }
 
 }

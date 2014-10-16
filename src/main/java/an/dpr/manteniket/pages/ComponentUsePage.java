@@ -3,18 +3,17 @@ package an.dpr.manteniket.pages;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +25,11 @@ import an.dpr.manteniket.repository.BicisRepository;
 import an.dpr.manteniket.repository.ComponentUsesRepository;
 import an.dpr.manteniket.repository.ComponentesRepository;
 import an.dpr.manteniket.template.ManteniketPage;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextFieldConfig;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextFieldConfig.TodayButton;
 
 /**
  * Page for the add and edit of uses of components.
@@ -45,7 +49,7 @@ public class ComponentUsePage extends ManteniketPage{
     private Long bikeId;
     private TextField<Long> txtId;
     private DateTextField txtInit;
-    private DateTextField txtFin;
+    private org.apache.wicket.extensions.markup.html.form.DateTextField txtFin;
     private DropDownChoice<Bici> cmbBike;
     private DropDownChoice<Component> cmbComp;
     private TextArea<String> txtDesc;
@@ -91,6 +95,7 @@ public class ComponentUsePage extends ManteniketPage{
 	    cmbBike.setDefaultModel(new Model<Bici>(use.getBike()));
 	    cmbComp.setDefaultModel(new Model<Component>(use.getComponent()));
 	    txtDesc.setDefaultModel(Model.of(use.getDescrip()));
+	    log.debug("Uso:"+use.toString());
 	} else {
 	    txtId.setDefaultModel(Model.of(""));
 	    txtInit.setDefaultModel(Model.of(new Date()));
@@ -103,14 +108,18 @@ public class ComponentUsePage extends ManteniketPage{
 
     private void initComponents() {
 	log.info("inicio");
-	Form form = new Form("form");
-	Button saveBtn = new Button("saveBtn"){
+	BootstrapForm form = new BootstrapForm("form");
+	BootstrapButton saveBtn = new BootstrapButton("saveBtn", ManteniketContracts.BTN_SAVE){
+	    private static final long serialVersionUID = 1L;
+
 	    public void onSubmit(){
 		save();
 	    }
 	};
+	saveBtn.setLabel(new ResourceModel("btn.save"));
 	form.add(saveBtn);
-	Button retBtn = new Button("retBtn"){
+	BootstrapButton retBtn = new BootstrapButton("retBtn", ManteniketContracts.BTN_RETURN){
+	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
 		returnPage();
 	    }
@@ -118,6 +127,7 @@ public class ComponentUsePage extends ManteniketPage{
 		returnPage();
 	    }
 	};
+	retBtn.setLabel(new ResourceModel("btn.return"));
 	form.add(retBtn);
 	
 	txtId = new TextField<Long>("txtId");
@@ -125,32 +135,24 @@ public class ComponentUsePage extends ManteniketPage{
 	txtId.setType(Long.class);
 	form.add(txtId);
 	
-	txtInit=new DateTextField("txtInit");
-	DatePicker datePicker = new DatePicker(){
-
-	    @Override
-            protected String getAdditionalJavaScript()
-            {
-                return "${calendar}.cfg.setProperty(\"navigator\",true,false); ${calendar}.render();";
-            }
-        };
-        datePicker.setShowOnFieldClick(true);
-        datePicker.setAutoHide(true);
-        txtInit.add(datePicker);
+	
+        txtInit = datePickerBootstrap("txtInit");
         form.add(txtInit);
-        
-        txtFin = new DateTextField("txtFin");
-        datePicker = new DatePicker(){
-            
-            @Override
-            protected String getAdditionalJavaScript()
-            {
-        	return "${calendar}.cfg.setProperty(\"navigator\",true,false); ${calendar}.render();";
-            }
-        };
-        datePicker.setShowOnFieldClick(true);
-        datePicker.setAutoHide(true);
-        txtFin.add(datePicker);
+        txtFin = datePickerBootstrap("txtFin");
+//                txtFin = new DateTextField("txtFin");
+//                DatePicker datePicker = new DatePicker(){
+//                    
+//		    private static final long serialVersionUID = 1L;
+//
+//		    @Override
+//                    protected String getAdditionalJavaScript()
+//                    {
+//                	return "${calendar}.cfg.setProperty(\"navigator\",true,false); ${calendar}.render();";
+//                    }
+//                };
+//                datePicker.setShowOnFieldClick(true);
+//                datePicker.setAutoHide(true);
+//                txtFin.add(datePicker);
         form.add(txtFin);
         
         ChoiceRenderer<Bici> bikeRender = new ChoiceRenderer<Bici>("codBici", "idBici");
@@ -168,6 +170,17 @@ public class ComponentUsePage extends ManteniketPage{
         form.add(txtDesc);
         
         add(form);
+    }
+    
+    private DateTextField datePickerBootstrap(String id){
+	DateTextFieldConfig config = new DateTextFieldConfig()
+    		.autoClose(true)
+    		.withView(DateTextFieldConfig.View.Decade)
+    		.showTodayButton(TodayButton.TRUE)
+    		.highlightToday(true)
+    		.withStartDate(new DateTime().withYear(2000))
+    		.withFormat("dd/MM/yyyy");
+	return new DateTextField(id, config);
     }
     
     private void returnPage(){
