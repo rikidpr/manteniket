@@ -34,6 +34,7 @@
 		<jetty.version>7.6.13.v20130916</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
 		<spring.version>3.2.0.RELEASE</spring.version>
+		<spring-data-jpa.version>1.2.0.RELEASE</spring-data-jpa.version>
 		<jpa.version>2.0.0</jpa.version>
 		<hibernate.version>3.5.4-Final</hibernate.version>
 
@@ -105,12 +106,21 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>1.2.0.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>3.2.6.RELEASE</version>
+			<version>${spring-data-jpa.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
