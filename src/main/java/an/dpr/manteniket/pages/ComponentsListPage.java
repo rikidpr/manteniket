@@ -81,6 +81,9 @@ public class ComponentsListPage extends ManteniketPage {
 		rv.add(new Label(rv.newChildId(), Model.of(km)));
 		PageParameters params = new PageParameters();
 		params.add(ManteniketContracts.ID, component.getId());
+		params.add(ManteniketContracts.ENTITY, ManteniketContracts.Entity.COMPONENT);
+		params.add(ManteniketContracts.RETURN_PAGE, this.getClass().getName());
+		rv.add(new LinkPanel(rv.newChildId(), params, BikeCompListPage.class, getString("btn.uses")));
 		rv.add(new LinkPanel(rv.newChildId(), params, ComponentsPage.class, getString("btn.edit"))); 
 		rv.add(new LinkPanel(rv.newChildId(), params, ComponentsDeletePage.class, getString("btn.delete"))); 
 		item.add(rv);

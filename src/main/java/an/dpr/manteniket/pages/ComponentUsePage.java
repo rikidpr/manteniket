@@ -3,7 +3,8 @@ package an.dpr.manteniket.pages;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.extensions.yui.calendar.DatePicker;
+import org.apache.wicket.Page;
+import org.apache.wicket.PageReference;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -18,12 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
+import an.dpr.manteniket.bean.ManteniketContracts.Entity;
+import an.dpr.manteniket.dao.BicisDAO;
+import an.dpr.manteniket.dao.ComponentUsesDAO;
+import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
-import an.dpr.manteniket.repository.BicisRepository;
-import an.dpr.manteniket.repository.ComponentUsesRepository;
-import an.dpr.manteniket.repository.ComponentesRepository;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
@@ -40,13 +42,12 @@ public class ComponentUsePage extends ManteniketPage{
 
     private static final Logger log = LoggerFactory.getLogger(ComponentUsePage.class);
     @SpringBean
-    private ComponentUsesRepository repo;
+    private ComponentUsesDAO cuDao;
     @SpringBean
-    private ComponentesRepository repoComp;
+    private ComponentesDAO compDao;
     @SpringBean
-    private BicisRepository repoBike;
+    private BicisDAO bikeDao;
     
-    private Long bikeId;
     private TextField<Long> txtId;
     private DateTextField txtInit;
     private org.apache.wicket.extensions.markup.html.form.DateTextField txtFin;
@@ -60,15 +61,19 @@ public class ComponentUsePage extends ManteniketPage{
     
     public ComponentUsePage(PageParameters params){
 	super();
-	initComponents();
+	initComponents(params);
 	Long id = null;
+	Entity entity = null;
+	long sourceId;
 	if (params!= null){
-	    bikeId = params.get("bikeId").toLongObject();
 	    id = !params.get(ManteniketContracts.ID).isEmpty() 
 		    ? params.get(ManteniketContracts.ID).toLongObject()
 		    : null;
+	    entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
+	    sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong();
+		
 	}
-	loadData(id);
+	loadData(id, entity);
 	addValidations();
     }
 
@@ -83,12 +88,23 @@ public class ComponentUsePage extends ManteniketPage{
 	add(new FeedbackPanel("feedback"));
     }
 
-    private void loadData(Long id) {
+    private void loadData(Long id, Entity entity) {
 	ComponentUse use = null;
 	if (id!=null){
-	    use = repo.findOne(id);
+	    use = cuDao.findOne(id);
 	}
 	if (use != null){
+	    //TODO PROBAR ASI!! 
+//	    DropDownChoice<Person> ddc = 
+//            new DropDownChoice<Person>("name", 
+//                    new PropertyModel<Person>(employee, "managedBy"),
+//                    new LoadableDetachableModel<List<Person>>() {
+//                        @Override
+//                        protected Object load() { 
+//                            return Person.getManagers();
+//                        }
+//                    }
+//                );
 	    txtId.setDefaultModel(Model.of(use.getId()));
 	    txtInit.setDefaultModel(Model.of(use.getInit()));
 	    txtFin.setDefaultModel(Model.of(use.getFinish()));
@@ -106,14 +122,20 @@ public class ComponentUsePage extends ManteniketPage{
 	}
     }
 
-    private void initComponents() {
+    private void initComponents(final PageParameters params) {
 	log.info("inicio");
+
+	
+//	final Page returnTo = params.get(ManteniketContracts.RETURN_PAGE).to(Page.class);
+	Object refObj = getEntityRefObject(params);
+	
 	BootstrapForm form = new BootstrapForm("form");
 	BootstrapButton saveBtn = new BootstrapButton("saveBtn", ManteniketContracts.BTN_SAVE){
 	    private static final long serialVersionUID = 1L;
 
 	    public void onSubmit(){
 		save();
+		setResponsePage(BikeCompListPage.class);
 	    }
 	};
 	saveBtn.setLabel(new ResourceModel("btn.save"));
@@ -121,10 +143,10 @@ public class ComponentUsePage extends ManteniketPage{
 	BootstrapButton retBtn = new BootstrapButton("retBtn", ManteniketContracts.BTN_RETURN){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
-		returnPage();
+		setResponsePage(BikeCompListPage.class);
 	    }
 	    public void onError(){
-		returnPage();
+		setResponsePage(BikeCompListPage.class);
 	    }
 	};
 	retBtn.setLabel(new ResourceModel("btn.return"));
@@ -139,30 +161,22 @@ public class ComponentUsePage extends ManteniketPage{
         txtInit = datePickerBootstrap("txtInit");
         form.add(txtInit);
         txtFin = datePickerBootstrap("txtFin");
-//                txtFin = new DateTextField("txtFin");
-//                DatePicker datePicker = new DatePicker(){
-//                    
-//		    private static final long serialVersionUID = 1L;
-//
-//		    @Override
-//                    protected String getAdditionalJavaScript()
-//                    {
-//                	return "${calendar}.cfg.setProperty(\"navigator\",true,false); ${calendar}.render();";
-//                    }
-//                };
-//                datePicker.setShowOnFieldClick(true);
-//                datePicker.setAutoHide(true);
-//                txtFin.add(datePicker);
         form.add(txtFin);
         
         ChoiceRenderer<Bici> bikeRender = new ChoiceRenderer<Bici>("codBici", "idBici");
-        List<Bici> bikes = repoBike.findAll();
+        List<Bici> bikes = bikeDao.findAll();
         cmbBike = new DropDownChoice<Bici>("cmbBike", bikes, bikeRender);
+        if (refObj instanceof Bici){
+            cmbBike.setDefaultModelObject((Bici)refObj);
+        }
         form.add(cmbBike);
 
         ChoiceRenderer<Component> compRender = new ChoiceRenderer<Component>("name", "id");
-        List<Component> components = repoComp.findAll();
+        List<Component> components = compDao.findAll();
         cmbComp = new DropDownChoice<Component>("cmbComp", components, compRender);
+        if (refObj instanceof Component){
+            cmbComp.setDefaultModelObject((Component)refObj);
+        }
         form.add(cmbComp);
         
         txtDesc = new TextArea<String>("txtDesc");
@@ -172,6 +186,25 @@ public class ComponentUsePage extends ManteniketPage{
         add(form);
     }
     
+    private Object getEntityRefObject(PageParameters params) {
+	Object object = null;
+	long id = params.get(ManteniketContracts.SOURCE_ID).toLong();
+	Entity entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
+	switch(entity){
+	case BIKE:
+	    Bici bici = new Bici();
+	    bici.setIdBici(id);
+	    object = bici;
+	    break;
+	case COMPONENT:
+	    Component component = new Component();
+	    component.setId(id);
+	    object = component;
+	    break;
+	}
+	return object;
+    }
+
     private DateTextField datePickerBootstrap(String id){
 	DateTextFieldConfig config = new DateTextFieldConfig()
     		.autoClose(true)
@@ -182,13 +215,7 @@ public class ComponentUsePage extends ManteniketPage{
     		.withFormat("dd/MM/yyyy");
 	return new DateTextField(id, config);
     }
-    
-    private void returnPage(){
-	PageParameters params = new PageParameters();
-	params.set(ManteniketContracts.ID, bikeId);
-	setResponsePage(BikeCompListPage.class, params);//TODO config the components page source
-    }
-    
+
     private void save(){
 	ComponentUse use = new ComponentUse();
 	String id = txtId.getDefaultModelObjectAsString();
@@ -201,8 +228,7 @@ public class ComponentUsePage extends ManteniketPage{
 	use.setFinish((Date)txtFin.getDefaultModelObject());
 	use.setDescrip(txtDesc.getDefaultModelObjectAsString());
 	
-	repo.save(use);
+	cuDao.save(use);
 	
-	returnPage();
     }
 }

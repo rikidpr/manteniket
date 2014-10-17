@@ -73,6 +73,8 @@ public class BicisListPage extends ManteniketPage {
 			.getModel(), "tipo")));
 		PageParameters params = new PageParameters();
 		params.add(ManteniketContracts.ID, bici.getIdBici());
+		params.add(ManteniketContracts.ENTITY, ManteniketContracts.Entity.BIKE);
+		params.add(ManteniketContracts.RETURN_PAGE, this.getClass().getName());
 		rv.add(new LinkPanel(rv.newChildId(), params,
 			BikeCompListPage.class, getString("btn.components")));
 		rv.add(new LinkPanel(rv.newChildId(), params, BicisPage.class,

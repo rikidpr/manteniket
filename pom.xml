@@ -33,8 +33,8 @@
         <wicket.bootsrap.version>0.9.6</wicket.bootsrap.version>
 		<jetty.version>7.6.13.v20130916</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
-		<spring.version>3.2.0.RELEASE</spring.version>
-		<spring-data-jpa.version>1.2.0.RELEASE</spring-data-jpa.version>
+		<spring.version>3.2.10.RELEASE</spring.version>
+		<spring-data-jpa.version>1.6.4.RELEASE</spring-data-jpa.version>
 		<jpa.version>2.0.0</jpa.version>
 		<hibernate.version>3.5.4-Final</hibernate.version>
 
@@ -139,17 +139,19 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 		<!-- DERBY 
+		-->
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
 			<version>10.10.1.1</version>
 		</dependency>
-		-->
+		<!-- POSTGRESQL
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>8.4-702.jdbc3</version>
 		</dependency>
+		 -->
 		<!-- FIN PERSISTENCIA -->
 		
 		<dependency>
