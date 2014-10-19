@@ -2,7 +2,7 @@ package an.dpr.manteniket.bean;
 
 public enum ActivityType {
 
-    ROAD((short)1), CLUB((short)2), INDOOR((short)3), CYCLOTOURIST((short)4), MTB((short)5);
+    ROAD((short)1), CLUB((short)2), INDOOR((short)3), CYCLOTOURIST((short)4), MTB((short)5), URBAN((short)6);
     
     private short code;
 

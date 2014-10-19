@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.extensions.markup.html.form.DateTextField;
-import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.TimeField;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -24,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ActivityType;
-import an.dpr.manteniket.bean.CyclingType;
 import an.dpr.manteniket.bean.ManteniketContracts;
+import an.dpr.manteniket.components.Utils;
 import an.dpr.manteniket.dao.ActivitiesDAO;
 import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.domain.Activity;
@@ -34,6 +32,7 @@ import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
 
 public class ActivitiesPage extends ManteniketPage {
 
@@ -61,15 +60,16 @@ public class ActivitiesPage extends ManteniketPage {
     public ActivitiesPage(PageParameters params) {
 	super();
 	initComponents();
-	if (params != null){
-	    loadData(params);
-	}
+	loadData(params);
 	addValidations();
     }
 
     private void loadData(PageParameters params) {
-	Long id = params.get(ManteniketContracts.ID).toLongObject();
-	Activity act = dao.findById(id);
+	Activity act = null;
+	if (params != null){
+	    Long id = params.get(ManteniketContracts.ID).toLongObject();
+	    act = dao.findById(id);
+	}
 	if (act != null) {
 	    txtId.setModel(Model.of(act.getActivityId()));
 	    txtDate.setModel(Model.of(act.getDate()));
@@ -85,6 +85,13 @@ public class ActivitiesPage extends ManteniketPage {
 		log.error("tipo no reconocido", e);
 		cmbType.setModel(new Model<ActivityType>());
 	    }
+	} else {
+	    log.debug("new activity, set the date models");
+	    txtDate.setModel(Model.of(new Date()));
+	    Calendar cal = Calendar.getInstance();
+	    cal.set(Calendar.HOUR, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    txtTime.setModel(Model.of(cal.getTime()));
 	}
     }
 
@@ -146,18 +153,7 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(new Label("lblDesc", new ResourceModel("lbl.desc")));
 	form.add(txtDesc);
 	
-	txtDate = new DateTextField("txtDate",Model.of(Calendar.getInstance().getTime()));
-        DatePicker datePicker = new DatePicker()
-        {
-            @Override
-            protected String getAdditionalJavaScript()
-            {
-                return "${calendar}.cfg.setProperty(\"navigator\",true,false); ${calendar}.render();";
-            }
-        };
-        datePicker.setShowOnFieldClick(true);
-        datePicker.setAutoHide(true);
-        txtDate.add(datePicker);
+	txtDate = Utils.datePickerBootstrap("txtDate");
 	form.add(new Label("lblDate", new ResourceModel("lbl.date")));
 	form.add(txtDate);
 	
@@ -184,6 +180,7 @@ public class ActivitiesPage extends ManteniketPage {
 
     private void guardar() {
 	Activity act = new Activity();
+	
 	if (txtId.getDefaultModelObject()!= null){
 	    act.setActivityId((Long)txtId.getDefaultModelObject());
 	}
