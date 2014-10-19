@@ -7,7 +7,6 @@ import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 
 import java.util.List;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
@@ -15,14 +14,13 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import an.dpr.manteniket.MainPage;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.LinkPanel;
@@ -54,12 +52,9 @@ public class BikeCompListPage extends ManteniketPage {
 
 	Long id = params.get(ID).toLongObject();
 	Entity entity = params.get(ENTITY).toEnum(Entity.class);
-	final String retPageClass= params.get(ManteniketContracts.RETURN_PAGE).toString();
-	final Class retPage = Class.forName(retPageClass);
 	final PageParameters pp = new PageParameters();
 	pp.add(ManteniketContracts.SOURCE_ID, id);
 	pp.add(ManteniketContracts.ENTITY, entity);
-	pp.add(ManteniketContracts.RETURN_PAGE, this.getPageReference());
 	
 	BootstrapForm form = new BootstrapForm("form");
 	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD){
@@ -74,19 +69,19 @@ public class BikeCompListPage extends ManteniketPage {
 	};
 	btnAdd.setLabel(new ResourceModel("btn.add"));
 	form.add(btnAdd);
-	BootstrapButton retBtn = new BootstrapButton("btnReturn", BTN_RETURN){
-	    
-	    
-	    private static final long serialVersionUID = 1L;
-	    
-	    @Override
-	    public void onSubmit(){
-		setResponsePage(retPage);
-	    }
-	    
-	};
-	retBtn.setLabel(new ResourceModel("btn.return"));
-	form.add(retBtn);
+//	BootstrapButton retBtn = new BootstrapButton("btnReturn", BTN_RETURN){
+//	    
+//	    
+//	    private static final long serialVersionUID = 1L;
+//	    
+//	    @Override
+//	    public void onSubmit(){
+//		setResponsePage(MainPage.class);//TODO VER COMO PODEMOS HACER PARA QUE VUELVA A listbicis o listcomp
+//	    }
+//	    
+//	};
+//	retBtn.setLabel(new ResourceModel("btn.return"));
+//	form.add(retBtn);
 	add(form);
 	listado(id, entity);
     }

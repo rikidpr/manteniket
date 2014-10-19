@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 
-import an.dpr.manteniket.HomePage;
+import an.dpr.manteniket.MainPage;
+import an.dpr.manteniket.LogoutPage;
 import an.dpr.manteniket.pages.ActivitiesListPage;
 import an.dpr.manteniket.pages.BicisListPage;
 import an.dpr.manteniket.pages.ComponentsListPage;
@@ -19,19 +19,22 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.image.GlyphIconType;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.INavbarComponent;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.ImmutableNavbarComponent;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.Navbar;
-import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.Navbar.Position;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.NavbarButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.NavbarComponents;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.NavbarDropDownButton;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
 
 public class BootstrapHeaderPanel extends Panel {
+    
+    private static final long serialVersionUID = 1L;
+
     public BootstrapHeaderPanel(String id) {
 	super(id);
 
 	add(navbar());
     }
 
+    //TODO el boton home deberia ser mejor un boton logout, y el titulo dirigir a mainpage
     private Navbar navbar() {
 	Navbar navbar = new Navbar("navbar");
 	navbar.setInverted(true);
@@ -40,8 +43,9 @@ public class BootstrapHeaderPanel extends Panel {
 
 	addItemsMenu(navbar);
 
-	navbar.addComponents(NavbarComponents.transform(Navbar.ComponentPosition.RIGHT, new NavbarButton<HomePage>(
-		HomePage.class, new ResourceModel("header.home")).setIconType(GlyphIconType.home)));
+	navbar.addComponents(NavbarComponents.transform(
+		Navbar.ComponentPosition.RIGHT, 
+		new NavbarButton<LogoutPage>(LogoutPage.class, new ResourceModel("header.logout")).setIconType(GlyphIconType.logout)));
 
 	return navbar;
     }

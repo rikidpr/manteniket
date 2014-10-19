@@ -1,5 +1,8 @@
 package an.dpr.manteniket.pages;
 
+import static an.dpr.manteniket.bean.ManteniketContracts.ID;
+import static an.dpr.manteniket.bean.ManteniketContracts.ENTITY;
+
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +50,7 @@ public class ComponentUsePage extends ManteniketPage{
     private ComponentesDAO compDao;
     @SpringBean
     private BicisDAO bikeDao;
+    private ComponentUse bean;
     
     private TextField<Long> txtId;
     private DateTextField txtInit;
@@ -54,6 +58,8 @@ public class ComponentUsePage extends ManteniketPage{
     private DropDownChoice<Bici> cmbBike;
     private DropDownChoice<Component> cmbComp;
     private TextArea<String> txtDesc;
+    private long sourceId;
+    private Entity entity;
     
     public ComponentUsePage(){
 	this(null);
@@ -62,18 +68,7 @@ public class ComponentUsePage extends ManteniketPage{
     public ComponentUsePage(PageParameters params){
 	super();
 	initComponents(params);
-	Long id = null;
-	Entity entity = null;
-	long sourceId;
-	if (params!= null){
-	    id = !params.get(ManteniketContracts.ID).isEmpty() 
-		    ? params.get(ManteniketContracts.ID).toLongObject()
-		    : null;
-	    entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
-	    sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong();
-		
-	}
-	loadData(id, entity);
+	loadData(params);
 	addValidations();
     }
 
@@ -88,38 +83,46 @@ public class ComponentUsePage extends ManteniketPage{
 	add(new FeedbackPanel("feedback"));
     }
 
-    private void loadData(Long id, Entity entity) {
-	ComponentUse use = null;
-	if (id!=null){
-	    use = cuDao.findOne(id);
+    private void loadData(PageParameters params) {
+	Long id = null;
+	Object refObj = getEntityRefObject(params);
+	if (params!= null){
+	    id = !params.get(ManteniketContracts.ID).isEmpty() 
+		    ? params.get(ManteniketContracts.ID).toLongObject()
+			    : null;
+	    entity = params.get(ManteniketContracts.ENTITY)
+		    .toEnum(Entity.class);
+	    sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong();
 	}
-	if (use != null){
-	    //TODO PROBAR ASI!! 
-//	    DropDownChoice<Person> ddc = 
-//            new DropDownChoice<Person>("name", 
-//                    new PropertyModel<Person>(employee, "managedBy"),
-//                    new LoadableDetachableModel<List<Person>>() {
-//                        @Override
-//                        protected Object load() { 
-//                            return Person.getManagers();
-//                        }
-//                    }
-//                );
-	    txtId.setDefaultModel(Model.of(use.getId()));
-	    txtInit.setDefaultModel(Model.of(use.getInit()));
-	    txtFin.setDefaultModel(Model.of(use.getFinish()));
-	    cmbBike.setDefaultModel(new Model<Bici>(use.getBike()));
-	    cmbComp.setDefaultModel(new Model<Component>(use.getComponent()));
-	    txtDesc.setDefaultModel(Model.of(use.getDescrip()));
-	    log.debug("Uso:"+use.toString());
+	if (id!=null){
+	    bean = cuDao.findOne(id);
+	}
+	if (bean != null){
+	    txtId.setDefaultModel(Model.of(bean.getId()));
+	    txtInit.setDefaultModel(Model.of(bean.getInit()));
+	    txtFin.setDefaultModel(Model.of(bean.getFinish()));
+	    cmbBike.setDefaultModel(new Model<Bici>(bean.getBike()));
+	    cmbComp.setDefaultModel(new Model<Component>(bean.getComponent()));
+	    txtDesc.setDefaultModel(Model.of(bean.getDescrip()));
+	    log.debug("Uso:"+bean.toString());
 	} else {
 	    txtId.setDefaultModel(Model.of(""));
 	    txtInit.setDefaultModel(Model.of(new Date()));
 	    txtFin.setDefaultModel(Model.of(new Date()));
-	    cmbBike.setDefaultModel(new Model<Bici>());
-	    cmbComp.setDefaultModel(new Model<Component>());
 	    txtDesc.setDefaultModel(Model.of(""));
+	    if (refObj instanceof Bici) {
+		cmbBike.setDefaultModel(new Model<Bici>((Bici)refObj));
+	    } else {
+		cmbBike.setDefaultModel(new Model<Bici>());
+	    }
+	    if (refObj instanceof Component) {
+		Component comp = (Component) refObj;
+		cmbComp.setDefaultModel(new Model<Component>(comp));
+	    } else {
+		cmbComp.setDefaultModel(new Model<Component>());
+	    }
 	}
+	
     }
 
     private void initComponents(final PageParameters params) {
@@ -127,7 +130,6 @@ public class ComponentUsePage extends ManteniketPage{
 
 	
 //	final Page returnTo = params.get(ManteniketContracts.RETURN_PAGE).to(Page.class);
-	Object refObj = getEntityRefObject(params);
 	
 	BootstrapForm form = new BootstrapForm("form");
 	BootstrapButton saveBtn = new BootstrapButton("saveBtn", ManteniketContracts.BTN_SAVE){
@@ -135,7 +137,10 @@ public class ComponentUsePage extends ManteniketPage{
 
 	    public void onSubmit(){
 		save();
-		setResponsePage(BikeCompListPage.class);
+		PageParameters params = new PageParameters();
+		params.add(ID, sourceId);
+		params.add(ENTITY, entity);
+		setResponsePage(BikeCompListPage.class, params);
 	    }
 	};
 	saveBtn.setLabel(new ResourceModel("btn.save"));
@@ -143,10 +148,16 @@ public class ComponentUsePage extends ManteniketPage{
 	BootstrapButton retBtn = new BootstrapButton("retBtn", ManteniketContracts.BTN_RETURN){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
-		setResponsePage(BikeCompListPage.class);
+		PageParameters params = new PageParameters();
+		params.add(ID, sourceId);
+		params.add(ENTITY, entity);
+		setResponsePage(BikeCompListPage.class, params);
 	    }
 	    public void onError(){
-		setResponsePage(BikeCompListPage.class);
+		PageParameters params = new PageParameters();
+		params.add(ID, sourceId);
+		params.add(ENTITY, entity);
+		setResponsePage(BikeCompListPage.class, params);
 	    }
 	};
 	retBtn.setLabel(new ResourceModel("btn.return"));
@@ -166,17 +177,11 @@ public class ComponentUsePage extends ManteniketPage{
         ChoiceRenderer<Bici> bikeRender = new ChoiceRenderer<Bici>("codBici", "idBici");
         List<Bici> bikes = bikeDao.findAll();
         cmbBike = new DropDownChoice<Bici>("cmbBike", bikes, bikeRender);
-        if (refObj instanceof Bici){
-            cmbBike.setDefaultModelObject((Bici)refObj);
-        }
         form.add(cmbBike);
 
         ChoiceRenderer<Component> compRender = new ChoiceRenderer<Component>("name", "id");
         List<Component> components = compDao.findAll();
         cmbComp = new DropDownChoice<Component>("cmbComp", components, compRender);
-        if (refObj instanceof Component){
-            cmbComp.setDefaultModelObject((Component)refObj);
-        }
         form.add(cmbComp);
         
         txtDesc = new TextArea<String>("txtDesc");

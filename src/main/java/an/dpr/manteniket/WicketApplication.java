@@ -9,6 +9,7 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import an.dpr.manteniket.security.AppSecurity;
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
 import de.agilecoders.wicket.core.settings.IBootstrapSettings;
@@ -29,7 +30,11 @@ public class WicketApplication extends WebApplication {
      */
     @Override
     public Class<? extends WebPage> getHomePage() {
-	return LoginPage.class;
+	if (AppSecurity.isLogin()){
+	    return MainPage.class;
+	} else {
+	    return LoginPage.class;
+	}
     }
 
     /**

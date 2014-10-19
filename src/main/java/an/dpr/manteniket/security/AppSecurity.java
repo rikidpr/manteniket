@@ -20,6 +20,15 @@ public class AppSecurity {
     static{
 	passService = getPasswordService();
     }
+    
+    public static boolean isLogin(){
+	Subject user = SecurityUtils.getSubject();
+	if (user.isAuthenticated()){
+	    return true;
+	} else {
+	    return false;
+	}
+    }
 
     public static boolean login(String user, String pass) {
 	boolean logeado = false;

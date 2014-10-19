@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import an.dpr.manteniket.bean.ActivityType;
+
 @Entity
 @Table(name = "activities")
 public class Activity implements Serializable{
@@ -26,6 +28,8 @@ public class Activity implements Serializable{
     private Date date;
     private Double km;
     private Bici bike;
+    private Short type;
+    private Short heartRate;
     private String description;
 
     @Id
@@ -74,5 +78,23 @@ public class Activity implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column
+    public Short getType() {
+        return type;
+    }
+
+    public void setType(Short type) {
+        this.type = type;
+    }
+
+    @Column
+    public Short getHeartRate() {
+        return heartRate;
+    }
+
+    public void setHeartRate(Short heartRate) {
+        this.heartRate = heartRate;
     }
 }

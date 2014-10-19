@@ -1,5 +1,6 @@
 package an.dpr.manteniket.pages;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -21,6 +23,8 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import an.dpr.manteniket.bean.ActivityType;
+import an.dpr.manteniket.bean.CyclingType;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.dao.ActivitiesDAO;
 import an.dpr.manteniket.dao.BicisDAO;
@@ -47,6 +51,8 @@ public class ActivitiesPage extends ManteniketPage {
     private TextField<Double> txtKm;
     private TextField<String> txtDesc;
     private DropDownChoice<Bici> cmbBike;
+    private TextField<Short> txtHeartRate;
+    private DropDownChoice<ActivityType> cmbType;
     
     public ActivitiesPage(){
 	this(null);
@@ -64,14 +70,21 @@ public class ActivitiesPage extends ManteniketPage {
     private void loadData(PageParameters params) {
 	Long id = params.get(ManteniketContracts.ID).toLongObject();
 	Activity act = dao.findById(id);
-	if (act != null){
+	if (act != null) {
 	    txtId.setModel(Model.of(act.getActivityId()));
 	    txtDate.setModel(Model.of(act.getDate()));
 	    txtTime.setModel(Model.of(act.getDate()));
 	    txtKm.setModel(Model.of(act.getKm()));
+	    txtHeartRate.setModel(Model.of(act.getHeartRate()));
 	    txtDesc.setModel(Model.of(act.getDescription()));
 	    Model<Bici> choices = new Model<Bici>(act.getBike());
 	    cmbBike.setModel(choices);
+	    try {
+		cmbType.setModel(new Model<ActivityType>(ActivityType.getByCode(act.getType())));
+	    } catch (Exception e) {
+		log.error("tipo no reconocido", e);
+		cmbType.setModel(new Model<ActivityType>());
+	    }
 	}
     }
 
@@ -123,6 +136,11 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(new Label("lblKm", new ResourceModel("lbl.km")));
 	form.add(txtKm);
 	
+	txtHeartRate = new TextField<Short>("txtHeartRate", Model.of((short)0));
+	txtHeartRate.setType(Short.class);
+	form.add(new Label("lblHeartRate", new ResourceModel("lbl.heart.rate")));
+	form.add(txtHeartRate);
+	
 	txtDesc = new TextField<String>("txtDesc", Model.of(""));
 	txtDesc.setType(String.class);
 	form.add(new Label("lblDesc", new ResourceModel("lbl.desc")));
@@ -148,11 +166,18 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(txtTime);
 	
 	List<Bici> bikes = bicisDao.findAll();
-	Model<Bici> choices = new Model<Bici>();
-	ChoiceRenderer<Bici> render = new ChoiceRenderer<Bici>("codBici", "idBici");
-	cmbBike = new DropDownChoice<Bici>("cmbBike", choices, bikes, render);
+	Model<Bici> choicesB = new Model<Bici>();
+	ChoiceRenderer<Bici> renderB = new ChoiceRenderer<Bici>("codBici", "idBici");
+	cmbBike = new DropDownChoice<Bici>("cmbBike", choicesB, bikes, renderB);
 	form.add(new Label("lblBike", new ResourceModel("lbl.bike")));
 	form.add(cmbBike);
+	
+	ChoiceRenderer<ActivityType> renderAT = new ChoiceRenderer<ActivityType>("name");
+	IModel<ActivityType> modelAT = new Model<ActivityType>();
+	List<ActivityType> choicesAT = Arrays.asList(ActivityType.values());
+	cmbType= new DropDownChoice<ActivityType>("cmbType", modelAT, choicesAT, renderAT);
+	form.add(new Label("lblType", new ResourceModel("lbl.type")));
+	form.add(cmbType);
 	
 	add(form);
     }
@@ -176,7 +201,6 @@ public class ActivitiesPage extends ManteniketPage {
 	act.setDate(cal.getTime());
 	
 	act.setDescription(txtDesc.getDefaultModelObjectAsString());
-	act.setKm((Double)txtKm.getDefaultModelObject());
 	String idBike = cmbBike.getValue();
 	try{
 	    Bici bike = new Bici();
@@ -185,11 +209,31 @@ public class ActivitiesPage extends ManteniketPage {
 	} catch(NumberFormatException e){
 	    log.debug(idBike+" no es un valor long valido");
 	}
+	act.setKm((Double)txtKm.getDefaultModelObject());
+	act.setHeartRate((Short)txtHeartRate.getDefaultModelObject());
+	ActivityType at = (ActivityType)cmbType.getDefaultModelObject();
+	act.setType(at.getCode());
 	dao.save(act);
 	volver();
     }
     
     private void volver() {
 	setResponsePage(ActivitiesListPage.class);
+    }
+
+    public TextField<Short> getTxtHeartRate() {
+        return txtHeartRate;
+    }
+
+    public void setTxtHeartRate(TextField<Short> txtHeartRate) {
+        this.txtHeartRate = txtHeartRate;
+    }
+
+    public DropDownChoice<ActivityType> getCmbType() {
+        return cmbType;
+    }
+
+    public void setCmbType(DropDownChoice<ActivityType> cmbType) {
+        this.cmbType = cmbType;
     }
 }
