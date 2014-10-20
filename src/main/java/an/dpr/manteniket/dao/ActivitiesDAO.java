@@ -7,6 +7,10 @@ import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -59,11 +63,32 @@ public class ActivitiesDAO {
     }
     
     public List<Activity> findAll(){
+	//sort por defecto
+	Sort sort = new Sort(Sort.Direction.ASC, "date");
+	return findAll(sort);
+    }
+    
+    public List<Activity> findAll(int from, int numberOfResults){
+	Sort sort = new Sort(Sort.Direction.ASC, "date");
+	return findAll(sort, from, numberOfResults);
+    }
+    
+    public List<Activity> findAll(final Sort sort){
+	return findAll(sort, null, null);
+    }
+    
+    public List<Activity> findAll(final Sort sort, final Integer fromPage, final Integer numberOfResults){
 	return getTransactionTemplate().execute(new TransactionCallback<List<Activity>>() {
 
 	    @Override
 	    public List<Activity> doInTransaction(TransactionStatus status) {
-		List<Activity> list = repo.findAll();
+		List<Activity> list = null;
+		if (fromPage != null){
+		    Page<Activity> page= repo.findAll(new PageRequest(fromPage, numberOfResults, sort));
+		    list = page.getContent();
+		} else {
+		    list = repo.findAll(sort);
+		}
 		for(Activity act : list){
 		    Hibernate.initialize(act.getBike());
 		}
@@ -72,6 +97,13 @@ public class ActivitiesDAO {
 	    
 	});
     }
+
+    /**
+     * Busca todos pero paginando
+     * @param from
+     * @param to
+     * @return
+     */
 
     public List<Activity> findByDates(final Date ini, final Date fin){
 

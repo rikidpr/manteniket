@@ -9,6 +9,7 @@ import org.apache.wicket.model.ResourceModel;
 
 import an.dpr.manteniket.MainPage;
 import an.dpr.manteniket.LogoutPage;
+import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.pages.ActivitiesListPage;
 import an.dpr.manteniket.pages.BicisListPage;
 import an.dpr.manteniket.pages.ComponentsListPage;
@@ -56,40 +57,17 @@ public class BootstrapHeaderPanel extends Panel {
 	NavbarButton<ComponentsListPage> menuComponents; 
 
 	menuActivities = new NavbarButton<ActivitiesListPage>(ActivitiesListPage.class, new ResourceModel("menu.activities"));
-	menuActivities.setIconType(FontAwesomeIconType.user);
+	menuActivities.setIconType(FontAwesomeIconTypeExt.area_chart);
 	
 	menuBikes = new NavbarButton<BicisListPage>(BicisListPage.class, new ResourceModel("menu.bikes"));
-	menuBikes.setIconType(FontAwesomeIconType.beer);
+	menuBikes.setIconType(FontAwesomeIconTypeExt.bicycle);
 	
 	menuComponents = new NavbarButton<ComponentsListPage>(ComponentsListPage.class, new ResourceModel("menu.components"));
-	menuComponents.setIconType(FontAwesomeIconType.ambulance);
+	menuComponents.setIconType(FontAwesomeIconType.cog);
 	
 	List<INavbarComponent> list = NavbarComponents.transform(Navbar.ComponentPosition.RIGHT, 
 		menuActivities, menuBikes, menuComponents);
 	navbar.addComponents(list);
     }
 
-    private void addItemsMenuDropDown(Navbar navbar) {
-	DropDownButton dropdown = new NavbarDropDownButton(new ResourceModel("menu.dropdown")) {
-
-	    private static final long serialVersionUID = 1L;
-
-	    @SuppressWarnings({ "rawtypes", "unchecked" })
-	    @Override
-	    protected List<AbstractLink> newSubMenuButtons(String buttonMarkupId) {
-		final List<AbstractLink> subMenu = new ArrayList<AbstractLink>();
-		subMenu.add(new MenuBookmarkablePageLink(ActivitiesListPage.class, new ResourceModel("menu.activities"))
-			.setIconType(FontAwesomeIconType.user));
-		subMenu.add(new MenuBookmarkablePageLink(BicisListPage.class, new ResourceModel("menu.bikes"))
-			.setIconType(FontAwesomeIconType.user));
-		subMenu.add(new MenuBookmarkablePageLink(ComponentsListPage.class, new ResourceModel("menu.components"))
-			.setIconType(FontAwesomeIconType.user));
-		return subMenu;
-	    }
-
-	};
-	dropdown.setType(Type.Warning);
-
-	navbar.addComponents(new ImmutableNavbarComponent(dropdown, Navbar.ComponentPosition.RIGHT));
-    }
 }

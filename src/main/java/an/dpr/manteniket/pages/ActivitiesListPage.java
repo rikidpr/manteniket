@@ -26,6 +26,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
@@ -41,6 +43,7 @@ public class ActivitiesListPage extends ManteniketPage {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ActivitiesListPage.class);
+    public static final Long ITEMS_PAGE = new Long(5);
     @SpringBean
     private ActivitiesDAO dao;
 
@@ -68,8 +71,7 @@ public class ActivitiesListPage extends ManteniketPage {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void listado() {
 	log.debug("iniciando listado");
-	List<Activity> list = dao.findAll();
-	ActivitySortData asd = new ActivitySortData(list);
+	ActivitySortData asd = new ActivitySortData(dao);
 	final DataView<Activity> dataView = new DataView<Activity>("rows", asd){
 
 	    @Override
@@ -87,7 +89,7 @@ public class ActivitiesListPage extends ManteniketPage {
 	    }
 	    
 	}; 
-	dataView.setItemsPerPage(10);
+	dataView.setItemsPerPage(ITEMS_PAGE);
 	ManteniketTable table = new ManteniketTable("table");
 	table.add(dataView);
 	OrderByBorder dateSort = new OrderByBorder("orderByDate", "date", asd)
@@ -126,58 +128,81 @@ public class ActivitiesListPage extends ManteniketPage {
 
 class ActivitySortData extends SortableDataProvider<Activity, String>{
     
+    private ActivitiesDAO dao;
     private static final long serialVersionUID = 1L;
     private List<Activity> list;
+    private long size;
     private static final String DATE = "date";
     private static final String KM = "km";
 
-    public ActivitySortData(List<Activity> list){
-	this.list = list;
-        setSort(DATE, SortOrder.DESCENDING);
+    public ActivitySortData(ActivitiesDAO dao){
+	this.dao = dao;
     }
 
     @Override
     public Iterator<? extends Activity> iterator(long first, long count) {
+	int fromPage = 0;
+	if (first >= ActivitiesListPage.ITEMS_PAGE) {
+	    fromPage = ((int) (first/ActivitiesListPage.ITEMS_PAGE));
+	}
 	//FIXME mejora haciendo llamadas a DB de lo necesario en cuenta de traer todo el pastel y luego filtrar!!
-	int fromIndex = new Long(first).intValue();
-	int toIndex = (int) (fromIndex + count);
-	List<Activity> actList = getList(getSort());
-	return actList.subList(fromIndex, toIndex).iterator();
+	List<Activity> actList = getList(getSort(), fromPage, ActivitiesListPage.ITEMS_PAGE.intValue());
+	return actList.iterator();
     }
 
-    private List<Activity> getList(final SortParam<String> sort) {
-	if (sort.getProperty().equals(DATE)){
+    private List<Activity> getList(SortParam<String> sortParam, int page, int numberOfResults) {
+	Sort sort;
+	if (sortParam != null && 
+		(sortParam.getProperty().equals(DATE)
+			|| sortParam.getProperty().equals(KM))
+		){
 	    //ordenacion por fecha
-	    Collections.sort(list, new Comparator<Activity>() {
+	    Direction direction;
+	    if (sortParam.isAscending()){
+		direction = Sort.Direction.ASC;
+	    }else {
+		direction = Sort.Direction.DESC;
+	    }
+	    sort = new Sort(direction, sortParam.getProperty());
+	    list = dao.findAll(sort, page, numberOfResults);
+	    
+	}
+	return list;
+    }
 
-		@Override
-		public int compare(Activity o1, Activity o2) {
-		    int retValue = o1.getDate().compareTo(o2.getDate());
-		    if (!sort.isAscending()){
-			retValue *= -1;
-		    }
-		    return retValue;
-		}
-	    });
-	} else if (sort.getProperty().equals(KM)){
-	    //ordenacion por km
-	    Collections.sort(list, new Comparator<Activity>(){
-
-		@Override
-		public int compare(Activity o1, Activity o2) {
-		    int retValue = o1.getKm().compareTo(o2.getKm());
-		    if (!sort.isAscending()){
-			retValue *= -1;
-		    }
-		    return retValue;
-		}});
+    private List<Activity> getList(final SortParam<String> sortParam) {
+	Sort sort;
+	if (sortParam != null && 
+		(sortParam.getProperty().equals(DATE)
+		|| sortParam.getProperty().equals(KM))
+		){
+	    //ordenacion por fecha
+	    Direction direction;
+	    if (sortParam.isAscending()){
+		direction = Sort.Direction.ASC;
+	    }else {
+		direction = Sort.Direction.DESC;
+	    }
+	    sort = new Sort(direction, sortParam.getProperty());
+	    list = dao.findAll(sort);
+	    
 	}
 	return list;
     }
 
     @Override
     public long size() {
-	return list.size();
+	if (list == null){
+	    listadoPorDefecto();
+	    size = list.size();
+	}
+	return size;
+    }
+
+    private void listadoPorDefecto() {
+	Sort sort = new Sort(Sort.Direction.ASC, DATE);
+	setSort(DATE, SortOrder.ASCENDING);
+	list = dao.findAll(sort);
     }
 
     @Override
