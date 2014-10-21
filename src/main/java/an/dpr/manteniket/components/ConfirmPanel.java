@@ -19,7 +19,7 @@ public class ConfirmPanel extends Panel{
     
     private static final Logger log = LoggerFactory.getLogger(ConfirmPanel.class);
     @SpringBean
-    private ActivitiesDAO dao;
+    private transient ActivitiesDAO dao;
     //componentes
     
     public ConfirmPanel(String id, String texto, final ConfirmAction actions){

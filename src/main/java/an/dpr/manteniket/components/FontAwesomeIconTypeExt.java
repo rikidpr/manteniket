@@ -15,7 +15,7 @@ enum FontAwesomeGraphicsExt {
 
 /**
  * Clase replica de de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType
- * para añadir nuevos iconos no incluidos.
+ * para anyadir nuevos iconos no incluidos.
  * @author ricardo.saez-martinez@hp.com
  *
  */

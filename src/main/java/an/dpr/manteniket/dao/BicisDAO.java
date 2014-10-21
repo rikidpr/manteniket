@@ -3,10 +3,17 @@ package an.dpr.manteniket.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 
+import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.repository.BicisRepository;
 
@@ -37,8 +44,30 @@ public class BicisDAO {
 	return repo.findByTipo(tipo);
     }
 
-    public List<Bici> findAll() {
-	return repo.findAll();
+    public List<Bici> findAll(){
+	//sort por defecto
+	Sort sort = new Sort(Sort.Direction.ASC, "date");
+	return findAll(sort);
+    }
+    
+    public List<Bici> findAll(int from, int numberOfResults){
+	Sort sort = new Sort(Sort.Direction.ASC, "date");
+	return findAll(sort, from, numberOfResults);
+    }
+    
+    public List<Bici> findAll(final Sort sort){
+	return findAll(sort, null, null);
+    }
+    
+    public List<Bici> findAll(final Sort sort, final Integer fromPage, final Integer numberOfResults){
+	List<Bici> list;
+	if (fromPage != null){
+	    Page<Bici> page = repo.findAll(new PageRequest(fromPage, numberOfResults, sort));
+	    list = page.getContent();
+	} else {
+	    list = repo.findAll(sort);
+	}
+	return list;
     }
     
     public Bici save(Bici bike){
