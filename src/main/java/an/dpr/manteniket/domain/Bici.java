@@ -11,10 +11,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import an.dpr.manteniket.bean.ManteniketBean;
 
 @Entity
 @Table(name="bicis")
-public class Bici implements Serializable{
+public class Bici implements ManteniketBean, Serializable{
 
     private Long idBici;
     private String codBici;
@@ -76,5 +79,11 @@ public class Bici implements Serializable{
 
     public void setComponentUses(Set<ComponentUse> componentUses) {
         this.componentUses = componentUses;
+    }
+
+    @Override
+    @Transient
+    public Long getId() {
+	return getIdBici();
     }
 }

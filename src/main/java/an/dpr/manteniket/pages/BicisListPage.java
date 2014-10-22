@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.Page;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -32,16 +32,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import an.dpr.manteniket.bean.ManteniketBean;
 import an.dpr.manteniket.bean.ManteniketContracts;
+import an.dpr.manteniket.bean.ManteniketContracts.Entity;
+import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.components.LinkPanel;
+import an.dpr.manteniket.components.ManteniketLink;
+import an.dpr.manteniket.components.ManteniketLinkColumn;
 import an.dpr.manteniket.components.ManteniketTable;
 import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
+import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
 
 public class BicisListPage extends ManteniketPage {
 
@@ -79,17 +87,30 @@ public class BicisListPage extends ManteniketPage {
     private void listadoDataTable() {
 	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao);
 
-	List<IColumn<String,String>> columns = new ArrayList<IColumn<String,String>>();
-	columns.add(new PropertyColumn<String, String>(new ResourceModel("head.code"), "codBici", "codBici"));
-	columns.add(new PropertyColumn<String, String>(new ResourceModel("head.desc"),"descripcion","descripcion"));
-//	columns.add(new PropertyColumn<String, String>(new ResourceModel("head.type"),"tipo","tipo"));
-	TextFilteredPropertyColumn<String, String, String> tpcTipo;
-	tpcTipo = new  TextFilteredPropertyColumn<String,String, String>(new ResourceModel("head.type"),"tipo","tipo");
+	List<IColumn<? extends ManteniketBean,String>> columns = new ArrayList<IColumn<? extends ManteniketBean,String>>();
+	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.code"), "codBici", "codBici"));
+	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.desc"),"descripcion","descripcion"));
+//	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.type"),"tipo","tipo"));
+	TextFilteredPropertyColumn<Bici, String, String> tpcTipo;
+	tpcTipo = new  TextFilteredPropertyColumn<Bici,String, String>(new ResourceModel("head.type"),"tipo","tipo");
 //	FilterForm<?> form = new FilterForm<T>("filterForm", locator);
 //	add(tpcTipo.getFilter("tipoFilter", form ));
 	columns.add(tpcTipo);
 	
-	//TODO add links columns
+	//links
+	IColumn<ComponentUse,String> linkComponents= new ManteniketLinkColumn<ComponentUse, BikeCompListPage, String>(Model.of(""), 
+		BikeCompListPage.class, Model.of(""), FontAwesomeIconType.cog, Entity.BIKE);
+	
+	columns.add(linkComponents);
+
+	IColumn<Bici,String> linkEdit= new ManteniketLinkColumn<Bici, BicisPage, String>(Model.of(""), BicisPage.class, 
+		Model.of(""), FontAwesomeIconType.edit);
+	columns.add(linkEdit);
+	
+	IColumn<Bici,String> linkDelete= new ManteniketLinkColumn<Bici, BicisDeletePage, String>(Model.of(""), BicisDeletePage.class, 
+		Model.of(""), FontAwesomeIconTypeExt.remove);
+	columns.add(linkDelete);
+	
 	//TODO FilteredColumn
 	
 	DefaultDataTable table = new DefaultDataTable("table", columns,dataProvider, 10);
@@ -98,48 +119,8 @@ public class BicisListPage extends ManteniketPage {
 	add(table);
 
     }
-	
-    private void listadoDataView(){
-	log.debug("iniciando listado");
-	List<Bici> bicis = dao.findAll();
-	ListDataProvider<Bici> data = new ListDataProvider<Bici>(bicis);
-	DataView<Bici> dataView = new DataView<Bici>("rows", data) {
-
-	    @Override
-	    protected void populateItem(Item<Bici> item) {
-		Bici bici = item.getModelObject();
-		RepeatingView rv = new RepeatingView("dataRow");
-		rv.add(new Label(rv.newChildId(), new PropertyModel(item
-			.getModel(), "codBici")));
-		rv.add(new Label(rv.newChildId(), new PropertyModel(item
-			.getModel(), "descripcion")));
-		rv.add(new Label(rv.newChildId(), new PropertyModel(item
-			.getModel(), "tipo")));
-		PageParameters params = new PageParameters();
-		params.add(ManteniketContracts.ID, bici.getIdBici());
-		params.add(ManteniketContracts.ENTITY, ManteniketContracts.Entity.BIKE);
-		params.add(ManteniketContracts.RETURN_PAGE, this.getClass().getName());
-		rv.add(new LinkPanel(rv.newChildId(), params,
-			BikeCompListPage.class, getString("btn.components")));
-		rv.add(new LinkPanel(rv.newChildId(), params, BicisPage.class,
-			getString("btn.edit")));
-		rv.add(new LinkPanel(rv.newChildId(), params,
-			BicisDeletePage.class, getString("btn.delete")));
-
-		item.add(rv);
-	    }
-
-	};
-	dataView.setItemsPerPage(3);
-	ManteniketTable table = new ManteniketTable("table");
-	table.add(dataView);
-	add(table);
-	add(new BootstrapPagingNavigator("pagingNavigator", dataView));
-    }
-
 }
-
-
+	
 class BikeSortDataProvider extends SortableDataProvider<Bici, String>{
     
     private BicisDAO dao;
@@ -207,5 +188,5 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String>{
 	return Model.of(object);
     }
     
-};
+}
 

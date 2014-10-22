@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import an.dpr.manteniket.bean.ManteniketBean;
+
 /**
  * Entity for the uses of components 
  * @author rsaez
@@ -22,7 +24,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name="component_uses")
-public class ComponentUse implements Serializable{
+public class ComponentUse implements ManteniketBean, Serializable{
 
     private Long id;
     private Date init;

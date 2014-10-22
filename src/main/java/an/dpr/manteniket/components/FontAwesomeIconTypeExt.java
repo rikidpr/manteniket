@@ -10,7 +10,7 @@ import static an.dpr.manteniket.components.FontAwesomeIconTypeExtBuilder.on;
 
 
 enum FontAwesomeGraphicsExt {
-    bicycle,area_chart;
+    bicycle,area_chart,remove;
 }
 
 /**
@@ -25,6 +25,7 @@ public class FontAwesomeIconTypeExt  extends IconType {
     
     public static final FontAwesomeIconTypeExt bicycle = on(FontAwesomeGraphicsExt.bicycle).build();
     public static final FontAwesomeIconTypeExt area_chart= on(FontAwesomeGraphicsExt.area_chart).build();
+    public static final FontAwesomeIconTypeExt remove= on(FontAwesomeGraphicsExt.remove).build();
     
     /**
      * Constructor.
