@@ -17,9 +17,12 @@ public interface BicisRepository extends CrudRepository<Bici, Long>{
     
     Bici findByCodBici(String codBici);
     
-    Set<Bici> findByTipo(String tipo);
+    List<Bici> findByTipo(String tipo);
+    List<Bici> findByTipo(String tipo, Sort sort);
+    Page<Bici> findByTipo(String tipo, Pageable pageable);
 
     List<Bici> findAll();
     List<Bici> findAll(Sort sort);
     Page<Bici> findAll(Pageable pageable);
+    
 }
