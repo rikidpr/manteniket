@@ -39,19 +39,30 @@ public class BicisDAO {
 	return repo.findByCodBici(codBici);
     }
 
-    public Set<Bici> findByTipoComponente(String tipo) {
+    public List<Bici> findByTipo(String tipo) {
 	log.debug("param tipo" + tipo);
 	return repo.findByTipo(tipo);
     }
-
+    
+    public List<Bici> findByTipo(Bici bici, final Sort sort, final Integer fromPage, final Integer numberOfResults){
+   	List<Bici> list;
+   	if (fromPage != null){
+   	    Page<Bici> page = repo.findByTipo(bici.getTipo(), new PageRequest(fromPage, numberOfResults, sort));
+   	    list = page.getContent();
+   	} else {
+   	    list = repo.findByTipo(bici.getTipo(),sort);
+   	}
+   	return list;
+       }
+    
     public List<Bici> findAll(){
 	//sort por defecto
-	Sort sort = new Sort(Sort.Direction.ASC, "date");
+	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
 	return findAll(sort);
     }
     
     public List<Bici> findAll(int from, int numberOfResults){
-	Sort sort = new Sort(Sort.Direction.ASC, "date");
+	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
 	return findAll(sort, from, numberOfResults);
     }
     
