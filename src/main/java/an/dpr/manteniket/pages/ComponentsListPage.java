@@ -67,6 +67,12 @@ public class ComponentsListPage extends ManteniketPage {
     
     private void listado() {
 	log.debug("iniciando listado");
+	listadoOld();
+    }
+    
+    @Deprecated
+    private void listadoOld(){
+	log.debug("iniciando listado");
 	List<Component> componentes = dao.findAll();
 	ListDataProvider<Component> data = new ListDataProvider<Component>(componentes);
 	DataView<Component> dataView = new DataView<Component>("rows", data){

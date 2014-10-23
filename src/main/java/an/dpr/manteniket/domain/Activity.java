@@ -13,12 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import an.dpr.manteniket.bean.ActivityType;
+import an.dpr.manteniket.bean.ManteniketBean;
 
 @Entity
 @Table(name = "activities")
-public class Activity implements Serializable{
+public class Activity implements ManteniketBean, Serializable{
 
     private Long activityId;
     /**
@@ -38,7 +40,12 @@ public class Activity implements Serializable{
     public Long getActivityId() {
 	return activityId;
     }
-
+    
+    @Transient
+    public Long getId(){
+	return getActivityId();
+    }
+    
     public void setActivityId(Long activityId) {
 	this.activityId = activityId;
     }

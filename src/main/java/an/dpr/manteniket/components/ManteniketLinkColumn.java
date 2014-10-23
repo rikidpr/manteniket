@@ -1,6 +1,5 @@
 package an.dpr.manteniket.components;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
@@ -13,6 +12,14 @@ import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.image.IconType;
 
+/**
+ * 
+ * @author rsaez
+ *
+ * @param <T> Bean principal del crud (el que va a ser editado, elminado...)
+ * @param <P> Pagina destino
+ * @param <S> ordenacion, no tiene mucho sentido aqui
+ */
 public class ManteniketLinkColumn<T extends ManteniketBean, P extends ManteniketPage, S>  extends AbstractColumn<T,S>{
     
     private static final long serialVersionUID = 1L;

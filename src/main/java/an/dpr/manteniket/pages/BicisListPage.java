@@ -10,11 +10,10 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilteredAbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAndClearFilter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
@@ -34,12 +33,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.components.ManteniketLinkColumn;
 import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
@@ -95,13 +96,18 @@ public class BicisListPage extends ManteniketPage {
 //	GoAndClearFilter gcFilter = new GoAndClearFilter("gcFilter", form, new ResourceModel("filter"), new ResourceModel("clear"));
 //	form.add(gcFilter);
 	
-	DefaultDataTable<Bici, String> table = new DefaultDataTable<Bici, String>("table", columns,dataProvider, 10);
-	
-	table.addTopToolbar(new FilterToolbar(table, form, dataProvider));
+	DataTable<Bici, String> table = new DataTable<Bici, String>("table", columns,dataProvider, ITEMS_PAGE.intValue());
+//	table.addTopToolbar(new FilterToolbar(table, form, dataProvider));
+//	table.addBottomToolbar(new NavigationToolbar(table));
+//	table.addBottomToolbar(new BootstrapNavigationToolbar(table)); necesitamos un <ul>!!
 	table.add(new TableBehavior().striped());
-	add(new BootstrapPagingNavigator("pagingNavigator", table));
 	form.add(table);
-
+	form.add(new BootstrapPagingNavigator("pagingNavigator", table));
+	add(form);
+	
+	
+	
+	BootstrapForm buttonForm = new BootstrapForm("button-form");
 	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD){
 	    
 	    private static final long serialVersionUID = 1L;
@@ -113,19 +119,16 @@ public class BicisListPage extends ManteniketPage {
 	    
 	};
 	btnAdd.setLabel(new ResourceModel("btn.add"));
-	form.add(btnAdd);
-	add(form);
+	buttonForm.add(btnAdd);
+	add(buttonForm);
     }
     
     private void addActionColumns(List<IColumn<Bici, String>> columns) {
 	// columns.add(createActionsColumn());
-	// TODO METER EL LINK DE COMPONENTES!
-	// IColumn<ComponentUse,String> linkComponents= new
-	// ManteniketLinkColumn<ComponentUse, BikeCompListPage,
-	// String>(Model.of(""),
-	// BikeCompListPage.class, Model.of(""), FontAwesomeIconType.cog,
-	// Entity.BIKE);
-	// columns.add(linkComponents);
+	IColumn<Bici, String> linkComponents = new ManteniketLinkColumn<Bici, BikeCompListPage, String>(
+		Model.of(""), BikeCompListPage.class, Model.of(""),
+		FontAwesomeIconType.cog, Entity.BIKE);
+	columns.add(linkComponents);
 
 	IColumn<Bici, String> linkEdit = new ManteniketLinkColumn<Bici, BicisPage, String>(Model.of(""),
 		BicisPage.class, Model.of(""), FontAwesomeIconType.edit);
@@ -194,8 +197,8 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 	if (first >= BicisListPage.ITEMS_PAGE) {
 	    fromPage = ((int) (first/BicisListPage.ITEMS_PAGE));
 	}
-	List<Bici> biciList = getList(getSort(), fromPage, BicisListPage.ITEMS_PAGE.intValue());
-	return biciList.iterator();
+	list = getList(getSort(), fromPage, BicisListPage.ITEMS_PAGE.intValue());
+	return list.iterator();
     }
 
     private List<Bici> getList(SortParam<String> sortParam, int page, int numberOfResults) {
@@ -229,8 +232,8 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 	log.debug("size!");
 	if (list == null){
 	    listadoPorDefecto();
-	    size = list.size();
 	}
+	size = list.size();
 	return size;
     }
 
