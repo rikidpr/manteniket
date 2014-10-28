@@ -2,15 +2,10 @@ package an.dpr.manteniket.pages;
 
 import static an.dpr.manteniket.bean.ManteniketContracts.BTN_ADD;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -18,19 +13,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -39,24 +25,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import an.dpr.manteniket.bean.ManteniketBean;
+import an.dpr.manteniket.bean.ManteniketContracts;
+import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
+import an.dpr.manteniket.components.ManteniketLinkColumn;
+import an.dpr.manteniket.dao.ActivitiesDAO;
+import an.dpr.manteniket.dao.IBikesDAO;
+import an.dpr.manteniket.domain.Activity;
+import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
-import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
-import an.dpr.manteniket.bean.ManteniketBean;
-import an.dpr.manteniket.bean.ManteniketContracts;
-import an.dpr.manteniket.bean.ManteniketContracts.Entity;
-import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
-import an.dpr.manteniket.components.LinkPanel;
-import an.dpr.manteniket.components.ManteniketLinkColumn;
-import an.dpr.manteniket.components.ManteniketTable;
-import an.dpr.manteniket.dao.ActivitiesDAO;
-import an.dpr.manteniket.dao.BicisDAO;
-import an.dpr.manteniket.domain.Activity;
-import an.dpr.manteniket.domain.Bici;
-import an.dpr.manteniket.domain.ComponentUse;
-import an.dpr.manteniket.template.ManteniketPage;
 
 public class ActivitiesListPage extends ManteniketPage {
 
@@ -66,7 +47,7 @@ public class ActivitiesListPage extends ManteniketPage {
     @SpringBean
     private ActivitiesDAO dao;
     @SpringBean
-    private BicisDAO bicisDao;
+    private IBikesDAO bicisDao;
 
     public ActivitiesListPage() {
 	super();
@@ -140,6 +121,7 @@ class ActivitySortData extends SortableDataProvider<Activity, String> implements
 
     public ActivitySortData(ActivitiesDAO dao){
 	this.dao = dao;
+	filterState = new Activity();
     }
 
     @Override

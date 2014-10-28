@@ -25,4 +25,7 @@ public interface BicisRepository extends CrudRepository<Bici, Long>{
     List<Bici> findAll(Sort sort);
     Page<Bici> findAll(Pageable pageable);
     
+    long count();
+    long countByTipo(String tipo);
+    
 }
