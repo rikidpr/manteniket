@@ -6,23 +6,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilteredAbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAndClearFilter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilter;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -35,6 +30,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
+import an.dpr.manteniket.components.ManteniketDataTable;
 import an.dpr.manteniket.components.ManteniketLinkColumn;
 import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.domain.Bici;
@@ -58,7 +54,7 @@ public class BicisListPage extends ManteniketPage {
 	super();
 
 	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao);
-	// create the form used to contain all filter components
+//	// create the form used to contain all filter components
 	final FilterForm<Bici> form = new FilterForm<Bici>("filter-form", dataProvider)
 		{
 	    private static final long serialVersionUID = 1L;
@@ -75,20 +71,20 @@ public class BicisListPage extends ManteniketPage {
 	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.code"), "codBici", "codBici"));
 	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.desc"),"descripcion","descripcion"));
 
-	TextFilteredPropertyColumn<Bici, Bici, String> tpcTipo;
-	tpcTipo = new  TextFilteredPropertyColumn<Bici,Bici, String>(new ResourceModel("head.type"),"tipo","tipo"){
-
-	    private static final long serialVersionUID = 1L;
-	    @Override 
-	    public Component getFilter(String componentId, FilterForm<?> form){
-		TextFilter filter = (TextFilter)super.getFilter(componentId, form);
-		TextField txtFilter = filter.getFilter();
-		txtFilter.add(AttributeModifier.replace("class", "form-control"));
-		return filter;
-	    }
-	    
-	};
-	columns.add(tpcTipo);
+//	TextFilteredPropertyColumn<Bici, Bici, String> tpcTipo;
+//	tpcTipo = new  TextFilteredPropertyColumn<Bici,Bici, String>(new ResourceModel("head.type"),"tipo","tipo"){
+//
+//	    private static final long serialVersionUID = 1L;
+//	    @Override 
+//	    public Component getFilter(String componentId, FilterForm<?> form){
+//		TextFilter filter = (TextFilter)super.getFilter(componentId, form);
+//		TextField txtFilter = filter.getFilter();
+//		txtFilter.add(AttributeModifier.replace("class", "form-control"));
+//		return filter;
+//	    }
+//	    
+//	};
+//	columns.add(tpcTipo);
 	
 	addActionColumns(columns);
 	
@@ -96,7 +92,7 @@ public class BicisListPage extends ManteniketPage {
 //	GoAndClearFilter gcFilter = new GoAndClearFilter("gcFilter", form, new ResourceModel("filter"), new ResourceModel("clear"));
 //	form.add(gcFilter);
 	
-	DataTable<Bici, String> table = new DataTable<Bici, String>("table", columns,dataProvider, ITEMS_PAGE.intValue());
+	ManteniketDataTable<Bici, String> table = new ManteniketDataTable<Bici, String>("table", columns,dataProvider, ITEMS_PAGE.intValue());
 //	table.addTopToolbar(new FilterToolbar(table, form, dataProvider));
 //	table.addBottomToolbar(new NavigationToolbar(table));
 //	table.addBottomToolbar(new BootstrapNavigationToolbar(table)); necesitamos un <ul>!!
@@ -219,21 +215,23 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 	    sort = new Sort(direction, sortParam.getProperty());
 	    if (filterState != null && filterState.getTipo()!=null){
 		list = dao.findByTipo(filterState, sort, page, numberOfResults);
+		size = dao.countByTipo(filterState, sort);
 	    } else {
 		list = dao.findAll(sort, page, numberOfResults);
+		size = dao.countAll(sort);
 	    }
-	    
+	} else {
+	    list = dao.findAll();
+	    size = dao.countAll(null);
 	}
 	return list;
     }
 
     @Override
     public long size() {
-	log.debug("size!");
-	if (list == null){
-	    listadoPorDefecto();
+	if (size == 0){
+	    size = dao.countAll(null);
 	}
-	size = list.size();
 	return size;
     }
 

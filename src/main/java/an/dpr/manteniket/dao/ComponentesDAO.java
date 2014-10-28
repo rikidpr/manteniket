@@ -18,7 +18,7 @@ import an.dpr.manteniket.repository.ComponentesRepository;
  * Dao del entity componentes
  * 
  * @author rsaez
- * 
+ * TODO BUSCAR POR USUARIOOOOOO
  */
 public class ComponentesDAO extends ManteniketDAO{
 

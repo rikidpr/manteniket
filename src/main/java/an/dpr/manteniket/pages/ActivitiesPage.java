@@ -25,7 +25,7 @@ import an.dpr.manteniket.bean.ActivityType;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.Utils;
 import an.dpr.manteniket.dao.ActivitiesDAO;
-import an.dpr.manteniket.dao.BicisDAO;
+import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
@@ -42,7 +42,7 @@ public class ActivitiesPage extends ManteniketPage {
     @SpringBean
     private ActivitiesDAO dao;
     @SpringBean
-    private BicisDAO bicisDao;
+    private IBikesDAO bicisDao;
 
     private TextField<Long> txtId;
     private DateTextField txtDate;

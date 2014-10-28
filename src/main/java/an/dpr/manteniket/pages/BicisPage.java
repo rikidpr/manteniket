@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.CyclingType;
 import an.dpr.manteniket.bean.ManteniketContracts;
-import an.dpr.manteniket.dao.BicisDAO;
+import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
@@ -30,7 +30,7 @@ public class BicisPage extends ManteniketPage {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BicisPage.class);
     @SpringBean
-    private BicisDAO dao;
+    private IBikesDAO dao;
 
     private TextField<Long> idBici;
     private TextField<String> codBici;

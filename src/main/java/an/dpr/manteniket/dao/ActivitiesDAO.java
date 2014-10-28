@@ -19,7 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.repository.ActivitiesRepository;
-
+//TODO buscar por usuario!!!!
 public class ActivitiesDAO {
 
     private static final Logger log = LoggerFactory.getLogger(ActivitiesDAO.class);

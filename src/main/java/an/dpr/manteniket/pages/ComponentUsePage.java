@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
-import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.dao.ComponentUsesDAO;
 import an.dpr.manteniket.dao.ComponentesDAO;
+import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
@@ -49,7 +49,7 @@ public class ComponentUsePage extends ManteniketPage{
     @SpringBean
     private ComponentesDAO compDao;
     @SpringBean
-    private BicisDAO bikeDao;
+    private IBikesDAO bikeDao;
     private ComponentUse bean;
     
     private TextField<Long> txtId;
