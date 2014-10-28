@@ -6,19 +6,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilteredAbstractColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.GoAndClearFilter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -70,35 +64,12 @@ public class BicisListPage extends ManteniketPage {
 	List<IColumn<Bici,String>> columns = new ArrayList<IColumn<Bici,String>>();
 	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.code"), "codBici", "codBici"));
 	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.desc"),"descripcion","descripcion"));
-
-//	TextFilteredPropertyColumn<Bici, Bici, String> tpcTipo;
-//	tpcTipo = new  TextFilteredPropertyColumn<Bici,Bici, String>(new ResourceModel("head.type"),"tipo","tipo"){
-//
-//	    private static final long serialVersionUID = 1L;
-//	    @Override 
-//	    public Component getFilter(String componentId, FilterForm<?> form){
-//		TextFilter filter = (TextFilter)super.getFilter(componentId, form);
-//		TextField txtFilter = filter.getFilter();
-//		txtFilter.add(AttributeModifier.replace("class", "form-control"));
-//		return filter;
-//	    }
-//	    
-//	};
-//	columns.add(tpcTipo);
 	
 	addActionColumns(columns);
 	
-	//TODO FilteredColumn
-//	GoAndClearFilter gcFilter = new GoAndClearFilter("gcFilter", form, new ResourceModel("filter"), new ResourceModel("clear"));
-//	form.add(gcFilter);
-	
 	ManteniketDataTable<Bici, String> table = new ManteniketDataTable<Bici, String>("table", columns,dataProvider, ITEMS_PAGE.intValue());
-//	table.addTopToolbar(new FilterToolbar(table, form, dataProvider));
-//	table.addBottomToolbar(new NavigationToolbar(table));
-//	table.addBottomToolbar(new BootstrapNavigationToolbar(table)); necesitamos un <ul>!!
 	table.add(new TableBehavior().striped());
 	form.add(table);
-	form.add(new BootstrapPagingNavigator("pagingNavigator", table));
 	add(form);
 	
 	
@@ -136,37 +107,6 @@ public class BicisListPage extends ManteniketPage {
 
     }
 
-    /**
-     * Create a composite column extending FilteredAbstractColumn. This column
-     * adds a UserActionsPanel as its cell contents. It also provides the
-     * go-and-clear filter control panel.
-     */
-    private FilteredAbstractColumn<Bici, String> createActionsColumn() {
-	return new FilteredAbstractColumn<Bici, String>(Model.of("Actions")) {
-	    private static final long serialVersionUID = 1L;
-
-	    // return the go-and-clear filter for the filter toolbar
-	    public Component getFilter(String componentId, FilterForm<?> form) {
-		return new GoAndClearFilter(componentId, form, new ResourceModel("filter"), new ResourceModel("clear"));
-	    }
-
-	    // add the UserActionsPanel to the cell item
-	    public void populateItem(Item<ICellPopulator<Bici>> cellItem, String componentId,
-		    IModel<Bici> rowModel) {
-//		Panel panel = new Panel(componentId, rowModel){
-//		    private static final long serialVersionUID = 1L;
-//		    
-//		};
-//		panel.add(ManteniketLink.createLink("editLink", rowModel,(Entity)null, 
-//			BicisPage.class,Model.of(""), FontAwesomeIconType.edit));
-//		panel.add(ManteniketLink.createLink("deleteLink", rowModel,(Entity)null, 
-//			BicisDeletePage.class,Model.of(""), FontAwesomeIconTypeExt.remove));
-//		
-//		cellItem.add(panel);
-		cellItem.add(new Label(componentId, "hola"));
-	    }
-	};
-    }
 }
 	
 class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements IFilterStateLocator<Bici>{
@@ -198,7 +138,6 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     }
 
     private List<Bici> getList(SortParam<String> sortParam, int page, int numberOfResults) {
-	Sort sort;
 	if (sortParam != null && 
 		(sortParam.getProperty().equals(COD_BICI)
 			|| sortParam.getProperty().equals(TIPO)
@@ -212,17 +151,11 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 	    }else {
 		direction = Sort.Direction.DESC;
 	    }
-	    sort = new Sort(direction, sortParam.getProperty());
-	    if (filterState != null && filterState.getTipo()!=null){
-		list = dao.findByTipo(filterState, sort, page, numberOfResults);
-		size = dao.countByTipo(filterState, sort);
-	    } else {
-		list = dao.findAll(sort, page, numberOfResults);
-		size = dao.countAll(sort);
-	    }
+	    Sort sort = new Sort(direction, sortParam.getProperty());
+	    list = dao.findAll(sort, page, numberOfResults);
 	} else {
-	    list = dao.findAll();
-	    size = dao.countAll(null);
+	    list = dao.findAll(page, numberOfResults);
+	    size = dao.count(null);
 	}
 	return list;
     }
@@ -230,7 +163,7 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     @Override
     public long size() {
 	if (size == 0){
-	    size = dao.countAll(null);
+	    size = dao.count(null);
 	}
 	return size;
     }
