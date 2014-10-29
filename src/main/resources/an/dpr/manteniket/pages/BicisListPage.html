@@ -8,28 +8,12 @@
 	<wicket:extend>
 		<form wicket:id="form">
 			<button wicket:id="btnAdd"></button>
-		</form>
-	<!-- 
-	 	<table wicket:id="table">
-			<tr>
-				<th><wicket:message key="head.code" /></th>
-				<th><wicket:message key="head.desc" /></th>
-				<th><wicket:message key="head.type" /></th>
-				<th colspan="3"><wicket:message key="head.actions" /></th>
-			</tr>
-			<tr wicket:id="rows">
-				<td wicket:id="dataRow"></td>
-			</tr>
-		</table>
-		<ul wicket:id="pagingNavigator">
-			<li>1</li>
-			<li>2</li>
-			<li>3</li>
-		</ul>
-	 <form wicket:id="filterForm">
 	 </form>
-	 -->
-	 	<table class="dataview" cellspacing="0" wicket:id="table">[table]</table>
+	 <form wicket:id="filter-form">
+	 	<table class="dataview" cellspacing="0" wicket:id="table">
+	 	[table]
+	 	</table>
+	 </form>
 	</wicket:extend>
 </body>
 </html>

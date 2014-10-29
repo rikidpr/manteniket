@@ -19,7 +19,6 @@ package an.dpr.manteniket.components;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
@@ -54,7 +53,8 @@ public class BootstrapNavigationToolbar extends NavigationToolbar {
      *            dataview used by datatable
      * @return paging navigator that will be used to navigate the data table
      */
-    protected PagingNavigator newPagingNavigator(final String navigatorId, final DataTable<?, ?> table) {
+    protected PagingNavigator newPagingNavigator(final String navigatorId,
+	    final DataTable<?, ?> table) {
 	return new BootstrapPagingNavigator(navigatorId, table);
     }
 

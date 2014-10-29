@@ -158,4 +158,14 @@ public class BicisDAO implements IBikesDAO {
 	this.repo = repo;
     }
 
+    public List<Bici> find(Bici filtro, Sort sort, int page, int numberOfResults) {
+	List<Bici> list;
+	if (filtro == null || filtro.getTipo() == null){
+	    list = findAll(sort, page, numberOfResults);
+	} else {//DE MOMENTO SOLO TIPO
+	    list = findByTipo(filtro, sort, page, numberOfResults);
+	}
+	return list;
+    }
+
 }
