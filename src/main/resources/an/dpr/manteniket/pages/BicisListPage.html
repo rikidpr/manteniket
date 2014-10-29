@@ -6,26 +6,30 @@
 </head>
 <body>
 	<wicket:extend>
-	 <form wicket:id="button-form">
-	 	<div class="span3">
+		<form wicket:id="form">
 			<button wicket:id="btnAdd"></button>
-	 	</div>
-	 </form>
-	 <form wicket:id="filter-form">
-	 <!-- 
-	 	<div class="span3">
-			<div wicket:id="gcFilter">Botones Filtros</div>
-	 	</div>
-	  -->
-	 	<table class="dataview" cellspacing="0" wicket:id="table">
-	 	[table]
-	 	</table>
-	 	<ul wicket:id="pagingNavigator">
+		</form>
+	<!-- 
+	 	<table wicket:id="table">
+			<tr>
+				<th><wicket:message key="head.code" /></th>
+				<th><wicket:message key="head.desc" /></th>
+				<th><wicket:message key="head.type" /></th>
+				<th colspan="3"><wicket:message key="head.actions" /></th>
+			</tr>
+			<tr wicket:id="rows">
+				<td wicket:id="dataRow"></td>
+			</tr>
+		</table>
+		<ul wicket:id="pagingNavigator">
 			<li>1</li>
 			<li>2</li>
 			<li>3</li>
 		</ul>
+	 <form wicket:id="filterForm">
 	 </form>
+	 -->
+	 	<table class="dataview" cellspacing="0" wicket:id="table">[table]</table>
 	</wicket:extend>
 </body>
 </html>
