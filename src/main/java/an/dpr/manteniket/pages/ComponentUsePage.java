@@ -1,13 +1,11 @@
 package an.dpr.manteniket.pages;
 
-import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 import static an.dpr.manteniket.bean.ManteniketContracts.ENTITY;
+import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.PageReference;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -23,9 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
-import an.dpr.manteniket.dao.ComponentUsesDAO;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.dao.IBikesDAO;
+import an.dpr.manteniket.dao.IComponentUsesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
@@ -45,7 +43,7 @@ public class ComponentUsePage extends ManteniketPage{
 
     private static final Logger log = LoggerFactory.getLogger(ComponentUsePage.class);
     @SpringBean
-    private ComponentUsesDAO cuDao;
+    private IComponentUsesDAO cuDao;
     @SpringBean
     private ComponentesDAO compDao;
     @SpringBean

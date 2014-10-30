@@ -92,8 +92,8 @@ public class BicisListPage extends ManteniketPage {
 	
 	};
 	btnAdd.setLabel(new ResourceModel("btn.add"));
-	form.add(btnAdd);
-	add(form);
+	buttonForm.add(btnAdd);
+	add(buttonForm);
 
     }
 	
