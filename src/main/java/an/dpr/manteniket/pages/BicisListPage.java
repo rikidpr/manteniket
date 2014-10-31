@@ -20,6 +20,7 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import an.dpr.manteniket.bean.CyclingType;
+import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.components.ManteniketDataTable;
@@ -98,9 +100,11 @@ public class BicisListPage extends ManteniketPage {
     }
 	
     private void addActionColumns(List<IColumn<Bici, String>> columns) {
+	PageParameters params = new PageParameters();
+	params.add(ManteniketContracts.ENTITY,  Entity.BIKE);
   	IColumn<Bici, String> linkComponents = new ManteniketLinkColumn<Bici, BikeCompListPage, String>(
   		Model.of(""), BikeCompListPage.class, Model.of(""),
-  		FontAwesomeIconType.cog, Entity.BIKE);
+  		FontAwesomeIconType.cog,params);
   	columns.add(linkComponents);
 
   	IColumn<Bici, String> linkEdit = new ManteniketLinkColumn<Bici, BicisPage, String>(Model.of(""),

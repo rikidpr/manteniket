@@ -88,7 +88,7 @@ public class BikeCompListPage extends ManteniketPage {
 	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.init"), INIT, INIT));
 	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.finish"), FINISH, FINISH));
 	
-	addActionColumns(columns);
+	addActionColumns(columns, id, entity);
 	
 	DataTable<ComponentUse, String> table = new ManteniketDataTable<ComponentUse, String>("table", columns, dataProvider, ITEMS_PAGE);
 	//TODO add toolbar filter
@@ -96,9 +96,12 @@ public class BikeCompListPage extends ManteniketPage {
 	add(form);
     }
     
-    private void addActionColumns(List<IColumn<ComponentUse, String>> columns) {
+    private void addActionColumns(List<IColumn<ComponentUse, String>> columns, Long id, Entity entity) {
+	PageParameters params = new PageParameters();
+	params.add(ManteniketContracts.SOURCE_ID,  id);
+	params.add(ManteniketContracts.ENTITY,  entity);
   	IColumn<ComponentUse, String> linkEdit = new ManteniketLinkColumn<ComponentUse, ComponentUsePage, String>(Model.of(""),
-  		ComponentUsePage.class, Model.of(""), FontAwesomeIconType.edit);
+  		ComponentUsePage.class, Model.of(""), FontAwesomeIconType.edit,params);
   	columns.add(linkEdit);
       }
 
