@@ -27,6 +27,7 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
     private ComponentUsesRepository repo;
     @Autowired
     private PlatformTransactionManager transactionManager;
+    @Autowired IBikesDAO bikesDao;
     private TransactionTemplate transactionTemplate;
     
     private TransactionTemplate getTransactionTemplate(){
@@ -164,10 +165,10 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
     public long count(ComponentUse use) {
 	long count = 0;
 	if (use != null &&use.getBike()!=null){
-	    count = repo.countByBike(use.getBike());
+	    count = repo.countByBikeCode(use.getBike().getCodBici());
 	    
 	} else if (use != null && use.getComponent()!=null){
-	    count = repo.countByComponent(use.getComponent());
+	    count = repo.countByComponentName(use.getComponent().getName());
 	    
 	} else {
 	    count = count();
@@ -198,10 +199,17 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	Page<ComponentUse> page;
 	PageRequest pageRequest = new PageRequest(fromPage, itemsPage, sort);
 	
-	if (filtro != null && filtro.getBike() != null && filtro.getBike().getId() != null){
-	    page = repo.findByBike(filtro.getBike(), pageRequest);
+	if (filtro != null && filtro.getBike() != null){
+	    Bici bike = null;
+	    if (filtro.getBike().getId() != null)
+		bike = filtro.getBike();
+	    else if (filtro.getBike().getCodBici() != null){
+		bike = bikesDao.findByCodBici(filtro.getBike().getCodBici());
+	    }
+	    page = repo.findByBike(bike, pageRequest);
 	    
 	} else if (filtro != null && filtro.getComponent() != null && filtro.getComponent().getId() != null){
+	    //TODO hacer la misma movida que con bici ahi arriba
 	    page = repo.findByComponent(filtro.getComponent(), pageRequest);
 	    
 	}  else {

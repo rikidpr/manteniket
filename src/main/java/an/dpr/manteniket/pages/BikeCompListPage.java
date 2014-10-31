@@ -6,13 +6,16 @@ import static an.dpr.manteniket.bean.ManteniketContracts.ENTITY;
 import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -27,11 +30,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import an.dpr.manteniket.bean.CyclingType;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.ManteniketDataTable;
 import an.dpr.manteniket.components.ManteniketLinkColumn;
+import an.dpr.manteniket.dao.ComponentesDAO;
+import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.dao.IComponentUsesDAO;
+import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
@@ -50,6 +58,10 @@ public class BikeCompListPage extends ManteniketPage {
     
     @SpringBean
     private IComponentUsesDAO dao;
+    @SpringBean
+    private IBikesDAO bikesDao;
+    @SpringBean
+    private ComponentesDAO compDao;
 
     public BikeCompListPage(PageParameters params) throws StringValueConversionException, 
     		InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -81,21 +93,47 @@ public class BikeCompListPage extends ManteniketPage {
     
     private void listado(final Long id, final Entity entity) {
 	BikeCompDataProvider dataProvider = new BikeCompDataProvider(dao);
-	FilterForm form = new FilterForm("filter-form", dataProvider);
+	FilterForm<ComponentUse> form = new FilterForm<ComponentUse>("filter-form", dataProvider);
 	List<IColumn<ComponentUse, String>> columns = new ArrayList<IColumn<ComponentUse, String>>();
-	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.bike"), BIKE, BIKE));
-	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.component"), COMPONENT, COMPONENT));
+
+	//	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.bike"), BIKE, BIKE));
+	columns.add( new ChoiceFilteredPropertyColumn<ComponentUse, String, String>( 
+		new ResourceModel( "head.bike" ),BIKE,BIKE, getCmbBikes()));
+
+	//	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.component"), COMPONENT, COMPONENT));
+	columns.add(new ChoiceFilteredPropertyColumn<ComponentUse, String, String>(
+		new ResourceModel("head.component"), COMPONENT, COMPONENT, getCmbComponents()));
+	
 	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.init"), INIT, INIT));
+	
 	columns.add(new PropertyColumn<ComponentUse, String>(new ResourceModel("head.finish"), FINISH, FINISH));
 	
 	addActionColumns(columns, id, entity);
 	
 	DataTable<ComponentUse, String> table = new ManteniketDataTable<ComponentUse, String>("table", columns, dataProvider, ITEMS_PAGE);
-	//TODO add toolbar filter
+	table.addTopToolbar(new FilterToolbar(table, form, dataProvider));
 	form.add(table);
 	add(form);
     }
     
+    private IModel<List<? extends String>> getCmbBikes() {
+	List<String> bikeCodsList = new ArrayList<String>();
+	List<Bici> bikes = bikesDao.findAll();
+	for(Bici bike:bikes){
+	    bikeCodsList.add(bike.getCodBici());
+	}
+	return Model.ofList(bikeCodsList);
+    }
+    
+    private IModel<List<? extends String>> getCmbComponents(){
+	List<String> list = new ArrayList<String>();
+	List<Component> comps = compDao.findAll();
+	for(Component comp:comps)
+	    list.add(comp.getName());
+	return Model.ofList(list);
+    }
+
+
     private void addActionColumns(List<IColumn<ComponentUse, String>> columns, Long id, Entity entity) {
 	PageParameters params = new PageParameters();
 	params.add(ManteniketContracts.SOURCE_ID,  id);
