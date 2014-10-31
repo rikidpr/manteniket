@@ -43,10 +43,10 @@ public class BikeCompListPage extends ManteniketPage {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BikeCompListPage.class);
     public static final int ITEMS_PAGE = 5;
-    private static final String COMPONENT = "component.name";
-    private static final String BIKE = "bike.codBici";
-    private static final String INIT = "init";
-    private static final String FINISH = "finish";
+    static final String COMPONENT = "component.name";
+    static final String BIKE = "bike.codBici";
+    static final String INIT = "init";
+    static final String FINISH = "finish";
     
     @SpringBean
     private IComponentUsesDAO dao;
@@ -139,8 +139,23 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
 		){
 	    filtro = filterState;
 	}
-	//TODO DEFINIR SORT
-	sort = defaultSort();
+	if (sortParam != null && 
+		(sortParam.getProperty().equals(BikeCompListPage.COMPONENT)
+			|| sortParam.getProperty().equals(BikeCompListPage.BIKE)
+			|| sortParam.getProperty().equals(BikeCompListPage.INIT)
+			|| sortParam.getProperty().equals(BikeCompListPage.FINISH)
+			)
+		){
+	    Direction direction;
+	    if (sortParam.isAscending()){
+		direction = Sort.Direction.ASC;
+	    }else {
+		direction = Sort.Direction.DESC;
+	    }
+	    sort = new Sort(direction, sortParam.getProperty());
+	} else {
+	    sort = defaultSort();
+	}
 	list = dao.find(filtro, sort, fromPage, itemsPage);
 	return list;
     }

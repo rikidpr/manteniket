@@ -33,8 +33,10 @@ public interface ComponentUsesRepository extends
 
     @Query("FROM ComponentUse cu WHERE cu.component=:component")
     List<ComponentUse> findByComponent(@Param("component") Component component);
-    List<ComponentUse> findByComponent(Component component, Sort sort);
-    Page<ComponentUse> findByComponent(Component component, Pageable pageable);
+    @Query("FROM ComponentUse cu WHERE cu.component=:component")
+    List<ComponentUse> findByComponent(@Param("component") Component component, Sort sort);
+    @Query("FROM ComponentUse cu WHERE cu.component=:component")
+    Page<ComponentUse> findByComponent(@Param("component") Component component, Pageable pageable);
 //    
     @Query("FROM ComponentUse cu WHERE cu.init <= :date AND cu.finish >= :date")
     public List<ComponentUse> findByDate(@Param("date")Date date);
@@ -44,8 +46,11 @@ public interface ComponentUsesRepository extends
     @Query("select count(cu) FROM ComponentUse cu WHERE cu.component=:component")
     long countByComponent(Component component);
     
+    @Query("FROM ComponentUse cu")
     List<ComponentUse> findAll();
+    @Query("FROM ComponentUse cu")
     List<ComponentUse> findAll(Sort sort);
+    @Query("FROM ComponentUse cu")
     Page<ComponentUse> findAll(Pageable pageable);
 
 }
