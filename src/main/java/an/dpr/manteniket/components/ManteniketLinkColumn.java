@@ -4,6 +4,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.mapper.parameter.INamedParameters.NamedPair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import an.dpr.manteniket.bean.ManteniketBean;
@@ -26,38 +27,40 @@ public class ManteniketLinkColumn<T extends ManteniketBean, P extends Manteniket
     private Class<P> destination;
     private IModel<String> modelLink;
     private IconType iconType;
-    private Entity entity;
+    private PageParameters params;
 
     public ManteniketLinkColumn(IModel<String> header, Class<P> destination, IModel<String> modelLink){
 	this(header, destination, modelLink, null, null);
     }
 
-    public ManteniketLinkColumn(IModel<String> header, Class<P> destination, IModel<String> modelLink, Entity entity){
-	this(header, destination, modelLink, null, entity);
+    public ManteniketLinkColumn(IModel<String> header, Class<P> destination, IModel<String> modelLink, PageParameters params){
+	this(header, destination, modelLink, null, params);
     }
     
     public ManteniketLinkColumn(IModel<String> header, Class<P> destination, IModel<String> modelLink, IconType iconType){
 	this(header, destination, modelLink, iconType, null);
     }
     
-    public ManteniketLinkColumn(IModel<String> header, Class<P> destination, IModel<String> modelLink, IconType iconType, Entity entity){
+    public ManteniketLinkColumn(IModel<String> header, Class<P> destination, IModel<String> modelLink, IconType iconType, PageParameters params){
 	super(header);
 	this.destination = destination;
 	this.modelLink = modelLink;
 	this.iconType = iconType;
-	this.entity= entity;
+	this.params= params;
     }
     
 
     @Override
     public void populateItem(Item<ICellPopulator<T>> cellItem, String componentId, IModel<T> rowModel) {
-	PageParameters params = new PageParameters();
+	PageParameters pageParam = new PageParameters();
 	ManteniketBean bean = rowModel.getObject();
-	params.add(ManteniketContracts.ID, bean.getId());
-	if(entity != null){
-	    params.add(ManteniketContracts.ENTITY, entity);
+	pageParam.add(ManteniketContracts.ID, bean.getId());
+	if (this.params != null){
+	    for (NamedPair o : this.params.getAllNamed()){
+		pageParam.add(o.getKey(), o.getValue());
+	    }
 	}
-	ManteniketLink<P> ml = new ManteniketLink<P>(componentId, destination, params, modelLink);
+	ManteniketLink<P> ml = new ManteniketLink<P>(componentId, destination, pageParam, modelLink);
 	if (iconType != null){
 	    ml.setIconType(iconType);
 	}

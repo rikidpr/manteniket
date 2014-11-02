@@ -32,4 +32,6 @@ public interface IBikesDAO {
 
     public abstract void delete(Long bikeId);
 
+    public abstract List<Bici> find(Bici filtro, Sort sort, int page, int numberOfResults);
+
 }

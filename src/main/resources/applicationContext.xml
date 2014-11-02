@@ -17,20 +17,20 @@
 	<import resource="classpath:repository-context.xml" />
 	<import resource="classpath:beans.xml" />
 	<!--  POSTGRES
-	 -->
 	<bean id="springConfiguredDataSource" class="org.postgresql.ds.PGSimpleDataSource">
 		<property name="databaseName" value="manteniket" />
 		<property name="serverName" value="localhost" />
 		<property name="user" value="postgres" />
 		<property name="password" value="postgres" />
 	</bean>
+	 -->
 	<!-- derby
+	 -->
 	<bean id="springConfiguredDataSource" class="org.apache.derby.jdbc.EmbeddedSimpleDataSource">
-		<property name="databaseName" value="/home/rsaez/workspace/wicket/Manteniket/manteniketdb" />
+		<property name="databaseName" value="/users/saez/workspace/andpr/Manteniket/manteniketdb" />
 		<property name="user" value="" />
 		<property name="password" value="" />
 	</bean>
-	 -->
 	
 	<bean id="ShiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
@@ -48,6 +48,7 @@
 		<property name="filterChainDefinitions">
 			<value>
 				/rest/** = anon
+				/img/** = anon
 				/** = authc
 			</value>
 		</property>
@@ -57,12 +58,12 @@
 		<property name="realm" ref="jdbcRealm" />
 	</bean>
 
-	<!-- real shiro.ini <bean id="myReal" class="org.apache.shiro.realm.text.IniRealm"> 
-		<constructor-arg value="classpath:/META-INF/shiro.ini"/> </bean> -->
+	//<real shiro.ini <bean id="myReal" class="org.apache.shiro.realm.text.IniRealm"> 
+	//	<constructor-arg value="classpath:/META-INF/shiro.ini"/> </bean>
 	
-	<!-- real DB
-		permissionsLookupEnables-> si true, buscara permisos, si false solo buscara roles 
-	-->
+	// real DB
+	//	permissionsLookupEnables-> si true, buscara permisos, si false solo buscara roles 
+	//
 	<bean id="jdbcRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
 		<property name="dataSource" ref="springConfiguredDataSource" />
 		<property name="permissionsLookupEnabled" value="true"/>
@@ -84,6 +85,7 @@
 		<property name="securityManager" ref="securityManager" />
 	</bean>
 	
+	 -->
 	<bean id="wicketApplication" class="an.dpr.manteniket.WicketApplication"/>
 
 </beans>

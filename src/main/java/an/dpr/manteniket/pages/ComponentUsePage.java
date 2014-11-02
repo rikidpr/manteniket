@@ -1,13 +1,11 @@
 package an.dpr.manteniket.pages;
 
-import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 import static an.dpr.manteniket.bean.ManteniketContracts.ENTITY;
+import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.PageReference;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -23,9 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
-import an.dpr.manteniket.dao.ComponentUsesDAO;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.dao.IBikesDAO;
+import an.dpr.manteniket.dao.IComponentUsesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
@@ -45,7 +43,7 @@ public class ComponentUsePage extends ManteniketPage{
 
     private static final Logger log = LoggerFactory.getLogger(ComponentUsePage.class);
     @SpringBean
-    private ComponentUsesDAO cuDao;
+    private IComponentUsesDAO cuDao;
     @SpringBean
     private ComponentesDAO compDao;
     @SpringBean
@@ -110,12 +108,12 @@ public class ComponentUsePage extends ManteniketPage{
 	    txtInit.setDefaultModel(Model.of(new Date()));
 	    txtFin.setDefaultModel(Model.of(new Date()));
 	    txtDesc.setDefaultModel(Model.of(""));
-	    if (refObj instanceof Bici) {
+	    if (refObj != null && refObj instanceof Bici) {
 		cmbBike.setDefaultModel(new Model<Bici>((Bici)refObj));
 	    } else {
 		cmbBike.setDefaultModel(new Model<Bici>());
 	    }
-	    if (refObj instanceof Component) {
+	    if (refObj != null && refObj instanceof Component) {
 		Component comp = (Component) refObj;
 		cmbComp.setDefaultModel(new Model<Component>(comp));
 	    } else {
@@ -193,19 +191,23 @@ public class ComponentUsePage extends ManteniketPage{
     
     private Object getEntityRefObject(PageParameters params) {
 	Object object = null;
-	long id = params.get(ManteniketContracts.SOURCE_ID).toLong();
-	Entity entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
-	switch(entity){
-	case BIKE:
-	    Bici bici = new Bici();
-	    bici.setIdBici(id);
-	    object = bici;
-	    break;
-	case COMPONENT:
-	    Component component = new Component();
-	    component.setId(id);
-	    object = component;
-	    break;
+	try{
+	    long id = params.get(ManteniketContracts.SOURCE_ID).toLong(0);
+	    Entity entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
+	    switch(entity){
+	    case BIKE:
+		Bici bici = new Bici();
+		bici.setIdBici(id);
+		object = bici;
+		break;
+	    case COMPONENT:
+		Component component = new Component();
+		component.setId(id);
+		object = component;
+		break;
+	    }
+	} catch(NumberFormatException e){
+	    log.error("error de formato", e);
 	}
 	return object;
     }
