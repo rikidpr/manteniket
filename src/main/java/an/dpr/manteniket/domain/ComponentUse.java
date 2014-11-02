@@ -26,13 +26,18 @@ import an.dpr.manteniket.bean.ManteniketBean;
 @Table(name="component_uses")
 public class ComponentUse implements ManteniketBean, Serializable{
 
+    private static final long serialVersionUID = -3369582715603425959L;
+
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
+    
     private Long id;
     private Date init;
     private Date finish;
     private Component component;
     private Bici bike;
     private String descrip;
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
+    private User user;
+    
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -107,6 +112,15 @@ public class ComponentUse implements ManteniketBean, Serializable{
 	return "ComponentUse [id=" + id + ", init=" + init + ", finish="
 		+ finish /*+ ", component=" + component + ", bike=" + bike*/
 		+ ", descrip=" + descrip + "]";
+    }
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

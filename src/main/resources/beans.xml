@@ -5,8 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 	
-	<!-- security -->
-	<!-- 
+	<!-- security 
 	 <bean id="messageDigest" class="an.dpr.manteniket.beansfactory.MessageDigestFactoryBean">
 		<property name="algorithmName" value="MD5"/>
 	</bean>
@@ -16,7 +15,9 @@
 	<bean id="appsecurity" class="an.dpr.manteniket.security.AppSecurity">
 		<property name="passService" ref="passService"/>
 	</bean>
-	 -->
+	-->
+	<bean id="userInfo" class="an.dpr.manteniket.security.UserInfo" scope="session"/>
+	
 
 	<!-- Beans del modelo de datos -->
 	<bean id="componentesDAO" class="an.dpr.manteniket.dao.ComponentesDAO"/>

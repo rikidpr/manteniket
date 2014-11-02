@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.User;
 
 public interface BicisRepository extends CrudRepository<Bici, Long>{
 
@@ -15,16 +16,21 @@ public interface BicisRepository extends CrudRepository<Bici, Long>{
     
     Bici findByCodBici(String codBici);
     
-    List<Bici> findByTipo(String tipo);
-    List<Bici> findByTipo(String tipo, Sort sort);
-    Page<Bici> findByTipo(String tipo, Pageable pageable);
+//    List<Bici> findByUserAndTipo(User user, String tipo);
+//    List<Bici> findByUserAndTipo(User user, String tipo, Sort sort);
+//    Page<Bici> findByUserAndTipo(User user, String tipo, Pageable pageable);
+
+    List<Bici> findByUser(User user);
+    List<Bici> findByUser(User user, Sort sort);
+    Page<Bici> findByUser(User user, Pageable pageable);
 
     List<Bici> findAll();
     List<Bici> findAll(Sort sort);
     Page<Bici> findAll(Pageable pageable);
     
     long count();
-    long countByTipo(String tipo);
+    long countByUser(User user);
+    long countByUserAndTipo(User user, String tipo);
     
 }
 

@@ -12,6 +12,7 @@ import an.dpr.manteniket.LogoutPage;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.pages.ActivitiesListPage;
 import an.dpr.manteniket.pages.BicisListPage;
+import an.dpr.manteniket.pages.BikeCompListPage;
 import an.dpr.manteniket.pages.ComponentsListPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.dropdown.DropDownButton;
@@ -55,6 +56,7 @@ public class BootstrapHeaderPanel extends Panel {
 	NavbarButton<ActivitiesListPage> menuActivities;
 	NavbarButton<BicisListPage> menuBikes;
 	NavbarButton<ComponentsListPage> menuComponents; 
+	NavbarButton<BikeCompListPage> menuUses; 
 
 	menuActivities = new NavbarButton<ActivitiesListPage>(ActivitiesListPage.class, new ResourceModel("menu.activities"));
 	menuActivities.setIconType(FontAwesomeIconTypeExt.area_chart);
@@ -64,9 +66,12 @@ public class BootstrapHeaderPanel extends Panel {
 	
 	menuComponents = new NavbarButton<ComponentsListPage>(ComponentsListPage.class, new ResourceModel("menu.components"));
 	menuComponents.setIconType(FontAwesomeIconType.cog);
+
+	menuUses= new NavbarButton<BikeCompListPage>(BikeCompListPage.class, new ResourceModel("menu.uses"));
+	menuUses.setIconType(FontAwesomeIconType.plus_circle);
 	
 	List<INavbarComponent> list = NavbarComponents.transform(Navbar.ComponentPosition.RIGHT, 
-		menuActivities, menuBikes, menuComponents);
+		menuActivities, menuBikes, menuComponents, menuUses);
 	navbar.addComponents(list);
     }
 

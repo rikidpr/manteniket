@@ -16,7 +16,6 @@
 	</listener>
 
 	<display-name>manteniket</display-name>
-<!-- 
 	<filter>
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -25,7 +24,6 @@
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
- -->
 	<filter>
 		<filter-name>WicketFilter</filter-name>
 		<filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -34,12 +32,10 @@
 			<param-value>org.apache.wicket.spring.SpringWebApplicationFactory</param-value>
 		</init-param>
 	</filter>
-<!-- 
 	<filter-mapping>
 		<filter-name>ShiroFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
- -->
 	<filter-mapping>
 		<filter-name>WicketFilter</filter-name>
 		<url-pattern>/*</url-pattern>

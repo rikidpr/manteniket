@@ -7,5 +7,7 @@ import an.dpr.manteniket.domain.User;
 public interface UsersRepository extends CrudRepository<User, Long> {
 
     User findByUsername(String username);
+    
+    User findById(long userid);
 
 }

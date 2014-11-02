@@ -5,13 +5,19 @@ import static an.dpr.manteniket.bean.ManteniketContracts.BTN_RETURN;
 import static an.dpr.manteniket.bean.ManteniketContracts.ENTITY;
 import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -19,12 +25,15 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import an.dpr.manteniket.MainPage;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.LinkPanel;
 import an.dpr.manteniket.components.ManteniketTable;
+import an.dpr.manteniket.dao.BicisDAO;
 import an.dpr.manteniket.dao.ComponentUsesDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
@@ -36,14 +45,12 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagi
 
 public class BikeCompListPage extends ManteniketPage {
     
-    public static void main(String[] args){
-	String s="[Page class = an.dpr.manteniket.pages.ComponentsListPage, id = 3";
-	String[] aux = s.substring(14).split(",");
-	System.out.println(aux[0]);
-    }
-
+    static final int ITEMS_PAGE = 5;
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BikeCompListPage.class);
+    public static final String BIKE = "bike.codBici";
+    public static final String COMPONENT= "component.name";
+    
     @SpringBean
     private ComponentUsesDAO dao;
 
@@ -69,24 +76,22 @@ public class BikeCompListPage extends ManteniketPage {
 	};
 	btnAdd.setLabel(new ResourceModel("btn.add"));
 	form.add(btnAdd);
-//	BootstrapButton retBtn = new BootstrapButton("btnReturn", BTN_RETURN){
-//	    
-//	    
-//	    private static final long serialVersionUID = 1L;
-//	    
-//	    @Override
-//	    public void onSubmit(){
-//		setResponsePage(MainPage.class);//TODO VER COMO PODEMOS HACER PARA QUE VUELVA A listbicis o listcomp
-//	    }
-//	    
-//	};
-//	retBtn.setLabel(new ResourceModel("btn.return"));
-//	form.add(retBtn);
+
 	add(form);
 	listado(id, entity);
     }
     
     private void listado(final Long id, final Entity entity) {
+	//form
+	//dataproducer
+	//mantenikettable
+	//columns
+	//filter column
+	//filter toolbar
+    }
+    
+    
+    private void listadoOld(final Long id, final Entity entity) {
 	log.debug("iniciando listado");
 	List<ComponentUse> list = getList(id, entity);
 	ListDataProvider<ComponentUse> data = new ListDataProvider<ComponentUse>(list);
@@ -144,5 +149,74 @@ public class BikeCompListPage extends ManteniketPage {
 	return list;
     }
 
+
+}
+
+class UsesSortDataProvider extends SortableDataProvider<ComponentUse, String> implements
+	IFilterStateLocator<ComponentUse> {
+
+    private static final Logger log = LoggerFactory.getLogger(UsesSortDataProvider.class);
+    private ComponentUsesDAO dao;
+    private static final long serialVersionUID = 1L;
+    private List<ComponentUse> list;
+    private ComponentUse filterState;
+    private long size;
+    private static final String DESCRIPCION = "descripcion";
+    private static final String COD_BICI = "codBici";
+    private static final String TIPO = "tipo";
+
+    public UsesSortDataProvider(ComponentUsesDAO dao) {
+	this.dao = dao;
+	filterState = new ComponentUse();// importante, sino pegara un pete de null al
+				 // intentar setear el filtro
+    }
+
+    @Override
+    public Iterator<? extends ComponentUse> iterator(long first, long count) {
+	log.debug("a iterar!");
+	int fromPage = 0;
+	if (first >= BikeCompListPage.ITEMS_PAGE) {
+	    fromPage = ((int) (first / BikeCompListPage.ITEMS_PAGE));
+	}
+	list = getList(getSort(), fromPage, BikeCompListPage.ITEMS_PAGE);
+	return list.iterator();
+    }
+
+    private List<ComponentUse> getList(SortParam<String> sortParam, int page,
+	    int numberOfResults) {
+	ComponentUse filtro = null;
+	Sort sort = null;
+	if (filterState != null && 
+		(filterState.getBike() != null 
+		|| filterState.getComponent()!=null) ) {
+	    filtro = filterState;
+	}
+	
+	return list;
+    }
+
+    @Override
+    public long size() {
+	return size;
+    }
+
+    private Sort defaultSort() {
+	return new Sort(Sort.Direction.ASC, COD_BICI);
+    }
+
+    @Override
+    public IModel<ComponentUse> model(ComponentUse object) {
+	return Model.of(object);
+    }
+
+    public ComponentUse getFilterState() {
+	log.debug("init");
+	return filterState;
+    }
+
+    public void setFilterState(ComponentUse filterState) {
+	log.debug("init");
+	this.filterState = filterState;
+    }
 
 }

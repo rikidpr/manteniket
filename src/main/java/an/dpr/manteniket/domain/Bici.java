@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -23,6 +24,7 @@ public class Bici implements ManteniketBean, Serializable{
     private String codBici;
     private String descripcion;
     private String tipo;
+    private User user;
     private Set<Activity> activities;
     private Set<ComponentUse> componentUses;
 
@@ -85,5 +87,14 @@ public class Bici implements ManteniketBean, Serializable{
     @Transient
     public Long getId() {
 	return getIdBici();
+    }
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

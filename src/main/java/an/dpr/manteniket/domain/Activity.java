@@ -33,6 +33,7 @@ public class Activity implements ManteniketBean, Serializable{
     private Short type;
     private Short heartRate;
     private String description;
+    private User user;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -103,5 +104,14 @@ public class Activity implements ManteniketBean, Serializable{
 
     public void setHeartRate(Short heartRate) {
         this.heartRate = heartRate;
+    }
+    
+    @ManyToOne(fetch=FetchType.EAGER)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

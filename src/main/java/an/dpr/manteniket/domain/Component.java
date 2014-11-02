@@ -22,6 +22,7 @@ public class Component implements Serializable{
     private String type;
     private String description;
     private Set<ComponentUse> componentUses;
+    private User user;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -69,5 +70,14 @@ public class Component implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    @ManyToOne(fetch=FetchType.EAGER)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -71,7 +71,6 @@ public class BicisListPage extends ManteniketPage {
 	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.desc"),"descripcion","descripcion"));
 	IModel<List<? extends String>> cmb = Model.ofList(Arrays.asList(CyclingType.names())); 
 	columns.add( new ChoiceFilteredPropertyColumn<Bici, String, String>( new ResourceModel( "head.type" ), "tipo", "tipo", cmb));
-//	columns.add(new TextFilteredPropertyColumn<Bici, String, String>( new ResourceModel( "head.type" ), "tipo", "tipo"));
 	
 	addActionColumns(columns);
 	
