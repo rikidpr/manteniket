@@ -89,11 +89,13 @@ public class BicisDAO implements IBikesDAO {
      */
     @Override
     public long count(Bici bici){
-	if (bici == null){
-	    return count();
-	} else {
+	if (bici != null && bici.getUser()!=null && bici.getTipo()!=null){
 	    //de momento el conteo es por tipo porque solo se filtra por tipo, lueog y averemos
 	    return repo.countByUserAndTipo(bici.getUser(),bici.getTipo());
+	} else if (bici != null && bici.getUser()!=null){
+	    return repo.countByUser(bici.getUser());
+	} else {
+	    return repo.count();
 	}
     }
     

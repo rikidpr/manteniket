@@ -66,11 +66,13 @@ public class BikeCompListPage extends ManteniketPage {
     		InstantiationException, IllegalAccessException, ClassNotFoundException {
 	super();
 
-	Long id = params.get(ID).toLongObject();
-	Entity entity = params.get(ENTITY).toEnum(Entity.class);
+	Long id = params.get(ID).isNull() ? null : params.get(ID).toLongObject();
+	Entity entity = params.get(ENTITY).isNull() ? null : params.get(ENTITY).toEnum(Entity.class);
 	final PageParameters pp = new PageParameters();
-	pp.add(ManteniketContracts.SOURCE_ID, id);
-	pp.add(ManteniketContracts.ENTITY, entity);
+	if (id != null){
+	    pp.add(ManteniketContracts.SOURCE_ID, id);
+	    pp.add(ManteniketContracts.ENTITY, entity);
+	}
 	
 	BootstrapForm form = new BootstrapForm("button-form");
 	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD){
@@ -135,8 +137,10 @@ public class BikeCompListPage extends ManteniketPage {
 
     private void addActionColumns(List<IColumn<ComponentUse, String>> columns, Long id, Entity entity) {
 	PageParameters params = new PageParameters();
-	params.add(ManteniketContracts.SOURCE_ID,  id);
-	params.add(ManteniketContracts.ENTITY,  entity);
+	if (id!=null){
+	    params.add(ManteniketContracts.SOURCE_ID,  id);
+	    params.add(ManteniketContracts.ENTITY,  entity);
+	}
   	IColumn<ComponentUse, String> linkEdit = new ManteniketLinkColumn<ComponentUse, ComponentUsePage, String>(Model.of(""),
   		ComponentUsePage.class, Model.of(""), FontAwesomeIconType.edit,params);
   	columns.add(linkEdit);

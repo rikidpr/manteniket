@@ -20,6 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
+import an.dpr.manteniket.repository.BicisRepository;
 import an.dpr.manteniket.repository.ComponentUsesRepository;
 import an.dpr.manteniket.util.DateUtil;
 
@@ -28,6 +29,8 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
     private static final Logger log = LoggerFactory.getLogger(ComponentUsesDAO.class);
     @Autowired
     private ComponentUsesRepository repo;
+    @Autowired
+    private BicisRepository repoBike;
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired IBikesDAO bikesDao;
@@ -215,7 +218,7 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	    if (filtro.getBike().getId() != null)
 		bike = filtro.getBike();
 	    else if (filtro.getBike().getCodBici() != null){
-		bike = bikesDao.findByCodBici(filtro.getUser(), filtro.getBike().getCodBici());
+		bike = repoBike.findByCodBici(filtro.getUser(), filtro.getBike().getCodBici());
 	    }
 	    page = repo.findByBike(bike, pageRequest);
 	    
