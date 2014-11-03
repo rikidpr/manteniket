@@ -16,14 +16,6 @@ public interface IBikesDAO {
 
     public abstract List<Bici> findByTipo(Bici bici, Sort sort, Integer fromPage, Integer numberOfResults);
 
-    public abstract List<Bici> findAll();
-
-    public abstract List<Bici> findAll(int from, int numberOfResults);
-
-    public abstract List<Bici> findAll(Sort sort);
-
-    public abstract List<Bici> findAll(Sort sort, Integer fromPage, Integer numberOfResults);
-
     public abstract long count();
 
     public abstract long count(Bici bici);

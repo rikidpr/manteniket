@@ -161,7 +161,7 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(new Label("lblTime", new ResourceModel("lbl.time")));
 	form.add(txtTime);
 	
-	List<Bici> bikes = bicisDao.findAll();
+	List<Bici> bikes = bicisDao.find();
 	Model<Bici> choicesB = new Model<Bici>();
 	ChoiceRenderer<Bici> renderB = new ChoiceRenderer<Bici>("codBici", "idBici");
 	cmbBike = new DropDownChoice<Bici>("cmbBike", choicesB, bikes, renderB);

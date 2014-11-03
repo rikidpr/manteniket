@@ -7,14 +7,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.TextFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
@@ -34,7 +32,10 @@ import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.components.ManteniketDataTable;
 import an.dpr.manteniket.components.ManteniketLinkColumn;
 import an.dpr.manteniket.dao.IBikesDAO;
+import an.dpr.manteniket.dao.IUserDAO;
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.User;
+import an.dpr.manteniket.security.AppSecurity;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
@@ -48,11 +49,13 @@ public class BicisListPage extends ManteniketPage {
     public static final Long ITEMS_PAGE = new Long(3);
     @SpringBean
     private IBikesDAO dao;
+    @SpringBean
+    private IUserDAO userDao;
 
     public BicisListPage() {
 	super();
-
-	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao);
+	Bici bici = newBiciInstance();
+	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao, bici);
 //	// create the form used to contain all filter components
 	final FilterForm<Bici> form = new FilterForm<Bici>("filter-form", dataProvider)
 		{
@@ -98,6 +101,18 @@ public class BicisListPage extends ManteniketPage {
 
     }
 	
+    private Bici newBiciInstance() {
+	Bici bici = new Bici();
+	//TODO esto del user a ManteniketApp
+	User user = (User) getSession().getAttribute(ManteniketContracts.LOGGED_USER);
+	if (user == null){
+	    user = userDao.getUser(AppSecurity.getUserName());
+	    getSession().setAttribute(ManteniketContracts.LOGGED_USER, user);
+	}
+	bici.setUser(user);
+	return bici;
+    }
+
     private void addActionColumns(List<IColumn<Bici, String>> columns) {
 	PageParameters params = new PageParameters();
 	params.add(ManteniketContracts.ENTITY,  Entity.BIKE);
@@ -127,11 +142,12 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     private Bici filterState;
     private static final String DESCRIPCION = "descripcion";
     private static final String COD_BICI = "codBici";
-    private static final String TIPO = "tipo";
+    private static final String TIPO = "tipo"; 
 
-    public BikeSortDataProvider(IBikesDAO dao){
+    public BikeSortDataProvider(IBikesDAO dao, Bici bici){
 	this.dao = dao;
-	filterState = new Bici();
+	filterState = bici;
+	
     }
 
     @Override

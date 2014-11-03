@@ -16,7 +16,6 @@
 		<property name="passService" ref="passService"/>
 	</bean>
 	-->
-	<bean id="userInfo" class="an.dpr.manteniket.security.UserInfo" scope="session"/>
 	
 
 	<!-- Beans del modelo de datos -->

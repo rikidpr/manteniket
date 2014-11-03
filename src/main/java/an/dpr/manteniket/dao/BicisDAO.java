@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.User;
 import an.dpr.manteniket.repository.BicisRepository;
-import an.dpr.manteniket.security.UserInfo;
 
 /**
  * Dao del entity componentes
@@ -25,7 +24,6 @@ public class BicisDAO implements IBikesDAO {
     private static final Logger log = LoggerFactory.getLogger(BicisDAO.class);
     @Autowired
     private BicisRepository repo;
-    @Autowired private UserInfo userInfo;
 
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findByIdBici(java.lang.Long)
@@ -58,21 +56,20 @@ public class BicisDAO implements IBikesDAO {
      * @see an.dpr.manteniket.dao.IBikesDAO#findByTipo(an.dpr.manteniket.domain.Bici, org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
     @Override
-    public List<Bici> findByTipo(Bici bici, final Sort sort, final Integer fromPage, final Integer numberOfResults){
-   	List<Bici> list;
-   	if (fromPage != null){
-   	    Page<Bici> page = null;//TODO repo.findByUserAndTipo(getUser(),bici.getTipo(), new PageRequest(fromPage, numberOfResults, sort));
-   	    list = page.getContent();
-   	} else {
-   	    list = null;//TODO repo.findByUserAndTipo(getUser(),bici.getTipo(),sort);
-   	}
-   	return list;
+    public List<Bici> findByTipo(Bici bici, final Sort sort, final Integer fromPage, 
+	    final Integer numberOfResults){
+	List<Bici> list;
+	Page<Bici> page = repo.findByUserAndTipo(bici.getUser(),
+		bici.getTipo(),
+		new PageRequest(fromPage, numberOfResults, sort));
+	list = page.getContent();
+  	return list;
        }
     
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll()
      */
-    @Override
+    @Deprecated
     public List<Bici> findAll(){
 	//sort por defecto
 	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
@@ -82,7 +79,7 @@ public class BicisDAO implements IBikesDAO {
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll(int, int)
      */
-    @Override
+    @Deprecated
     public List<Bici> findAll(int from, int numberOfResults){
 	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
 	return findAll(sort, from, numberOfResults);
@@ -91,7 +88,7 @@ public class BicisDAO implements IBikesDAO {
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll(org.springframework.data.domain.Sort)
      */
-    @Override
+    @Deprecated
     public List<Bici> findAll(final Sort sort){
 	return findAll(sort, null, null);
     }
@@ -99,7 +96,7 @@ public class BicisDAO implements IBikesDAO {
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll(org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
-    @Override
+    @Deprecated
     public List<Bici> findAll(final Sort sort, final Integer fromPage, final Integer numberOfResults){
 	List<Bici> list;
 	if (fromPage != null){
@@ -128,7 +125,7 @@ public class BicisDAO implements IBikesDAO {
 	    return count();
 	} else {
 	    //de momento el conteo es por tipo porque solo se filtra por tipo, lueog y averemos
-	    return repo.countByUserAndTipo(getUser(),bici.getTipo());//TODO ADD USER
+	    return repo.countByUserAndTipo(bici.getUser(), bici.getTipo());//TODO ADD USER
 	}
     }
     
@@ -166,8 +163,4 @@ public class BicisDAO implements IBikesDAO {
 	return list;
     }
     
-    private User getUser(){
-	return userInfo.getUser();
-    }
-
 }
