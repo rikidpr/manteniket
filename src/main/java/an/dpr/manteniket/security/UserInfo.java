@@ -10,6 +10,7 @@ import an.dpr.manteniket.domain.User;
  * @author rsaez
  *
  */
+@Deprecated
 public class UserInfo {
     
     @Autowired private IUserDAO dao;

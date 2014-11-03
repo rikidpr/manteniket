@@ -143,6 +143,7 @@ public class BicisPage extends ManteniketPage {
 	bike.setCodBici(codBici.getDefaultModelObjectAsString());
 	bike.setDescripcion(descripcion.getDefaultModelObjectAsString());
 	bike.setTipo(tipo.getDefaultModelObjectAsString());
+	bike.setUser(getUser());
 	try{
 	    dao.save(bike);
 	} catch(Exception e){

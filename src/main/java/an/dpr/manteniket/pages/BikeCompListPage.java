@@ -117,7 +117,7 @@ public class BikeCompListPage extends ManteniketPage {
     
     private IModel<List<? extends String>> getCmbBikes() {
 	List<String> bikeCodsList = new ArrayList<String>();
-	List<Bici> bikes = bikesDao.findAll();
+	List<Bici> bikes = bikesDao.findAll(getUser());
 	for(Bici bike:bikes){
 	    bikeCodsList.add(bike.getCodBici());
 	}

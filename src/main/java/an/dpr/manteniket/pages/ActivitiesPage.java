@@ -161,7 +161,7 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(new Label("lblTime", new ResourceModel("lbl.time")));
 	form.add(txtTime);
 	
-	List<Bici> bikes = bicisDao.findAll();
+	List<Bici> bikes = bicisDao.findAll(getUser());
 	Model<Bici> choicesB = new Model<Bici>();
 	ChoiceRenderer<Bici> renderB = new ChoiceRenderer<Bici>("codBici", "idBici");
 	cmbBike = new DropDownChoice<Bici>("cmbBike", choicesB, bikes, renderB);
@@ -210,6 +210,7 @@ public class ActivitiesPage extends ManteniketPage {
 	act.setHeartRate((Short)txtHeartRate.getDefaultModelObject());
 	ActivityType at = (ActivityType)cmbType.getDefaultModelObject();
 	act.setType(at.getCode());
+	act.setUser(getUser());
 	dao.save(act);
 	volver();
     }

@@ -13,6 +13,7 @@ public class ManteniketContracts {
     public static final Type BTN_RETURN = Type.Success;
     public static final Type BTN_ADD = Type.Info;
     public static final Type BTN_SAVE = Type.Warning;
+    public static final String LOGGED_USER = "LOGGED_USER";
     
     public enum Entity {
 	COMPONENT, BIKE, ACTIVITY;

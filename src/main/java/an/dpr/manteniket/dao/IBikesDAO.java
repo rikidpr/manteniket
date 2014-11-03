@@ -5,33 +5,28 @@ import java.util.List;
 import org.springframework.data.domain.Sort;
 
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.User;
 
 public interface IBikesDAO {
 
-    public abstract Bici findByIdBici(Long id);
+    Bici findByIdBici(Long id);
+    
+    Bici findByCodBici(User user, String codBici);
+    
+    List<Bici> findAll(User user);
+    
+    List<Bici> findByTipo(Bici bici, Sort sort, Integer fromPage, Integer numberOfResults);
 
-    public abstract Bici findByCodBici(String codBici);
+    long count();
 
-    public abstract List<Bici> findByTipo(String tipo);
+    long count(Bici bici);
 
-    public abstract List<Bici> findByTipo(Bici bici, Sort sort, Integer fromPage, Integer numberOfResults);
+    Bici save(Bici bike);
 
-    public abstract List<Bici> findAll();
+    void delete(Long bikeId);
 
-    public abstract List<Bici> findAll(int from, int numberOfResults);
+    List<Bici> find(Bici filtro, Sort sort, int page, int numberOfResults);
 
-    public abstract List<Bici> findAll(Sort sort);
 
-    public abstract List<Bici> findAll(Sort sort, Integer fromPage, Integer numberOfResults);
-
-    public abstract long count();
-
-    public abstract long count(Bici bici);
-
-    public abstract Bici save(Bici bike);
-
-    public abstract void delete(Long bikeId);
-
-    public abstract List<Bici> find(Bici filtro, Sort sort, int page, int numberOfResults);
 
 }
