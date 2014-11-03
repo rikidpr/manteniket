@@ -147,6 +147,7 @@ public class ComponentsPage extends ManteniketPage {
 	comp.setName(txtName.getDefaultModelObjectAsString());
 	comp.setDescription(txtDescription.getDefaultModelObjectAsString());
 	comp.setType(cmbType.getDefaultModelObjectAsString());
+	comp.setUser(getUser());
 	dao.save(comp);
 	setResponsePage(ComponentsListPage.class);
     }

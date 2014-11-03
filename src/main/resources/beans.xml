@@ -16,13 +16,13 @@
 		<property name="passService" ref="passService"/>
 	</bean>
 	-->
-	
 
 	<!-- Beans del modelo de datos -->
 	<bean id="componentesDAO" class="an.dpr.manteniket.dao.ComponentesDAO"/>
 	<bean id="bicisDAO" class="an.dpr.manteniket.dao.BicisDAO"/>
 	<bean id="activitiesDAO" class="an.dpr.manteniket.dao.ActivitiesDAO"/>
 	<bean id="componentUsesDAO" class="an.dpr.manteniket.dao.ComponentUsesDAO"/>
+	<bean id="userDAO" class="an.dpr.manteniket.dao.springdatajpa.UserDAOSpringDataJPA"/>
 	
 	
 </beans>

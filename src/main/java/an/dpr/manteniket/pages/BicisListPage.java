@@ -54,8 +54,10 @@ public class BicisListPage extends ManteniketPage {
 
     public BicisListPage() {
 	super();
-	Bici bici = newBiciInstance();
-	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao, bici);
+
+	Bici filterBike = new Bici();
+	filterBike.setUser(getUser());
+	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao, filterBike);
 //	// create the form used to contain all filter components
 	final FilterForm<Bici> form = new FilterForm<Bici>("filter-form", dataProvider)
 		{
@@ -144,10 +146,9 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     private static final String COD_BICI = "codBici";
     private static final String TIPO = "tipo"; 
 
-    public BikeSortDataProvider(IBikesDAO dao, Bici bici){
+    public BikeSortDataProvider(IBikesDAO dao, Bici filterBike){
 	this.dao = dao;
-	filterState = bici;
-	
+	filterState = filterBike;
     }
 
     @Override
@@ -162,11 +163,7 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     }
 
     private List<Bici> getList(SortParam<String> sortParam, int page, int numberOfResults) {
-	Bici filtro = null;
 	Sort sort = null;
-	if (filterState != null && filterState.getTipo() != null){
-	    filtro = filterState;
-	} 
 	if (sortParam != null && 
 		(sortParam.getProperty().equals(COD_BICI)
 			|| sortParam.getProperty().equals(TIPO)
@@ -183,7 +180,7 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 	} else {
 	    sort = defaultSort();
 	}
-	list = dao.find(filtro, sort, page, numberOfResults);
+	list = dao.find(filterState, sort, page, numberOfResults);
 	return list;
     }
 

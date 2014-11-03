@@ -80,8 +80,7 @@ public class ActivitiesListPage extends ManteniketPage {
 	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.km"),"km","km"));	
 	//	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.bike"),"bike.codBici","bike.codBici"));
 
-	List<Bici> list = new ArrayList<Bici>();
-	list.add(bicisDao.findByCodBici("Trek 3700"));
+	List<Bici> list = bicisDao.findAll(getUser());
 	IModel<List<? extends Bici>> filterChoices = Model.ofList(list);
 	ChoiceFilteredPropertyColumn cfpc = new ChoiceFilteredPropertyColumn<Activity, Bici, String>
 		(new ResourceModel("head.bike"),"bike.codBici","bike.codBici", filterChoices);

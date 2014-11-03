@@ -1,5 +1,7 @@
 package an.dpr.manteniket.dao;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,9 +18,10 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import an.dpr.manteniket.domain.Bici;
-import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.domain.Component;
+import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.repository.ComponentUsesRepository;
+import an.dpr.manteniket.util.DateUtil;
 
 public class ComponentUsesDAO implements IComponentUsesDAO {
 
@@ -61,6 +64,14 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
      */
     @Override
     public ComponentUse save(ComponentUse use){
+	//se guardan todas las fechas a hora 00:00
+	try {
+	    use.setInit(DateUtil.dateWithoutHour(use.getInit()));
+	    use.setFinish(DateUtil.dateWithoutHour(use.getFinish()));
+	} catch (ParseException e) {
+	    log.error("Error parseando fechas de "+use);
+	}
+	
 	return repo.save(use);
 	//TODO excepciones sql
     }
@@ -204,7 +215,7 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	    if (filtro.getBike().getId() != null)
 		bike = filtro.getBike();
 	    else if (filtro.getBike().getCodBici() != null){
-		bike = bikesDao.findByCodBici(filtro.getBike().getCodBici());
+		bike = bikesDao.findByCodBici(filtro.getUser(), filtro.getBike().getCodBici());
 	    }
 	    page = repo.findByBike(bike, pageRequest);
 	    

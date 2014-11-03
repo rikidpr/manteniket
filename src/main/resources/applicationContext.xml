@@ -57,13 +57,14 @@
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 		<property name="realm" ref="jdbcRealm" />
 	</bean>
-
+<!-- 
 	//<real shiro.ini <bean id="myReal" class="org.apache.shiro.realm.text.IniRealm"> 
 	//	<constructor-arg value="classpath:/META-INF/shiro.ini"/> </bean>
 	
 	// real DB
 	//	permissionsLookupEnables-> si true, buscara permisos, si false solo buscara roles 
 	//
+ -->
 	<bean id="jdbcRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
 		<property name="dataSource" ref="springConfiguredDataSource" />
 		<property name="permissionsLookupEnabled" value="true"/>
@@ -85,7 +86,6 @@
 		<property name="securityManager" ref="securityManager" />
 	</bean>
 	
-	 -->
 	<bean id="wicketApplication" class="an.dpr.manteniket.WicketApplication"/>
 
 </beans>

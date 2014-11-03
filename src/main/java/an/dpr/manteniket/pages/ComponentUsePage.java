@@ -173,7 +173,7 @@ public class ComponentUsePage extends ManteniketPage{
         form.add(txtFin);
         
         ChoiceRenderer<Bici> bikeRender = new ChoiceRenderer<Bici>("codBici", "idBici");
-        List<Bici> bikes = bikeDao.findAll();
+        List<Bici> bikes = bikeDao.findAll(getUser());
         cmbBike = new DropDownChoice<Bici>("cmbBike", bikes, bikeRender);
         form.add(cmbBike);
 
@@ -234,6 +234,7 @@ public class ComponentUsePage extends ManteniketPage{
 	use.setInit((Date)txtInit.getDefaultModelObject());
 	use.setFinish((Date)txtFin.getDefaultModelObject());
 	use.setDescrip(txtDesc.getDefaultModelObjectAsString());
+	use.setUser(getUser());
 	
 	cuDao.save(use);
 	

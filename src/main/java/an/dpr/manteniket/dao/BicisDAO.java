@@ -25,85 +25,53 @@ public class BicisDAO implements IBikesDAO {
     @Autowired
     private BicisRepository repo;
 
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IBikesDAO#findByIdBici(java.lang.Long)
-     */
     @Override
     public Bici findByIdBici(Long id) {
 	log.debug("params: id " + id);
 	return repo.findOne(id);
     }
 
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IBikesDAO#findByCodBici(java.lang.String)
-     */
     @Override
-    public Bici findByCodBici(String codBici) {
+    public Bici findByCodBici(User user, String codBici) {
 	log.debug("param codBici " + codBici);
-	return repo.findByCodBici(codBici);
+	return repo.findByCodBici(user, codBici);
     }
 
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IBikesDAO#findByTipo(java.lang.String)
-     */
-    @Override
-    public List<Bici> findByTipo(String tipo) {
-	log.debug("param tipo" + tipo);
-	return null;//TODO repo.findByUserAndTipo(getUser(),tipo);
-    }
-    
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findByTipo(an.dpr.manteniket.domain.Bici, org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
     @Override
-    public List<Bici> findByTipo(Bici bici, final Sort sort, final Integer fromPage, 
-	    final Integer numberOfResults){
-	List<Bici> list;
-	Page<Bici> page = repo.findByUserAndTipo(bici.getUser(),
-		bici.getTipo(),
-		new PageRequest(fromPage, numberOfResults, sort));
-	list = page.getContent();
-  	return list;
+    public List<Bici> findByTipo(Bici bici, final Sort sort, final Integer fromPage, final Integer numberOfResults){
+   	List<Bici> list;
+   	if (fromPage != null){
+   	    Page<Bici> page = repo.findByUserAndTipo(bici.getUser(),bici.getTipo(), new PageRequest(fromPage, numberOfResults, sort));
+   	    list = page.getContent();
+   	} else {
+   	    list = repo.findByUserAndTipo(bici.getUser(),bici.getTipo(),sort);
+   	}
+   	return list;
        }
     
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IBikesDAO#findAll()
-     */
-    @Deprecated
-    public List<Bici> findAll(){
+    public List<Bici> findAll(User user){
 	//sort por defecto
 	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
-	return findAll(sort);
+	Bici bici = new Bici();
+	bici.setUser(user);
+	Integer count = (int) count(bici);
+	return findAll(user, sort, 0, count );
     }
     
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IBikesDAO#findAll(int, int)
-     */
-    @Deprecated
-    public List<Bici> findAll(int from, int numberOfResults){
-	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
-	return findAll(sort, from, numberOfResults);
-    }
-    
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IBikesDAO#findAll(org.springframework.data.domain.Sort)
-     */
-    @Deprecated
-    public List<Bici> findAll(final Sort sort){
-	return findAll(sort, null, null);
-    }
     
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll(org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
-    @Deprecated
-    public List<Bici> findAll(final Sort sort, final Integer fromPage, final Integer numberOfResults){
+    public List<Bici> findAll(User user, final Sort sort, final Integer fromPage, final Integer numberOfResults){
 	List<Bici> list;
 	if (fromPage != null){
-	    Page<Bici> page = null;//TODO repo.findByUser(getUser(),new PageRequest(fromPage, numberOfResults, sort));
+	    Page<Bici> page = repo.findByUser(user,new PageRequest(fromPage, numberOfResults, sort));
 	    list = page.getContent();
 	} else {
-	    list = null;//TODO repo.findByUser(getUser(),sort);
+	    list = repo.findByUser(user,sort);
 	}
 	return list;
     }
@@ -125,7 +93,7 @@ public class BicisDAO implements IBikesDAO {
 	    return count();
 	} else {
 	    //de momento el conteo es por tipo porque solo se filtra por tipo, lueog y averemos
-	    return repo.countByUserAndTipo(bici.getUser(), bici.getTipo());//TODO ADD USER
+	    return repo.countByUserAndTipo(bici.getUser(),bici.getTipo());
 	}
     }
     
@@ -142,6 +110,7 @@ public class BicisDAO implements IBikesDAO {
      */
     @Override
     public void delete(Long bikeId){
+	//TODO manejar excepciones. Peude suceder que no permitar borrarlo por dependencias de FK.
 	repo.delete(bikeId);
     }
 
@@ -155,8 +124,10 @@ public class BicisDAO implements IBikesDAO {
 
     public List<Bici> find(Bici filtro, Sort sort, int page, int numberOfResults) {
 	List<Bici> list;
-	if (filtro == null || filtro.getTipo() == null){
-	    list = findAll(sort, page, numberOfResults);
+	if (filtro == null){
+	    list = null;
+	} else if (filtro.getTipo() == null){
+	    list = findAll(filtro.getUser(), sort, page, numberOfResults);
 	} else {//DE MOMENTO SOLO TIPO
 	    list = findByTipo(filtro, sort, page, numberOfResults);
 	}
