@@ -140,7 +140,6 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     private IBikesDAO dao;
     private static final long serialVersionUID = 1L;
     private List<Bici> list;
-    private long size;
     private Bici filterState;
     private static final String DESCRIPCION = "descripcion";
     private static final String COD_BICI = "codBici";
@@ -189,8 +188,7 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 	Bici filtro = null;
 	if (filterState != null && filterState.getTipo() != null)
 	    filtro = filterState;
-	size = dao.count(filtro);
-	return size;
+	return dao.count(filtro);
     }
 
     private Sort defaultSort() {

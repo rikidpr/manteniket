@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -22,25 +22,28 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 
-import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
-import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
-import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
-import an.dpr.manteniket.WicketApplication;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.LinkPanel;
 import an.dpr.manteniket.components.ManteniketTable;
 import an.dpr.manteniket.dao.ActivitiesDAO;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.domain.Activity;
+import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.template.ManteniketPage;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
+import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 
 public class ComponentsListPage extends ManteniketPage {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ComponentsListPage.class);
+    static final String NAME = "name";
+    static final String TYPE = "type";
     @SpringBean
     private ComponentesDAO dao;
     @SpringBean
@@ -119,4 +122,55 @@ public class ComponentsListPage extends ManteniketPage {
 	return km;
     }
 
+}
+
+
+class ComponentSortDataProvider extends SortableDataProvider<Component, String> implements IFilterStateLocator<Component>{
+    
+    private static final Logger log = LoggerFactory.getLogger(ComponentSortDataProvider.class);
+    public ComponentesDAO dao;
+    public Component filterState;
+
+    @Override
+    public Iterator<? extends Component> iterator(long first, long count) {
+	int fromPage = 0;
+	if (first >= BicisListPage.ITEMS_PAGE) {
+	    fromPage = ((int) (first/BicisListPage.ITEMS_PAGE));
+	}
+	List<Component> list = getList(getSort(), fromPage, BicisListPage.ITEMS_PAGE.intValue());
+	return list.iterator();
+    }
+
+    private List<Component> getList(SortParam<String> sort, long first, int intValue) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public long size() {
+	Component filtro = null;
+	if (filterState != null && filterState.getType() != null)
+	    filtro = filterState;
+	return dao.count(filtro);
+    }
+
+    @Override
+    public IModel<Component> model(Component object) {
+	return Model.of(object);
+    }
+    
+    private Sort defaultSort() {
+	return new Sort(Sort.Direction.ASC, ComponentsListPage.NAME);
+    }
+
+    @Override
+    public Component getFilterState() {
+	return filterState;
+    }
+
+    @Override
+    public void setFilterState(Component state) {
+	this.filterState = state;
+    }
+    
 }

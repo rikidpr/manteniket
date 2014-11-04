@@ -231,7 +231,7 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	    if (fComp.getId()!=null){
 		comp = fComp;
 	    } else if (fComp.getName()!=null && !fComp.getName().isEmpty()){
-		comp = compRepo.findByName(fComp.getName());
+		comp = compRepo.findByUserIdAndName(filtro.getUser().getId(), fComp.getName());
 	    }
 	    page = repo.findByComponent(comp, pageRequest);
 	    
