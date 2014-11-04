@@ -93,7 +93,9 @@ public class BikeCompListPage extends ManteniketPage {
     
     
     private void listado(final Long id, final Entity entity) {
-	BikeCompDataProvider dataProvider = new BikeCompDataProvider(dao);
+	ComponentUse cu = new ComponentUse();
+	cu.setUser(getUser());
+	BikeCompDataProvider dataProvider = new BikeCompDataProvider(dao, cu);
 	FilterForm<ComponentUse> form = new FilterForm<ComponentUse>("filter-form", dataProvider);
 	List<IColumn<ComponentUse, String>> columns = new ArrayList<IColumn<ComponentUse, String>>();
 
@@ -156,9 +158,10 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
     private IComponentUsesDAO dao;
     private List<ComponentUse> list;
     
-    BikeCompDataProvider(IComponentUsesDAO dao){
+    BikeCompDataProvider(IComponentUsesDAO dao, ComponentUse componentUse){
 	this.dao = dao;
-	this.filterState = new ComponentUse();
+	this.filterState = componentUse;
+	
     }
 
     @Override
@@ -173,13 +176,8 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
     }
 
     private List<ComponentUse> getList(SortParam<String> sortParam, int fromPage, int itemsPage) {
-	ComponentUse filtro = null;
+	ComponentUse filtro = getFiltro();
 	Sort sort = null;
-	if (filterState != null && 
-		(filterState.getBike()!= null || filterState.getComponent()!=null)
-		){
-	    filtro = filterState;
-	}
 	if (sortParam != null && 
 		(sortParam.getProperty().equals(BikeCompListPage.COMPONENT)
 			|| sortParam.getProperty().equals(BikeCompListPage.BIKE)
@@ -207,13 +205,22 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
 
     @Override
     public long size() {
-	ComponentUse filtro = null;
-	if (filterState != null && 
-		(filterState.getBike()!= null || filterState.getComponent()!=null)
-		){
-	    filtro = filterState;
-	}
+	ComponentUse filtro = getFiltro();
 	return dao.count(filtro);
+    }
+    
+    private ComponentUse getFiltro(){
+	ComponentUse filtro = null; 
+	if (filterState != null){
+	    Bici bike = filterState.getBike();
+	    Component comp = filterState.getComponent();
+	    if ((bike!= null && bike.getCodBici()!=null && !bike.getCodBici().isEmpty())
+		    ||
+		    (comp!=null && comp.getName()!= null && !comp.getName().isEmpty())){
+		filtro = filterState;
+	    }
+	}
+	return filtro;
     }
 
     @Override

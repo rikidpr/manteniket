@@ -56,7 +56,7 @@ public class ComponentUsePage extends ManteniketPage{
     private DropDownChoice<Bici> cmbBike;
     private DropDownChoice<Component> cmbComp;
     private TextArea<String> txtDesc;
-    private long sourceId;
+    private Long sourceId;
     private Entity entity;
     
     public ComponentUsePage(){
@@ -88,9 +88,11 @@ public class ComponentUsePage extends ManteniketPage{
 	    id = !params.get(ManteniketContracts.ID).isEmpty() 
 		    ? params.get(ManteniketContracts.ID).toLongObject()
 			    : null;
-	    entity = params.get(ManteniketContracts.ENTITY)
-		    .toEnum(Entity.class);
-	    sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong();
+		    if (!params.get(ManteniketContracts.SOURCE_ID).isNull()
+			    && !params.get(ManteniketContracts.ENTITY).isNull()){
+			sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong(0);
+			entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
+		    }
 	}
 	if (id!=null){
 	    bean = cuDao.findOne(id);
@@ -135,9 +137,7 @@ public class ComponentUsePage extends ManteniketPage{
 
 	    public void onSubmit(){
 		save();
-		PageParameters params = new PageParameters();
-		params.add(ID, sourceId);
-		params.add(ENTITY, entity);
+		PageParameters params = getReturnParams();
 		setResponsePage(BikeCompListPage.class, params);
 	    }
 	};
@@ -146,15 +146,11 @@ public class ComponentUsePage extends ManteniketPage{
 	BootstrapButton retBtn = new BootstrapButton("retBtn", ManteniketContracts.BTN_RETURN){
 	    private static final long serialVersionUID = 1L;
 	    public void onSubmit(){
-		PageParameters params = new PageParameters();
-		params.add(ID, sourceId);
-		params.add(ENTITY, entity);
+		PageParameters params = getReturnParams();
 		setResponsePage(BikeCompListPage.class, params);
 	    }
 	    public void onError(){
-		PageParameters params = new PageParameters();
-		params.add(ID, sourceId);
-		params.add(ENTITY, entity);
+		PageParameters params = getReturnParams();
 		setResponsePage(BikeCompListPage.class, params);
 	    }
 	};
@@ -189,25 +185,37 @@ public class ComponentUsePage extends ManteniketPage{
         add(form);
     }
     
+    private PageParameters getReturnParams() {
+	PageParameters params = new PageParameters();
+	if (sourceId != null)
+	    params.add(ID, sourceId);
+	if (entity != null)
+	    params.add(ENTITY, entity);
+	return params;
+    }
+    
     private Object getEntityRefObject(PageParameters params) {
 	Object object = null;
-	try{
-	    long id = params.get(ManteniketContracts.SOURCE_ID).toLong(0);
-	    Entity entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
-	    switch(entity){
-	    case BIKE:
-		Bici bici = new Bici();
-		bici.setIdBici(id);
-		object = bici;
-		break;
-	    case COMPONENT:
-		Component component = new Component();
-		component.setId(id);
-		object = component;
-		break;
+	if (params != null && !params.get(ManteniketContracts.SOURCE_ID).isNull()
+		&& !params.get(ManteniketContracts.ENTITY).isNull()){
+	    try{
+		long id = params.get(ManteniketContracts.SOURCE_ID).toLong(0);
+		Entity entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
+		switch(entity){
+		case BIKE:
+		    Bici bici = new Bici();
+		    bici.setIdBici(id);
+		    object = bici;
+		    break;
+		case COMPONENT:
+		    Component component = new Component();
+		    component.setId(id);
+		    object = component;
+		    break;
+		}
+	    } catch(NumberFormatException e){
+		log.error("error de formato", e);
 	    }
-	} catch(NumberFormatException e){
-	    log.error("error de formato", e);
 	}
 	return object;
     }

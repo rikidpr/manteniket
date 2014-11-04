@@ -22,6 +22,7 @@ import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.repository.BicisRepository;
 import an.dpr.manteniket.repository.ComponentUsesRepository;
+import an.dpr.manteniket.repository.ComponentesRepository;
 import an.dpr.manteniket.util.DateUtil;
 
 public class ComponentUsesDAO implements IComponentUsesDAO {
@@ -30,7 +31,9 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
     @Autowired
     private ComponentUsesRepository repo;
     @Autowired
-    private BicisRepository repoBike;
+    private BicisRepository bikeRepo;
+    @Autowired
+    private ComponentesRepository compRepo;
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired IBikesDAO bikesDao;
@@ -218,13 +221,19 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	    if (filtro.getBike().getId() != null)
 		bike = filtro.getBike();
 	    else if (filtro.getBike().getCodBici() != null){
-		bike = repoBike.findByCodBici(filtro.getUser(), filtro.getBike().getCodBici());
+		bike = bikeRepo.findByCodBici(filtro.getUser(), filtro.getBike().getCodBici());
 	    }
 	    page = repo.findByBike(bike, pageRequest);
 	    
-	} else if (filtro != null && filtro.getComponent() != null && filtro.getComponent().getId() != null){
-	    //TODO hacer la misma movida que con bici ahi arriba
-	    page = repo.findByComponent(filtro.getComponent(), pageRequest);
+	} else if (filtro != null && filtro.getComponent() != null){
+	    Component fComp = filtro.getComponent();
+	    Component comp = null;
+	    if (fComp.getId()!=null){
+		comp = fComp;
+	    } else if (fComp.getName()!=null && !fComp.getName().isEmpty()){
+		comp = compRepo.findByName(fComp.getName());
+	    }
+	    page = repo.findByComponent(comp, pageRequest);
 	    
 	}  else {
 	    page = repo.findAll(pageRequest);
