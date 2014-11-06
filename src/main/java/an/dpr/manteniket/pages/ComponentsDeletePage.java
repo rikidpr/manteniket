@@ -31,12 +31,12 @@ public class ComponentsDeletePage extends ManteniketPage{
 	    @Override
 	    public void accept() {
 		delete(id);
-		setResponsePage(BicisListPage.class);
+		setResponsePage(ComponentsListPage.class);
 	    }
 
 	    @Override
 	    public void cancel() {
-		setResponsePage(BicisListPage.class);
+		setResponsePage(ComponentsListPage.class);
 	    }};
 	ConfirmPanel cp = new ConfirmPanel("confirmPanel", texto.toString(), actions);
 	add(cp);

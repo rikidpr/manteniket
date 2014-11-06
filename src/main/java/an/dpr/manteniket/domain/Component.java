@@ -13,9 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import an.dpr.manteniket.bean.ManteniketBean;
+
 @Entity
 @Table(name = "components")
-public class Component implements Serializable{
+public class Component implements Serializable, ManteniketBean{
 
     private Long id;
     private String name;

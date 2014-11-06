@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilteredPropertyColumn;
@@ -25,17 +23,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
-import an.dpr.manteniket.bean.ManteniketBean;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
+import an.dpr.manteniket.components.ManteniketDataTable;
 import an.dpr.manteniket.components.ManteniketLinkColumn;
-import an.dpr.manteniket.dao.ActivitiesDAO;
+import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
-import de.agilecoders.wicket.core.markup.html.bootstrap.navigation.BootstrapPagingNavigator;
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
 
@@ -45,7 +42,7 @@ public class ActivitiesListPage extends ManteniketPage {
     private static final Logger log = LoggerFactory.getLogger(ActivitiesListPage.class);
     public static final Long ITEMS_PAGE = new Long(5);
     @SpringBean
-    private ActivitiesDAO dao;
+    private IActivityDao dao;
     @SpringBean
     private IBikesDAO bicisDao;
 
@@ -56,7 +53,9 @@ public class ActivitiesListPage extends ManteniketPage {
     
     private void initComponents(){
 //	BootstrapForm form = new BootstrapForm("form");
-	final ActivitySortData dataProvider = new ActivitySortData(dao);
+	Activity filtroBase=new Activity();
+	filtroBase.setUser(getUser());
+	final ActivitySortData dataProvider = new ActivitySortData(dao, filtroBase);
 	FilterForm<Activity> form = new FilterForm<Activity>("form", dataProvider);
 	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD){
 
@@ -75,7 +74,7 @@ public class ActivitiesListPage extends ManteniketPage {
 
 	log.debug("inicio");
 
-	List<IColumn<? extends ManteniketBean,String>> columns = new ArrayList<IColumn<? extends ManteniketBean,String>>();
+	List<IColumn<Activity,String>> columns = new ArrayList<IColumn<Activity,String>>();
 	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.date"), "date", "date"));
 	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.km"),"km","km"));	
 	//	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.bike"),"bike.codBici","bike.codBici"));
@@ -96,10 +95,9 @@ public class ActivitiesListPage extends ManteniketPage {
 	columns.add(linkDelete);
 	
 	
-	DefaultDataTable table = new DefaultDataTable("table", columns,dataProvider, 10);
+	ManteniketDataTable<Activity, String> table = new ManteniketDataTable<Activity, String>("table", columns,dataProvider, 10);
 	table.add(new TableBehavior().striped());
 	form.add(table);
-	form.add(new BootstrapPagingNavigator("pagingNavigator", table));
 
 	add(form);
     }
@@ -110,17 +108,15 @@ public class ActivitiesListPage extends ManteniketPage {
 class ActivitySortData extends SortableDataProvider<Activity, String> implements IFilterStateLocator<Activity>{
     
     private static final Logger log = LoggerFactory.getLogger(ActivitySortData.class);
-    private ActivitiesDAO dao;
+    private IActivityDao dao;
     private static final long serialVersionUID = 1L;
     private static final String DATE = "date";
     private static final String KM = "km";
-    private List<Activity> list;
-    private long size;
     private Activity filterState;
 
-    public ActivitySortData(ActivitiesDAO dao){
+    public ActivitySortData(IActivityDao dao, Activity filtroBase){
 	this.dao = dao;
-	filterState = new Activity();
+	filterState = filtroBase;
     }
 
     @Override
@@ -129,32 +125,17 @@ class ActivitySortData extends SortableDataProvider<Activity, String> implements
 	if (first >= ActivitiesListPage.ITEMS_PAGE) {
 	    fromPage = ((int) (first/ActivitiesListPage.ITEMS_PAGE));
 	}
-	//FIXME mejora haciendo llamadas a DB de lo necesario en cuenta de traer todo el pastel y luego filtrar!!
-	List<Activity> actList = getList(getSort(), fromPage, ActivitiesListPage.ITEMS_PAGE.intValue());
-	return filtra(actList);
+	List<Activity> list = getList(getSort(), fromPage, ActivitiesListPage.ITEMS_PAGE.intValue());
+	return list.iterator();
     }
 
-    //filtra por el filterState indicado
-    private Iterator<? extends Activity> filtra(List<Activity> actList) {
-	Iterator<? extends Activity> iterator;
-	if (filterState == null){
-	    iterator = actList.iterator();
-	} else {
-	    log.debug("filtramoooos"+filterState);
-	    iterator = actList.iterator();
-//	    List<Activity> newList = new ArrayList<Activity>();
-//	    for(Activity act : actList){
-//		if (act.getBike().equals(filterState)){
-//		    newList.add(act);
-//		}
-//	    }
-//	    iterator = newList.iterator();
-	}
-	return iterator;
+    private List<Activity> getList(SortParam<String> sortParam, int fromPage, int numberOfResults) {
+	Sort sort = getSort(sortParam);
+	return dao.find(filterState, sort, fromPage, numberOfResults);
     }
-
-    private List<Activity> getList(SortParam<String> sortParam, int page, int numberOfResults) {
-	Sort sort;
+    
+    private Sort getSort(SortParam<String> sortParam){
+	Sort sort ;
 	if (sortParam != null && 
 		(sortParam.getProperty().equals(DATE)
 			|| sortParam.getProperty().equals(KM))
@@ -167,45 +148,14 @@ class ActivitySortData extends SortableDataProvider<Activity, String> implements
 		direction = Sort.Direction.DESC;
 	    }
 	    sort = new Sort(direction, sortParam.getProperty());
-	    list = dao.findAll(sort, page, numberOfResults);
-	    
+	} else{
+	    sort = new Sort(Sort.Direction.DESC, DATE);
 	}
-	return list;
+	return sort;
     }
 
-    private List<Activity> getList(final SortParam<String> sortParam) {
-	Sort sort;
-	if (sortParam != null && 
-		(sortParam.getProperty().equals(DATE)
-		|| sortParam.getProperty().equals(KM))
-		){
-	    //ordenacion por fecha
-	    Direction direction;
-	    if (sortParam.isAscending()){
-		direction = Sort.Direction.ASC;
-	    }else {
-		direction = Sort.Direction.DESC;
-	    }
-	    sort = new Sort(direction, sortParam.getProperty());
-	    list = dao.findAll(sort);
-	    
-	}
-	return list;
-    }
-
-    @Override
     public long size() {
-	if (list == null){
-	    listadoPorDefecto();
-	    size = list.size();
-	}
-	return size;
-    }
-
-    private void listadoPorDefecto() {
-	Sort sort = new Sort(Sort.Direction.ASC, DATE);
-	setSort(DATE, SortOrder.ASCENDING);
-	list = dao.findAll(sort);
+	return dao.count(filterState);
     }
 
     @Override

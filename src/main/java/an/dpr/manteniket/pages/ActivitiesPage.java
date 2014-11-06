@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import an.dpr.manteniket.bean.ActivityType;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.Utils;
-import an.dpr.manteniket.dao.ActivitiesDAO;
+import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
@@ -40,7 +40,7 @@ public class ActivitiesPage extends ManteniketPage {
     private static final Logger log = LoggerFactory
 	    .getLogger(ActivitiesPage.class);
     @SpringBean
-    private ActivitiesDAO dao;
+    private IActivityDao dao;
     @SpringBean
     private IBikesDAO bicisDao;
 

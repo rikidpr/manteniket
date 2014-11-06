@@ -19,8 +19,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.repository.ActivitiesRepository;
-//TODO buscar por usuario!!!!
-public class ActivitiesDAO {
+/**
+ * 
+ * @author saez
+ *
+ */
+public class ActivitiesDAO implements IActivityDao{
 
     private static final Logger log = LoggerFactory.getLogger(ActivitiesDAO.class);
     @Autowired
@@ -40,14 +44,26 @@ public class ActivitiesDAO {
 	return transactionTemplate;
     }
     
+    /* (non-Javadoc)
+     * @see an.dpr.manteniket.dao.IActivityDao#save(an.dpr.manteniket.domain.Activity)
+     */
+    @Override
     public Activity save(Activity activity){
 	return repo.save(activity);
     }
 
+    /* (non-Javadoc)
+     * @see an.dpr.manteniket.dao.IActivityDao#delete(java.lang.Long)
+     */
+    @Override
     public void delete(Long activityId){
 	repo.delete(activityId);
     }
     
+    /* (non-Javadoc)
+     * @see an.dpr.manteniket.dao.IActivityDao#findById(java.lang.Long)
+     */
+    @Override
     public Activity findById(final Long activityId){
 	return getTransactionTemplate().execute(new TransactionCallback<Activity>() {
 	    
@@ -62,32 +78,23 @@ public class ActivitiesDAO {
 	
     }
     
-    public List<Activity> findAll(){
-	//sort por defecto
-	Sort sort = new Sort(Sort.Direction.ASC, "date");
-	return findAll(sort);
-    }
-    
-    public List<Activity> findAll(int from, int numberOfResults){
-	Sort sort = new Sort(Sort.Direction.ASC, "date");
-	return findAll(sort, from, numberOfResults);
-    }
-    
-    public List<Activity> findAll(final Sort sort){
-	return findAll(sort, null, null);
-    }
-    
-    public List<Activity> findAll(final Sort sort, final Integer fromPage, final Integer numberOfResults){
+    /* (non-Javadoc)
+     * @see an.dpr.manteniket.dao.IActivityDao#find(an.dpr.manteniket.domain.Activity, org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
+     */
+    @Override
+    public List<Activity> find(final Activity activity, final Sort sort, final Integer fromPage, final Integer numberOfResults){
+	if (activity== null || activity.getUser()==null)
+	    throw new IllegalArgumentException("la actividad no puede ser nula ni carecer de usuario");
 	return getTransactionTemplate().execute(new TransactionCallback<List<Activity>>() {
 
 	    @Override
 	    public List<Activity> doInTransaction(TransactionStatus status) {
 		List<Activity> list = null;
 		if (fromPage != null){
-		    Page<Activity> page= repo.findAll(new PageRequest(fromPage, numberOfResults, sort));
+		    Page<Activity> page= repo.findByUserId(activity.getUser().getId(),new PageRequest(fromPage, numberOfResults, sort));
 		    list = page.getContent();
 		} else {
-		    list = repo.findAll(sort);
+		    list = repo.findByUserId(activity.getUser().getId(), sort);
 		}
 		for(Activity act : list){
 		    Hibernate.initialize(act.getBike());
@@ -122,6 +129,10 @@ public class ActivitiesDAO {
 	});
     }
 
+    /* (non-Javadoc)
+     * @see an.dpr.manteniket.dao.IActivityDao#findByBikeAndDates(an.dpr.manteniket.domain.Bici, java.util.Date, java.util.Date)
+     */
+    @Override
     public List<Activity> findByBikeAndDates(final Bici bike, final Date ini, final Date fin){
 	
 	return getTransactionTemplate().execute(new TransactionCallback<List<Activity>>() {
@@ -137,6 +148,16 @@ public class ActivitiesDAO {
 	    }
 	    
 	});
+    }
+
+    /* (non-Javadoc)
+     * @see an.dpr.manteniket.dao.IActivityDao#count(an.dpr.manteniket.domain.Activity)
+     */
+    @Override
+    public long count(Activity activity) {
+	if (activity== null || activity.getUser()==null)
+	    throw new IllegalArgumentException("la actividad no puede ser nula ni carecer de usuario");
+	return repo.countByUserId(activity.getUser().getId());
     }
     
     

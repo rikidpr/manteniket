@@ -103,18 +103,6 @@ public class BicisListPage extends ManteniketPage {
 
     }
 	
-    private Bici newBiciInstance() {
-	Bici bici = new Bici();
-	//TODO esto del user a ManteniketApp
-	User user = (User) getSession().getAttribute(ManteniketContracts.LOGGED_USER);
-	if (user == null){
-	    user = userDao.getUser(AppSecurity.getUserName());
-	    getSession().setAttribute(ManteniketContracts.LOGGED_USER, user);
-	}
-	bici.setUser(user);
-	return bici;
-    }
-
     private void addActionColumns(List<IColumn<Bici, String>> columns) {
 	PageParameters params = new PageParameters();
 	params.add(ManteniketContracts.ENTITY,  Entity.BIKE);

@@ -88,13 +88,14 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 
     @Override
     public List<Component> find(Component filtro, Sort sort, int page, int numberOfResults) {
-	List<Component> list;
-	if (filtro == null){
-	    list = null;
-	} else if (filtro.getType() == null){
-	    list = findByUser(filtro.getUser(), sort, page, numberOfResults);
-	} else {//DE MOMENTO SOLO TIPO
+	List<Component> list = null;
+	if (filtro != null && filtro.getType()!= null && !filtro.getType().isEmpty()){
 	    list = findByTipo(filtro, sort, page, numberOfResults);
+//	} else if (filtro != null && filtro.getName()!= null && !filtro.getName().isEmpty()){
+	    //TODO list = findByName(filtro, sort, page, numberOfResults);
+	}
+	if(list == null){
+	    list = findByUser(filtro.getUser(), sort, page, numberOfResults);
 	}
 	return list;
     }

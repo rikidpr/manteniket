@@ -3,11 +3,9 @@ package an.dpr.manteniket.components;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import an.dpr.manteniket.dao.ActivitiesDAO;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.dialog.Alert;
@@ -18,9 +16,6 @@ public class ConfirmPanel extends Panel{
     private static final long serialVersionUID = 1L;
     
     private static final Logger log = LoggerFactory.getLogger(ConfirmPanel.class);
-    @SpringBean
-    private transient ActivitiesDAO dao;
-    //componentes
     
     public ConfirmPanel(String id, String texto, final ConfirmAction actions){
 	super(id);

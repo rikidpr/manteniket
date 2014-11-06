@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.ConfirmAction;
 import an.dpr.manteniket.components.ConfirmPanel;
-import an.dpr.manteniket.dao.ActivitiesDAO;
+import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.template.ManteniketPage;
 
@@ -22,7 +22,7 @@ public class ActivityDeletePage extends ManteniketPage{
     
     private static final Logger log = LoggerFactory.getLogger(ActivityDeletePage.class);
     @SpringBean
-    private ActivitiesDAO dao;
+    private IActivityDao dao;
     //componentes
     
     public ActivityDeletePage(final PageParameters params){
