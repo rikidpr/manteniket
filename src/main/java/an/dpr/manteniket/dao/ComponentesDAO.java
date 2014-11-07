@@ -17,6 +17,7 @@ import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.domain.User;
+import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.repository.ComponentesRepository;
 
 /**
@@ -37,9 +38,13 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 	// TODO manejo excepciones sql
     }
     
-    public void delete(Long id){
-	repo.delete(id);
-	// TODO manejo excepciones sql
+    public void delete(Long id) throws ManteniketException{
+	try{
+	    repo.delete(id);
+	} catch(org.springframework.dao.DataIntegrityViolationException e){
+	    log.error("The component can't deleted", e);
+	    throw new ManteniketException(ManteniketException.CANT_DELETE_DEPENDENCIES);
+	}
     }
 
     public Component findOne(final Long id) {

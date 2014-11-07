@@ -1,15 +1,17 @@
 package an.dpr.manteniket.pages;
 
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import de.agilecoders.wicket.core.markup.html.bootstrap.dialog.Alert.Type;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.ConfirmAction;
 import an.dpr.manteniket.components.ConfirmPanel;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.template.ManteniketPage;
 
 public class BicisDeletePage extends ManteniketPage{
@@ -31,8 +33,8 @@ public class BicisDeletePage extends ManteniketPage{
 
 	    @Override
 	    public void accept() {
-		deleteBike(id);
-		setResponsePage(BicisListPage.class);
+		PageParameters params = deleteBike(id);
+		setResponsePage(BicisListPage.class, params);
 	    }
 
 	    @Override
@@ -43,13 +45,26 @@ public class BicisDeletePage extends ManteniketPage{
 	add(cp);
     }
     
-    private void deleteBike(Long bikeId) {
+    private PageParameters deleteBike(Long bikeId) {
+	PageParameters params;
 	try{
 	    dao.delete(bikeId);
+	    params = null;
 	    log.debug("bike "+bikeId+" deleted");
+	} catch(ManteniketException e){
+	    params = new PageParameters();
+	    if (ManteniketException.CANT_DELETE_DEPENDENCIES == e.getCode()){
+		params.add(ManteniketContracts.NOTIFICATION, "delete.bike.dependencies");
+	    } else {
+		params.add(ManteniketContracts.NOTIFICATION, "delete.error");
+	    }
+	    params.add(ManteniketContracts.NOTIFICATION_TYPE, Type.Danger);
 	} catch(Exception e){
-	    log.error("petada borrando", e);
+	    params = new PageParameters();
+	    params.add(ManteniketContracts.NOTIFICATION, "delete.error");
+	    params.add(ManteniketContracts.NOTIFICATION_TYPE, Type.Danger);
 	}
+	return params;
     }
     
 }

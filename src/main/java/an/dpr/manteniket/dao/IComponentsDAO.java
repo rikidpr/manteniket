@@ -6,12 +6,13 @@ import org.springframework.data.domain.Sort;
 
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.User;
+import an.dpr.manteniket.exception.ManteniketException;
 
 public interface IComponentsDAO {
     
     Component save(Component comp);
     
-    void delete(Long id);
+    void delete(Long id) throws ManteniketException;
 
     Component findOne(final Long id) ;
 

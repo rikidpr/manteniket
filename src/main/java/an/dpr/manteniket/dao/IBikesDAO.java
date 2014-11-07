@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.User;
+import an.dpr.manteniket.exception.ManteniketException;
 
 public interface IBikesDAO {
 
@@ -23,7 +24,7 @@ public interface IBikesDAO {
 
     Bici save(Bici bike);
 
-    void delete(Long bikeId);
+    void delete(Long bikeId) throws ManteniketException;
 
     List<Bici> find(Bici filtro, Sort sort, int page, int numberOfResults);
 

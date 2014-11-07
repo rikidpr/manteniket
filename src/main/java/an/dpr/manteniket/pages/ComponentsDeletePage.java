@@ -8,9 +8,11 @@ import org.slf4j.LoggerFactory;
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.components.ConfirmAction;
 import an.dpr.manteniket.components.ConfirmPanel;
-import an.dpr.manteniket.dao.ComponentesDAO;
+import an.dpr.manteniket.dao.IComponentsDAO;
 import an.dpr.manteniket.domain.Component;
+import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.template.ManteniketPage;
+import de.agilecoders.wicket.core.markup.html.bootstrap.dialog.Alert.Type;
 
 public class ComponentsDeletePage extends ManteniketPage{
 
@@ -18,7 +20,7 @@ public class ComponentsDeletePage extends ManteniketPage{
     
     private static final Logger log = LoggerFactory.getLogger(ComponentsDeletePage.class);
     @SpringBean
-    private ComponentesDAO dao;
+    private IComponentsDAO dao;
     
     public ComponentsDeletePage(final PageParameters params){
 	super();
@@ -30,8 +32,8 @@ public class ComponentsDeletePage extends ManteniketPage{
 
 	    @Override
 	    public void accept() {
-		delete(id);
-		setResponsePage(ComponentsListPage.class);
+		PageParameters params= delete(id);
+		setResponsePage(ComponentsListPage.class, params);
 	    }
 
 	    @Override
@@ -42,13 +44,27 @@ public class ComponentsDeletePage extends ManteniketPage{
 	add(cp);
     }
     
-    private void delete(Long id) {
+    
+    private PageParameters delete(Long id) {
+	PageParameters params;
 	try{
 	    dao.delete(id);
+	    params = null;
 	    log.debug("component "+id+" deleted");
+	} catch(ManteniketException e){
+	    params = new PageParameters();
+	    if (ManteniketException.CANT_DELETE_DEPENDENCIES == e.getCode()){
+		params.add(ManteniketContracts.NOTIFICATION, "delete.component.dependencies");
+	    } else {
+		params.add(ManteniketContracts.NOTIFICATION, "delete.error");
+	    }
+	    params.add(ManteniketContracts.NOTIFICATION_TYPE, Type.Danger);
 	} catch(Exception e){
-	    log.error("petada borrando", e);
+	    params = new PageParameters();
+	    params.add(ManteniketContracts.NOTIFICATION, "delete.error");
+	    params.add(ManteniketContracts.NOTIFICATION_TYPE, Type.Danger);
 	}
+	return params;
     }
     
 }

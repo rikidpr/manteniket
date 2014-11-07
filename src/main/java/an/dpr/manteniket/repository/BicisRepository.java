@@ -28,7 +28,6 @@ public interface BicisRepository extends CrudRepository<Bici, Long>{
     @Query(QUERY_USER_COD_BICI)
     Bici findByCodBici(@Param(USER) User user, @Param(COD_BICI) String codBici);
     
-    
     @Query(QUERY_USER_TIPO)
     List<Bici> findByUserAndTipo(@Param(USER) User user, @Param(TIPO) String tipo);
     @Query(QUERY_USER_TIPO)

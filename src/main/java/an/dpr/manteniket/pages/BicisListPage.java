@@ -38,14 +38,15 @@ import an.dpr.manteniket.domain.User;
 import an.dpr.manteniket.security.AppSecurity;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.dialog.Alert;
+import de.agilecoders.wicket.core.markup.html.bootstrap.dialog.Alert.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesomeIconType;
 
 public class BicisListPage extends ManteniketPage {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory
-	    .getLogger(BicisListPage.class);
+    private static final Logger log = LoggerFactory.getLogger(BicisListPage.class);
     public static final Long ITEMS_PAGE = new Long(3);
     @SpringBean
     private IBikesDAO dao;
@@ -53,87 +54,87 @@ public class BicisListPage extends ManteniketPage {
     private IUserDAO userDao;
 
     public BicisListPage() {
+	this(null);
+    }
+
+    public BicisListPage(PageParameters params) {
 	super();
 
 	Bici filterBike = new Bici();
 	filterBike.setUser(getUser());
 	final BikeSortDataProvider dataProvider = new BikeSortDataProvider(dao, filterBike);
-//	// create the form used to contain all filter components
-	final FilterForm<Bici> form = new FilterForm<Bici>("filter-form", dataProvider)
-		{
+	// // create the form used to contain all filter components
+	final FilterForm<Bici> form = new FilterForm<Bici>("filter-form", dataProvider) {
 	    private static final long serialVersionUID = 1L;
-	    
+
 	    @Override
-	    protected void onSubmit()
-	    {
+	    protected void onSubmit() {
 		log.debug("submit filter form");
 	    }
 	};
-	
 
-	List<IColumn<Bici,String>> columns = new ArrayList<IColumn<Bici,String>>();
+	List<IColumn<Bici, String>> columns = new ArrayList<IColumn<Bici, String>>();
 	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.code"), "codBici", "codBici"));
-	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.desc"),"descripcion","descripcion"));
-	IModel<List<? extends String>> cmb = Model.ofList(Arrays.asList(CyclingType.names())); 
-	columns.add( new ChoiceFilteredPropertyColumn<Bici, String, String>( new ResourceModel( "head.type" ), "tipo", "tipo", cmb));
-	
+	columns.add(new PropertyColumn<Bici, String>(new ResourceModel("head.desc"), "descripcion", "descripcion"));
+	IModel<List<? extends String>> cmb = Model.ofList(Arrays.asList(CyclingType.names()));
+	columns.add(new ChoiceFilteredPropertyColumn<Bici, String, String>(new ResourceModel("head.type"), "tipo",
+		"tipo", cmb));
+
 	addActionColumns(columns);
-	
-	ManteniketDataTable<Bici, String> table = new ManteniketDataTable<Bici, String>("table", columns,dataProvider, ITEMS_PAGE.intValue());
+
+	ManteniketDataTable<Bici, String> table = new ManteniketDataTable<Bici, String>("table", columns, dataProvider,
+		ITEMS_PAGE.intValue());
 	table.addTopToolbar(new FilterToolbar(table, form, dataProvider));
 	form.add(table);
 	add(form);
-	
-	
-	
+
 	BootstrapForm buttonForm = new BootstrapForm("button-form");
-	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD){
+	BootstrapButton btnAdd = new BootstrapButton("btnAdd", BTN_ADD) {
 
 	    private static final long serialVersionUID = 1L;
-	    
+
 	    @Override
-	    public void onSubmit(){
+	    public void onSubmit() {
 		setResponsePage(BicisPage.class);
 	    }
-	
+
 	};
 	btnAdd.setLabel(new ResourceModel("btn.add"));
 	buttonForm.add(btnAdd);
 	add(buttonForm);
 
+	addNotification(params);
     }
-	
+
     private void addActionColumns(List<IColumn<Bici, String>> columns) {
 	PageParameters params = new PageParameters();
-	params.add(ManteniketContracts.ENTITY,  Entity.BIKE);
-  	IColumn<Bici, String> linkComponents = new ManteniketLinkColumn<Bici, BikeCompListPage, String>(
-  		Model.of(""), BikeCompListPage.class, Model.of(""),
-  		FontAwesomeIconType.cog,params);
-  	columns.add(linkComponents);
+	params.add(ManteniketContracts.ENTITY, Entity.BIKE);
+	IColumn<Bici, String> linkComponents = new ManteniketLinkColumn<Bici, BikeCompListPage, String>(Model.of(""),
+		BikeCompListPage.class, Model.of(""), FontAwesomeIconType.cog, params);
+	columns.add(linkComponents);
 
-  	IColumn<Bici, String> linkEdit = new ManteniketLinkColumn<Bici, BicisPage, String>(Model.of(""),
-  		BicisPage.class, Model.of(""), FontAwesomeIconType.edit);
-  	columns.add(linkEdit);
+	IColumn<Bici, String> linkEdit = new ManteniketLinkColumn<Bici, BicisPage, String>(Model.of(""),
+		BicisPage.class, Model.of(""), FontAwesomeIconType.edit);
+	columns.add(linkEdit);
 
-  	IColumn<Bici, String> linkDelete = new ManteniketLinkColumn<Bici, BicisDeletePage, String>(Model.of(""),
-  		BicisDeletePage.class, Model.of(""), FontAwesomeIconTypeExt.remove);
-  	columns.add(linkDelete);
+	IColumn<Bici, String> linkDelete = new ManteniketLinkColumn<Bici, BicisDeletePage, String>(Model.of(""),
+		BicisDeletePage.class, Model.of(""), FontAwesomeIconTypeExt.remove);
+	columns.add(linkDelete);
 
-      }
+    }
 }
 
+class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements IFilterStateLocator<Bici> {
 
-class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements IFilterStateLocator<Bici>{
-    
     private IBikesDAO dao;
     private static final long serialVersionUID = 1L;
     private List<Bici> list;
     private Bici filterState;
     private static final String DESCRIPCION = "descripcion";
     private static final String COD_BICI = "codBici";
-    private static final String TIPO = "tipo"; 
+    private static final String TIPO = "tipo";
 
-    public BikeSortDataProvider(IBikesDAO dao, Bici filterBike){
+    public BikeSortDataProvider(IBikesDAO dao, Bici filterBike) {
 	this.dao = dao;
 	filterState = filterBike;
     }
@@ -142,25 +143,23 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     public Iterator<? extends Bici> iterator(long first, long count) {
 	int fromPage = 0;
 	if (first >= BicisListPage.ITEMS_PAGE) {
-	    fromPage = ((int) (first/BicisListPage.ITEMS_PAGE));
+	    fromPage = ((int) (first / BicisListPage.ITEMS_PAGE));
 	}
-	//FIXME mejora haciendo llamadas a DB de lo necesario en cuenta de traer todo el pastel y luego filtrar!!
-	list= getList(getSort(), fromPage, BicisListPage.ITEMS_PAGE.intValue());
+	// FIXME mejora haciendo llamadas a DB de lo necesario en cuenta de
+	// traer todo el pastel y luego filtrar!!
+	list = getList(getSort(), fromPage, BicisListPage.ITEMS_PAGE.intValue());
 	return list.iterator();
     }
 
     private List<Bici> getList(SortParam<String> sortParam, int page, int numberOfResults) {
 	Sort sort = null;
-	if (sortParam != null && 
-		(sortParam.getProperty().equals(COD_BICI)
-			|| sortParam.getProperty().equals(TIPO)
-			|| sortParam.getProperty().equals(DESCRIPCION)
-			)
-		){
+	if (sortParam != null
+		&& (sortParam.getProperty().equals(COD_BICI) || sortParam.getProperty().equals(TIPO) || sortParam
+			.getProperty().equals(DESCRIPCION))) {
 	    Direction direction;
-	    if (sortParam.isAscending()){
+	    if (sortParam.isAscending()) {
 		direction = Sort.Direction.ASC;
-	    }else {
+	    } else {
 		direction = Sort.Direction.DESC;
 	    }
 	    sort = new Sort(direction, sortParam.getProperty());
@@ -189,12 +188,11 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
     }
 
     public Bici getFilterState() {
-        return filterState;
+	return filterState;
     }
 
     public void setFilterState(Bici filterState) {
-        this.filterState = filterState;
+	this.filterState = filterState;
     }
-    
-};
 
+};

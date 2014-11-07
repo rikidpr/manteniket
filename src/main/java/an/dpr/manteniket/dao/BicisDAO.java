@@ -1,5 +1,6 @@
 package an.dpr.manteniket.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,8 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.User;
+import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.repository.BicisRepository;
 
 /**
@@ -111,9 +114,13 @@ public class BicisDAO implements IBikesDAO {
      * @see an.dpr.manteniket.dao.IBikesDAO#delete(java.lang.Long)
      */
     @Override
-    public void delete(Long bikeId){
-	//TODO manejar excepciones. Peude suceder que no permitar borrarlo por dependencias de FK.
-	repo.delete(bikeId);
+    public void delete(Long bikeId) throws ManteniketException{
+	try{
+	    repo.delete(bikeId);
+	} catch(org.springframework.dao.DataIntegrityViolationException e){
+	    log.error("The bike can't deleted", e);
+	    throw new ManteniketException(ManteniketException.CANT_DELETE_DEPENDENCIES);
+	}
     }
 
     public BicisRepository getRepo() {

@@ -58,16 +58,21 @@ public class ComponentsListPage extends ManteniketPage {
     static final String NAME = "name";
     static final String TYPE = "type";
     static final String KM = "km";
-    private static final int ITEMS_PAGE = 5;
+    static final int ITEMS_PAGE = 5;
     @SpringBean
     private ComponentesDAO dao;
     @SpringBean
     private IActivityDao actDao;
 
     public ComponentsListPage() {
+	this(null);
+    }
+
+    public ComponentsListPage(PageParameters params) {
 	super();
 	addBotonera();
 	addListado();
+	addNotification(params);
     }
 
     private void addBotonera() {
@@ -213,10 +218,10 @@ class ComponentSortDataProvider extends SortableDataProvider<Component, String> 
     @Override
     public Iterator<? extends Component> iterator(long first, long count) {
 	int fromPage = 0;
-	if (first >= BicisListPage.ITEMS_PAGE) {
-	    fromPage = ((int) (first / BicisListPage.ITEMS_PAGE));
+	if (first >= ComponentsListPage.ITEMS_PAGE) {
+	    fromPage = ((int) (first / ComponentsListPage.ITEMS_PAGE));
 	}
-	List<Component> list = getList(getSort(), fromPage, BicisListPage.ITEMS_PAGE.intValue());
+	List<Component> list = getList(getSort(), fromPage, ComponentsListPage.ITEMS_PAGE);
 	return list.iterator();
     }
 
