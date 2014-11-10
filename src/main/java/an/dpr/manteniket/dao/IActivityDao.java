@@ -5,21 +5,25 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 
+import an.dpr.manteniket.bean.ActivitySummaryBean;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.exception.ManteniketException;
 
 public interface IActivityDao {
 
-    public abstract Activity save(Activity activity);
+    Activity save(Activity activity);
 
-    public abstract void delete(Long activityId);
+    void delete(Long activityId);
 
-    public abstract Activity findById(Long activityId);
+    Activity findById(Long activityId);
 
-    public abstract List<Activity> find(Activity activity, Sort sort, Integer fromPage, Integer numberOfResults);
+    List<Activity> find(Activity activity, Sort sort, Integer fromPage, Integer numberOfResults);
 
-    public abstract List<Activity> findByBikeAndDates(Bici bike, Date ini, Date fin);
+    List<Activity> findByBikeAndDates(Bici bike, Date ini, Date fin);
 
-    public abstract long count(Activity activity);
+    long count(Activity activity);
+    
+    ActivitySummaryBean getActivitySummary(ActivitySummaryBean params) throws ManteniketException;
 
 }

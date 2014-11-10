@@ -1,5 +1,6 @@
 package an.dpr.manteniket.dao;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +17,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import an.dpr.manteniket.bean.ActivitySummaryBean;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.repository.ActivitiesRepository;
 /**
  * 
@@ -158,6 +161,38 @@ public class ActivitiesDAO implements IActivityDao{
 	if (activity== null || activity.getUser()==null)
 	    throw new IllegalArgumentException("la actividad no puede ser nula ni carecer de usuario");
 	return repo.countByUserId(activity.getUser().getId());
+    }
+
+    @Override
+    //TODO refactor troceo en metodos especificos (get list, get values)
+    public ActivitySummaryBean getActivitySummary(ActivitySummaryBean params)
+	    throws ManteniketException {
+	ActivitySummaryBean bean = new ActivitySummaryBean();
+	List<Activity> lista;
+	if (params.getType() == null){
+	    lista = repo.findByDateBetween(params.getInitDate(), params.getFinishDate());
+	} else {
+	    lista = repo.findDatesAndType(params.getInitDate(), params.getFinishDate(), params.getType().name());
+	}
+	int minutes = 0;
+	double km = 0;
+	int numberAct = 0;
+	for(Activity act:lista){
+	    km+=act.getKm();
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(act.getDate());
+	    minutes += cal.get(Calendar.HOUR)*60+cal.get(Calendar.MINUTE);
+	    numberAct++;
+	}
+	bean.setKm(km);
+	bean.setNumberActivities(numberAct);
+	bean.setMinutes(minutes);
+	bean.setType(params.getType());
+	
+	return bean;
+	
+	
+	
     }
     
     

@@ -1,10 +1,12 @@
 package an.dpr.manteniket.pages;
 
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.wicket.extensions.yui.calendar.DateTimeField.AM_PM;
 import org.apache.wicket.extensions.yui.calendar.TimeField;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -104,6 +106,7 @@ public class ActivitiesPage extends ManteniketPage {
 	txtDesc.add(new StringValidator(0, 100));
         add(new FeedbackPanel("feedback"));
     }
+    
 
     private void initComponents() {
 	log.debug("iniciando componentes");
@@ -158,6 +161,7 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(txtDate);
 	
 	txtTime = new TimeField("txtTime", Model.of(Calendar.getInstance().getTime()));
+	txtTime.setAmOrPm(AM_PM.AM);
 	form.add(new Label("lblTime", new ResourceModel("lbl.time")));
 	form.add(txtTime);
 	

@@ -17,14 +17,19 @@ import an.dpr.manteniket.domain.Bici;
 public interface ActivitiesRepository extends CrudRepository<Activity, Long> {
     
     String USER_ID = "USER_ID";
-    String FECHA_FIN = "fechaFin"; 
-    String FECHA_INI = "fechaIni";
+    String FINISH_DATE = "finishDate"; 
+    String INIT_DATE = "initDate";
     String BIKE= "bike";
+    String TYPE="TYPE";
     
     String FIND_BY_USER_ID = "from Activity a where a.disabledDate is null and  a.user.id=:"+USER_ID;
     String COUNT_BY_USER_ID = "SELECT count(a) from Activity a where a.disabledDate is null and  a.user.id=:"+USER_ID;
-    String FIND_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.date>:"+FECHA_INI+" and a.date<:"+FECHA_FIN;
-    String FIND_BIKE_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.bike=:"+BIKE+" and a.date>:"+FECHA_INI+" and a.date<:"+FECHA_FIN;
+    String FIND_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.date>:"+INIT_DATE
+	    +" and a.date<:"+FINISH_DATE;
+    String FIND_BIKE_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.bike=:"+BIKE
+	    +" and a.date>:"+INIT_DATE+" and a.date<:"+FINISH_DATE;
+    String FIND_BETWEEN_DATES_AND_TYPE = "from Activity a  where a.disabledDate is null and a.date>:"+INIT_DATE
+	    +" and a.date<:"+FINISH_DATE+" and a.type:="+TYPE;
 
     @Query("from Activity")
     List<Activity> findAll();
@@ -39,12 +44,18 @@ public interface ActivitiesRepository extends CrudRepository<Activity, Long> {
     Page<Activity> findByUserId(@Param(USER_ID) long userId, Pageable pageable);
     
     @Query(FIND_BETWEEN_DATES)
-    List<Activity> findByDateBetween(@Param(FECHA_INI)Date fehcaIni, @Param(FECHA_FIN) Date fechaFin);
+    List<Activity> findByDateBetween(@Param(INIT_DATE)Date fehcaIni, @Param(FINISH_DATE) Date fechaFin);
     
     @Query(FIND_BIKE_BETWEEN_DATES)
-    List<Activity> findByBikeAndDateBetween(@Param(BIKE)Bici bike, @Param(FECHA_INI)Date fehcaIni, @Param(FECHA_FIN)Date fechaFin);
+    List<Activity> findByBikeAndDateBetween(@Param(BIKE)Bici bike, @Param(INIT_DATE)Date fehcaIni, 
+	    @Param(FINISH_DATE)Date fechaFin);
 
+    @Query(FIND_BETWEEN_DATES_AND_TYPE)
+    List<Activity> findDatesAndType(@Param(INIT_DATE)Date initDate, @Param(FINISH_DATE)Date finisDate, 
+	    @Param(TYPE) String type);
+    
     @Query(COUNT_BY_USER_ID)
     long countByUserId(@Param(USER_ID) long userId);
+    
 
 }
