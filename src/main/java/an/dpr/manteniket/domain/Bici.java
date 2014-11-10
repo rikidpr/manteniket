@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import an.dpr.manteniket.bean.ManteniketBean;
@@ -29,6 +31,7 @@ public class Bici implements ManteniketBean, Serializable{
     private Date obsolete;
     private Set<Activity> activities;
     private Set<ComponentUse> componentUses;
+    private Date disabledDate;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -107,5 +110,26 @@ public class Bici implements ManteniketBean, Serializable{
 
     public void setObsolete(Date obsolete) {
         this.obsolete = obsolete;
+    }
+
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getDisabledDate() {
+        return disabledDate;
+    }
+
+    public void setDisabledDate(Date disabledDate) {
+        this.disabledDate = disabledDate;
+    }
+    
+    @Override
+    @Transient
+    public boolean isEnabled(){
+	if (disabledDate == null){
+	    return true;
+	} else {
+	    return false;
+	}
     }
 }

@@ -17,11 +17,11 @@ public interface BicisRepository extends CrudRepository<Bici, Long>{
     String USER = "user";
     String COD_BICI="codBici";
     String TIPO = "tipo";
-    String QUERY_USER= "select b from Bici b where b.user =:"+USER; 
-    String QUERY_USER_TIPO = "select b from Bici b where b.user =:"+USER+" and b.tipo =:"+TIPO; 
-    String QUERY_USER_COD_BICI = "select b from Bici b where b.user =:"+USER+" and b.codBici =:"+COD_BICI; 
-    String QUERY_COUNT_USER= "select count(b) from Bici b  where b.user =:"+USER; 
-    String QUERY_COUNT_USER_TIPO = "select count(b) from Bici b where b.user =:"+USER+" and b.tipo =:"+TIPO; 
+    String QUERY_USER= "select b from Bici b where b.disabledDate is null and  b.user =:"+USER; 
+    String QUERY_USER_TIPO = "select b from Bici b where b.disabledDate is null and  b.user =:"+USER+" and b.tipo =:"+TIPO; 
+    String QUERY_USER_COD_BICI = "select b from Bici b where b.disabledDate is null and  b.user =:"+USER+" and b.codBici =:"+COD_BICI; 
+    String QUERY_COUNT_USER= "select count(b) from Bici b  where b.disabledDate is null and  b.user =:"+USER; 
+    String QUERY_COUNT_USER_TIPO = "select count(b) from Bici b where b.disabledDate is null and  b.user =:"+USER+" and b.tipo =:"+TIPO; 
     
     Bici findByIdBici(Long idBici);
     

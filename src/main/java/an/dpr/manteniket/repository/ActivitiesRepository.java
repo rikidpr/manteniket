@@ -17,8 +17,14 @@ import an.dpr.manteniket.domain.Bici;
 public interface ActivitiesRepository extends CrudRepository<Activity, Long> {
     
     String USER_ID = "USER_ID";
-    String FIND_BY_USER_ID = "from Activity a where a.user.id=:"+USER_ID;
-    String COUNT_BY_USER_ID = "SELECT count(a) from Activity a where a.user.id=:"+USER_ID;
+    String FECHA_FIN = "fechaFin"; 
+    String FECHA_INI = "fechaIni";
+    String BIKE= "bike";
+    
+    String FIND_BY_USER_ID = "from Activity a where a.disabledDate is null and  a.user.id=:"+USER_ID;
+    String COUNT_BY_USER_ID = "SELECT count(a) from Activity a where a.disabledDate is null and  a.user.id=:"+USER_ID;
+    String FIND_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.date>:"+FECHA_INI+" and a.date<:"+FECHA_FIN;
+    String FIND_BIKE_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.bike=:"+BIKE+" and a.date>:"+FECHA_INI+" and a.date<:"+FECHA_FIN;
 
     @Query("from Activity")
     List<Activity> findAll();
@@ -32,11 +38,11 @@ public interface ActivitiesRepository extends CrudRepository<Activity, Long> {
     @Query(FIND_BY_USER_ID)
     Page<Activity> findByUserId(@Param(USER_ID) long userId, Pageable pageable);
     
-    @Query("from Activity a where a.date>:fechaIni and a.date<:fechaFin")//TODO between
-    List<Activity> findByDateBetween(@Param("fechaIni")Date fehcaIni, @Param("fechaFin") Date fechaFin);
+    @Query(FIND_BETWEEN_DATES)
+    List<Activity> findByDateBetween(@Param(FECHA_INI)Date fehcaIni, @Param(FECHA_FIN) Date fechaFin);
     
-    @Query("from Activity a where a.bike=:bike and  a.date>:fechaIni and a.date<:fechaFin")
-    List<Activity> findByBikeAndDateBetween(@Param("bike")Bici bike, @Param("fechaIni")Date fehcaIni, @Param("fechaFin")Date fechaFin);
+    @Query(FIND_BIKE_BETWEEN_DATES)
+    List<Activity> findByBikeAndDateBetween(@Param(BIKE)Bici bike, @Param(FECHA_INI)Date fehcaIni, @Param(FECHA_FIN)Date fechaFin);
 
     @Query(COUNT_BY_USER_ID)
     long countByUserId(@Param(USER_ID) long userId);

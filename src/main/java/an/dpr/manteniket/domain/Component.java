@@ -1,6 +1,7 @@
 package an.dpr.manteniket.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import an.dpr.manteniket.bean.ManteniketBean;
 
@@ -25,6 +29,7 @@ public class Component implements Serializable, ManteniketBean{
     private String description;
     private Set<ComponentUse> componentUses;
     private User user;
+    private Date disabledDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -81,5 +86,26 @@ public class Component implements Serializable, ManteniketBean{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getDisabledDate() {
+        return disabledDate;
+    }
+
+    public void setDisabledDate(Date disabledDate) {
+        this.disabledDate = disabledDate;
+    }
+    
+    @Override
+    @Transient
+    public boolean isEnabled(){
+	if (disabledDate == null){
+	    return true;
+	} else {
+	    return false;
+	}
     }
 }

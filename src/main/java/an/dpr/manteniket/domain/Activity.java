@@ -34,6 +34,7 @@ public class Activity implements ManteniketBean, Serializable{
     private Short heartRate;
     private String description;
     private User user;
+    private Date disabledDate;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -113,5 +114,25 @@ public class Activity implements ManteniketBean, Serializable{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getDisabledDate() {
+        return disabledDate;
+    }
+
+    public void setDisabledDate(Date disabledDate) {
+        this.disabledDate = disabledDate;
+    }
+    
+    @Override
+    @Transient
+    public boolean isEnabled(){
+	if (disabledDate == null){
+	    return true;
+	} else {
+	    return false;
+	}
     }
 }
