@@ -10,7 +10,7 @@ import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextFieldConfig;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextFieldConfig.TodayButton;
 
-public class Utils {
+public class ComponentFactory {
 
     public static DateTextField datePickerBootstrap(String id){
   	DateTextFieldConfig config = new DateTextFieldConfig()

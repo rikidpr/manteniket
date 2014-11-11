@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
+import an.dpr.manteniket.components.ComponentFactory;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.dao.IComponentUsesDAO;
@@ -52,7 +53,7 @@ public class ComponentUsePage extends ManteniketPage{
     
     private TextField<Long> txtId;
     private DateTextField txtInit;
-    private org.apache.wicket.extensions.markup.html.form.DateTextField txtFin;
+    private DateTextField txtFin;
     private DropDownChoice<Bici> cmbBike;
     private DropDownChoice<Component> cmbComp;
     private TextArea<String> txtDesc;
@@ -163,9 +164,9 @@ public class ComponentUsePage extends ManteniketPage{
 	form.add(txtId);
 	
 	
-        txtInit = datePickerBootstrap("txtInit");
+        txtInit = ComponentFactory.datePickerBootstrap("txtInit");
         form.add(txtInit);
-        txtFin = datePickerBootstrap("txtFin");
+        txtFin = ComponentFactory.datePickerBootstrap("txtFin");
         form.add(txtFin);
         
         ChoiceRenderer<Bici> bikeRender = new ChoiceRenderer<Bici>("codBici", "idBici");
@@ -218,17 +219,6 @@ public class ComponentUsePage extends ManteniketPage{
 	    }
 	}
 	return object;
-    }
-
-    private DateTextField datePickerBootstrap(String id){
-	DateTextFieldConfig config = new DateTextFieldConfig()
-    		.autoClose(true)
-    		.withView(DateTextFieldConfig.View.Decade)
-    		.showTodayButton(TodayButton.TRUE)
-    		.highlightToday(true)
-    		.withStartDate(new DateTime().withYear(2000))
-    		.withFormat("dd/MM/yyyy");
-	return new DateTextField(id, config);
     }
 
     private void save(){
