@@ -24,6 +24,12 @@ public interface IActivityDao {
 
     long count(Activity activity);
     
+
+    /**
+     * Get the summary bean for the params
+     * @param params ActivitySummaryBean with filters
+     * @return ActivitySummaryBean with summary data for the filter pass in params
+     */
     ActivitySummaryBean getActivitySummary(ActivitySummaryBean params) throws ManteniketException;
 
 }

@@ -358,4 +358,36 @@ public class DateUtil {
 	String sdate = formatter.format(date);
 	return formatter.parse(sdate);
     }
+    
+    public static Date firstDayOfMonth(Date date) throws ParseException{
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(dateWithoutHour(date));
+	cal.set(Calendar.DAY_OF_MONTH, 1);
+	return cal.getTime();
+    }
+
+    public static Date lastDayOfMonth(Date date) throws ParseException{
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(dateWithoutHour(date));
+	cal.set(Calendar.DAY_OF_MONTH, 1);
+	cal.add(Calendar.MONTH, 1);
+	cal.add(Calendar.SECOND, -1);
+	return cal.getTime();
+    }
+    
+    public static Date firstDayOfYear(Date date) throws ParseException{
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(dateWithoutHour(date));
+	cal.set(Calendar.DAY_OF_YEAR, 1);
+	return cal.getTime();
+    }
+    
+    public static Date lastDayOfYear(Date date) throws ParseException{
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(dateWithoutHour(date));
+	cal.set(Calendar.DAY_OF_YEAR, 1);
+	cal.add(Calendar.YEAR, 1);
+	cal.add(Calendar.SECOND, -1);
+	return cal.getTime();
+    }
 }

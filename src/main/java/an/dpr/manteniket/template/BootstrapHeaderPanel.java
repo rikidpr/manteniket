@@ -11,6 +11,7 @@ import an.dpr.manteniket.MainPage;
 import an.dpr.manteniket.LogoutPage;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.pages.ActivitiesListPage;
+import an.dpr.manteniket.pages.ActivitiesSummaryPage;
 import an.dpr.manteniket.pages.BicisListPage;
 import an.dpr.manteniket.pages.BikeCompListPage;
 import an.dpr.manteniket.pages.ComponentsListPage;
@@ -53,11 +54,15 @@ public class BootstrapHeaderPanel extends Panel {
     }
 
     private void addItemsMenu(Navbar navbar) {
+	NavbarButton<ActivitiesSummaryPage> menuSummary;
 	NavbarButton<ActivitiesListPage> menuActivities;
 	NavbarButton<BicisListPage> menuBikes;
 	NavbarButton<ComponentsListPage> menuComponents; 
 	NavbarButton<BikeCompListPage> menuUses; 
 
+	menuSummary = new NavbarButton<ActivitiesSummaryPage>(ActivitiesSummaryPage.class, new ResourceModel("menu.summary"));
+	menuSummary.setIconType(FontAwesomeIconTypeExt.area_chart);
+	
 	menuActivities = new NavbarButton<ActivitiesListPage>(ActivitiesListPage.class, new ResourceModel("menu.activities"));
 	menuActivities.setIconType(FontAwesomeIconTypeExt.area_chart);
 	
@@ -71,7 +76,7 @@ public class BootstrapHeaderPanel extends Panel {
 	menuUses.setIconType(FontAwesomeIconType.plus_circle);
 	
 	List<INavbarComponent> list = NavbarComponents.transform(Navbar.ComponentPosition.RIGHT, 
-		menuActivities, menuBikes, menuComponents, menuUses);
+		menuActivities, menuBikes, menuComponents, menuUses, menuSummary);
 	navbar.addComponents(list);
     }
 

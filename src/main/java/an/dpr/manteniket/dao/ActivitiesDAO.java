@@ -18,6 +18,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import an.dpr.manteniket.bean.ActivitySummaryBean;
+import an.dpr.manteniket.bean.ActivityType;
 import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.exception.ManteniketException;
@@ -164,35 +165,46 @@ public class ActivitiesDAO implements IActivityDao{
     }
 
     @Override
-    //TODO refactor troceo en metodos especificos (get list, get values)
     public ActivitySummaryBean getActivitySummary(ActivitySummaryBean params)
 	    throws ManteniketException {
-	ActivitySummaryBean bean = new ActivitySummaryBean();
-	List<Activity> lista;
-	if (params.getType() == null){
-	    lista = repo.findByDateBetween(params.getInitDate(), params.getFinishDate());
-	} else {
-	    lista = repo.findDatesAndType(params.getInitDate(), params.getFinishDate(), params.getType().name());
+	try{
+	    List<Activity> list = getActivityListForSummary(params);
+	    ActivitySummaryBean bean = getSummary(list, params.getType());
+	    return bean;
+	} catch(Exception e){
+	    String msg = "Error getting activities summary";
+	    log.error(msg, e);
+	    throw new ManteniketException(msg, e);
 	}
+    }
+    
+    private ActivitySummaryBean getSummary(List<Activity> list, ActivityType type){
 	int minutes = 0;
 	double km = 0;
 	int numberAct = 0;
-	for(Activity act:lista){
+	
+	for(Activity act:list){
 	    km+=act.getKm();
 	    Calendar cal = Calendar.getInstance();
 	    cal.setTime(act.getDate());
 	    minutes += cal.get(Calendar.HOUR)*60+cal.get(Calendar.MINUTE);
 	    numberAct++;
 	}
+	
+	ActivitySummaryBean bean = new ActivitySummaryBean();
 	bean.setKm(km);
 	bean.setNumberActivities(numberAct);
 	bean.setMinutes(minutes);
-	bean.setType(params.getType());
-	
+	bean.setType(type);
 	return bean;
-	
-	
-	
+    }
+
+    private List<Activity> getActivityListForSummary(ActivitySummaryBean params) {
+	if (params.getType() == null){
+	    return repo.findByDateBetween(params.getInitDate(), params.getFinishDate());
+	} else {
+	    return repo.findDatesAndType(params.getInitDate(), params.getFinishDate(), params.getType().getCode());
+	}
     }
     
     

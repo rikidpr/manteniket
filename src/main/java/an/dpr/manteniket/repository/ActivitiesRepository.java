@@ -29,7 +29,7 @@ public interface ActivitiesRepository extends CrudRepository<Activity, Long> {
     String FIND_BIKE_BETWEEN_DATES = "from Activity a  where a.disabledDate is null and a.bike=:"+BIKE
 	    +" and a.date>:"+INIT_DATE+" and a.date<:"+FINISH_DATE;
     String FIND_BETWEEN_DATES_AND_TYPE = "from Activity a  where a.disabledDate is null and a.date>:"+INIT_DATE
-	    +" and a.date<:"+FINISH_DATE+" and a.type:="+TYPE;
+	    +" and a.date<:"+FINISH_DATE+" and a.type=:"+TYPE;
 
     @Query("from Activity")
     List<Activity> findAll();
@@ -52,7 +52,7 @@ public interface ActivitiesRepository extends CrudRepository<Activity, Long> {
 
     @Query(FIND_BETWEEN_DATES_AND_TYPE)
     List<Activity> findDatesAndType(@Param(INIT_DATE)Date initDate, @Param(FINISH_DATE)Date finisDate, 
-	    @Param(TYPE) String type);
+	    @Param(TYPE) short type);
     
     @Query(COUNT_BY_USER_ID)
     long countByUserId(@Param(USER_ID) long userId);
