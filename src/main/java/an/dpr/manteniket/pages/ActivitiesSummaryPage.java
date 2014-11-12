@@ -10,12 +10,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -32,9 +35,9 @@ import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.template.ManteniketPage;
 import an.dpr.manteniket.util.DateUtil;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
-import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapCheckbox;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
 
@@ -56,17 +59,16 @@ public class ActivitiesSummaryPage extends ManteniketPage {
     private CheckBox chkFilterDates;//TODO bootstrapcheckbox (teniamos problemas)
     private DateTextField initDate;
     private DateTextField finishDate;
-    private Label km;
-    private Label time;
-    private Label numberActivities;
-    private Label compareKm;
-    private Label compareTime;
-    private Label compareNumAct;
     private BootstrapButton btnGetData;
+//    private AjaxSubmitLink link;
+    private BootstrapAjaxLink link;
     private BootstrapForm form;
+    
+    private ModalWindow modalResultados;
     
     private boolean compare = false;
     private boolean filterDates = false;
+    private SummaryResultPanel pnl;
 
     public ActivitiesSummaryPage() {
 	this(null);
@@ -121,30 +123,48 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	chkCompare = new CheckBox("compare",new PropertyModel<Boolean>(this, "compare"));
 	form.add(chkCompare);
 
-	km = new Label("km");
-	form.add(km);
-	time = new Label("time");
-	form.add(time);
-	numberActivities = new Label("numberActivities");
-	form.add(numberActivities);
-	compareKm = new Label("compareKm");
-	form.add(compareKm);
-	compareTime = new Label("compareTime");
-	form.add(compareTime);
-	compareNumAct = new Label("compareNumAct");
-	form.add(compareNumAct);
 
 	btnGetData = new BootstrapButton("btnGetData", Type.Default) {
 	    private static final long serialVersionUID = 1L;
 
 	    @Override
 	    public void onSubmit() {
-		reloadSummary();
+		reloadSummary(null);
 	    }
 	};
 	btnGetData.setLabel(new ResourceModel("btn.getData"));
 	form.add(btnGetData);
 	add(form);
+	
+//	link = new AjaxSubmitLink("link") {
+	link = new BootstrapAjaxLink("link", Type.Default) {
+	    @Override
+//	    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+	    public void onClick(AjaxRequestTarget target) {
+		reloadSummary(target);
+	    }
+	};
+	form.add(link);
+	panelResultados();
+    }
+    
+    private void panelResultados(){
+	modalResultados = new ModalWindow("modalResultados");
+	pnl = new SummaryResultPanel(modalResultados.getContentId());
+	
+	modalResultados.setContent(pnl);
+        modalResultados.setTitle("i18 titulo.");
+        
+        modalResultados.setCloseButtonCallback(new ModalWindow.CloseButtonCallback()
+        {
+            public boolean onCloseButtonClicked(AjaxRequestTarget target)
+            {
+                return true;
+            }
+        });
+        
+	
+	add(modalResultados);
     }
     
     private List<? extends String> getMonthList() {
@@ -182,32 +202,26 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	params.setFinishDate(DateUtil.lastDayOfMonth(date));
 	params.setType(null);
 	ActivitySummaryBean summary = dao.getActivitySummary(params);
-	km.setDefaultModel(Model.of(df.format(summary.getKm())));
-	time.setDefaultModel(Model.of(summary.getTime()));
-	numberActivities.setDefaultModel(Model.of(summary.getNumberActivities()));
+	pnl.setResultados(summary, null);
     }
     
     public static void main(String args[]){
 	System.out.println(Boolean.TRUE.equals(null));
     }
 
-    private void reloadSummary() {
+    private void reloadSummary(AjaxRequestTarget target) {
 	try {
+	    ActivitySummaryBean compare = null;
+	    ActivitySummaryBean summary = null;
 	    ActivityType type = (ActivityType) cmbType.getDefaultModelObject();
 
 	    ActivitySummaryBean params = new ActivitySummaryBean();
 	    params.setType(type);
 	    params = getSelectedDates(params);
 
-	    ActivitySummaryBean summary = dao.getActivitySummary(params);
-	    km.setDefaultModel(Model.of(df.format(summary.getKm())));
-	    time.setDefaultModel(Model.of(summary.getTime()));
-	    numberActivities.setDefaultModel(Model.of(summary.getNumberActivities()));
+	    summary = dao.getActivitySummary(params);
 	    
 	    if (isCompare()){//FIXME PUSH TO NEW METHOD 
-		double actualKm = summary.getKm();
-		int actualMinutes = summary.getMinutes();
-		int actualNumAct = summary.getNumberActivities();
 		
 		Calendar cal= Calendar.getInstance();
 		//init -1year
@@ -219,19 +233,11 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 		cal.add(Calendar.YEAR, -1);
 		params.setFinishDate(cal.getTime());
 		
-		summary = dao.getActivitySummary(params);
-		double difKm = actualKm-summary.getKm();
-		summary.setMinutes(actualMinutes-summary.getMinutes());
-		int difNA = actualNumAct-summary.getNumberActivities();
-		
-		compareKm.setDefaultModel(Model.of("("+df.format(difKm)+")"));
-		compareTime.setDefaultModel(Model.of("("+summary.getTime()+")"));
-		compareNumAct.setDefaultModel(Model.of("("+difNA+")"));
-	    } else {
-		compareKm.setDefaultModel(Model.of(""));
-		compareTime.setDefaultModel(Model.of(""));
-		compareNumAct.setDefaultModel(Model.of(""));
+		compare = dao.getActivitySummary(params);
 	    }
+	    
+	    pnl.setResultados(summary, compare);
+	    modalResultados.show(target);
 	} catch (ParseException e) {
 	    log.error("Month parse error", e);
 	} catch (ManteniketException e) {

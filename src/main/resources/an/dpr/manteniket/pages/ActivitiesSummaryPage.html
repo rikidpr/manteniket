@@ -69,48 +69,14 @@
 					<input type="checkbox" wicket:id="compare" />
 					<label><wicket:message key="compare"/></label>
 					<button wicket:id="btnGetData">Get Data</button>
+					 <a wicket:id="link">modal</a>
 				</div>
 
 				<hr />
-
-				<!-- km -->
-				<fieldset>
-					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
-					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-						<label for="km"><wicket:message key="lbl.km" />:</label>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-						 <label	wicket:id="km">15</label> 
-						 <label wicket:id="compareKm">15</label>
-					</div>
-					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
-					<!-- time -->
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">&nbsp;<!-- salto de linea --></div>
-					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
-					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-						<label for="time"><wicket:message key="lbl.time" />:</label> 
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-						<label wicket:id="time">2h 15'</label> 
-						<label wicket:id="compareTime">15</label>
-					</div>
-					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
-					
-					<!-- number activities -->
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">&nbsp;<!-- salto de linea --></div>
-					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
-					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-						<label for="numberActivities"><wicket:message key="lbl.numberActivities" />:</label> 
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-						<label wicket:id="numberActivities">3</label> 
-						<label wicket:id="compareNumAct">15</label>
-					</div>
-					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
-				</fieldset>
+			</form>
+			<div wicket:id="modalResultados"></div>
 					
 						
-			</form>
 		</div>
 	</wicket:extend>
 </body>
