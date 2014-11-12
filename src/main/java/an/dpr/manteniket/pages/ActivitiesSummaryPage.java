@@ -9,11 +9,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -38,7 +43,7 @@ public class ActivitiesSummaryPage extends ManteniketPage {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ActivitiesSummaryPage.class);
     private static final SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
-    private static final DecimalFormat df = new DecimalFormat("#0,00");
+    private static final DecimalFormat df = new DecimalFormat("#0.00");
 
     @SpringBean
     private IActivityDao dao;
@@ -47,7 +52,8 @@ public class ActivitiesSummaryPage extends ManteniketPage {
     private DropDownChoice<Integer> cmbYear;
     private DropDownChoice<String> cmbMonth;
     private DropDownChoice<ActivityType> cmbType;
-    private BootstrapCheckbox chkCompare;
+    private CheckBox chkCompare;
+    private CheckBox chkFilterDates;//TODO bootstrapcheckbox (teniamos problemas)
     private DateTextField initDate;
     private DateTextField finishDate;
     private Label km;
@@ -58,6 +64,9 @@ public class ActivitiesSummaryPage extends ManteniketPage {
     private Label compareNumAct;
     private BootstrapButton btnGetData;
     private BootstrapForm form;
+    
+    private boolean compare = false;
+    private boolean filterDates = false;
 
     public ActivitiesSummaryPage() {
 	this(null);
@@ -88,11 +97,28 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	form.add(cmbType);
 
 	initDate = ComponentFactory.datePickerBootstrap("initDate");
+	initDate.setModel(Model.of(new Date()));
+	initDate.setEnabled(filterDates);
 	form.add(initDate);
 	finishDate = ComponentFactory.datePickerBootstrap("finishDate");
+	finishDate.setModel(Model.of(new Date()));
+	finishDate.setEnabled(filterDates);
 	form.add(finishDate);
+	chkFilterDates = new AjaxCheckBox("filterDates",new PropertyModel<Boolean>(this,"filterDates")){
+	    private static final long serialVersionUID = 1L;
+
+	    @Override
+	    protected void onUpdate(AjaxRequestTarget target) {
+		initDate.setEnabled(chkFilterDates.getModelObject());
+		finishDate.setEnabled(chkFilterDates.getModelObject());
+		target.add(initDate);
+		target.add(finishDate);
+	    }
+	};
+	chkFilterDates.setDefaultModel(Model.of(Boolean.FALSE));
+	form.add(chkFilterDates);
 	
-	chkCompare = new BootstrapCheckbox("compare",Model.of(false), Model.of("i18ncomparar"));//;new ResourceModel("compare"));
+	chkCompare = new CheckBox("compare",new PropertyModel<Boolean>(this, "compare"));
 	form.add(chkCompare);
 
 	km = new Label("km");
@@ -102,11 +128,11 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	numberActivities = new Label("numberActivities");
 	form.add(numberActivities);
 	compareKm = new Label("compareKm");
-	form.add(km);
+	form.add(compareKm);
 	compareTime = new Label("compareTime");
-	form.add(time);
+	form.add(compareTime);
 	compareNumAct = new Label("compareNumAct");
-	form.add(numberActivities);
+	form.add(compareNumAct);
 
 	btnGetData = new BootstrapButton("btnGetData", Type.Default) {
 	    private static final long serialVersionUID = 1L;
@@ -120,7 +146,7 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	form.add(btnGetData);
 	add(form);
     }
-
+    
     private List<? extends String> getMonthList() {
 	List<String> list = new ArrayList<String>();
 	Calendar cal = Calendar.getInstance();
@@ -160,6 +186,10 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	time.setDefaultModel(Model.of(summary.getTime()));
 	numberActivities.setDefaultModel(Model.of(summary.getNumberActivities()));
     }
+    
+    public static void main(String args[]){
+	System.out.println(Boolean.TRUE.equals(null));
+    }
 
     private void reloadSummary() {
 	try {
@@ -174,7 +204,7 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	    time.setDefaultModel(Model.of(summary.getTime()));
 	    numberActivities.setDefaultModel(Model.of(summary.getNumberActivities()));
 	    
-	    if (chkCompare.getModelObject()){//FIXME PUSH TO NEW METHOD 
+	    if (isCompare()){//FIXME PUSH TO NEW METHOD 
 		double actualKm = summary.getKm();
 		int actualMinutes = summary.getMinutes();
 		int actualNumAct = summary.getNumberActivities();
@@ -190,13 +220,17 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 		params.setFinishDate(cal.getTime());
 		
 		summary = dao.getActivitySummary(params);
-		double difKm = summary.getKm()-actualKm;
-		summary.setMinutes(summary.getMinutes()-actualMinutes);
-		int difNA = summary.getNumberActivities()-actualNumAct;
+		double difKm = actualKm-summary.getKm();
+		summary.setMinutes(actualMinutes-summary.getMinutes());
+		int difNA = actualNumAct-summary.getNumberActivities();
 		
 		compareKm.setDefaultModel(Model.of("("+df.format(difKm)+")"));
 		compareTime.setDefaultModel(Model.of("("+summary.getTime()+")"));
 		compareNumAct.setDefaultModel(Model.of("("+difNA+")"));
+	    } else {
+		compareKm.setDefaultModel(Model.of(""));
+		compareTime.setDefaultModel(Model.of(""));
+		compareNumAct.setDefaultModel(Model.of(""));
 	    }
 	} catch (ParseException e) {
 	    log.error("Month parse error", e);
@@ -212,7 +246,7 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	initDate = this.initDate.getModelObject();
 	finishDate = this.finishDate.getModelObject();
 	//en caso de que no se rellenen, se tira de anyo/mes
-	if (initDate == null || finishDate == null){
+	if (!Boolean.TRUE.equals(chkFilterDates.getDefaultModelObject()) || initDate == null || finishDate == null){
 	    int year = (Integer) cmbYear.getDefaultModelObject();
 	    String month = null;
 	    if (cmbMonth.getDefaultModelObject() != null) {
@@ -236,6 +270,22 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	bean.setFinishDate(finishDate);
 	
 	return bean;
+    }
+
+    public boolean isCompare() {
+        return compare;
+    }
+
+    public void setCompare(boolean compare) {
+        this.compare = compare;
+    }
+
+    public boolean isFilterDates() {
+        return filterDates;
+    }
+
+    public void setFilterDates(boolean filterDates) {
+        this.filterDates = filterDates;
     }
 
 }

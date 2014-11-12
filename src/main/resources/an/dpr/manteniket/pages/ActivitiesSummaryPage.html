@@ -12,50 +12,104 @@
 	<wicket:extend>
 		<div class="container">
 			<form wicket:id="form">
-				<div class="form-group">
-					<label for="cmbYear"><wicket:message key="lbl.year" /></label> 
-					<select class="form-control" wicket:id="cmbYear"></select>
-				</div>
-				<div class="form-group">
-					<label for="cmbMonth"><wicket:message key="lbl.month" /></label> 
-					<select class="form-control" wicket:id="cmbMonth"></select>
-				</div>
-				<div class="form-group">
-					<label for="cmbType"><wicket:message key="lbl.type" /></label>
-					<select class="form-control" wicket:id="cmbType"></select>
-				</div>
-				<div class="form-group">
-					<label for="initDate"><wicket:message key="init.date" /></label>
-					<input wicket:id="initDate" type="text"/>
-				</div>
-				<div class="form-group">
-					<label for="finishDate"><wicket:message key="finish.date" /></label>
-					<input wicket:id="finishDate" type="text"/>
-				</div>
-				<div class="form-group">
-					<input type="checkbox" wicket:id="compare"/>
-				</div>
-				
 				<hr/>
-				
+				<fieldset>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+						<label for="cmbYear"><wicket:message key="lbl.year" /></label> 
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<select	class="form-control" wicket:id="cmbYear"></select>
+					</div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"></div>
+					
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+						<label for="cmbMonth"><wicket:message key="lbl.month" /></label>
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<select class="form-control" wicket:id="cmbMonth"></select>
+					</div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"></div>
+						
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+						<label for="cmbType"><wicket:message key="lbl.type" /></label> 
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<select	class="form-control" wicket:id="cmbType"></select>
+					</div>
+					<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
+				</fieldset>
+				<hr/>
+				<fieldset>
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<input type="checkbox" wicket:id="filterDates" />
+							<label><wicket:message key="set.custom.dates"/></label>
+						</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+							<label for="initDate"><wicket:message key="init.date" /></label>
+						</div>
+						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+							<input wicket:id="initDate" type="text" />
+						</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+							<label for="finishDate"><wicket:message key="finish.date" /></label>
+						</div>
+						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+							<input wicket:id="finishDate" type="text" />
+						</div>
+				</fieldset>
+				<hr/>
 				<div class="form-group">
-					<label for="km"><wicket:message key="lbl.km" />:</label> 
-					<label wicket:id="km">15</label>
-					<label wicket:id="compareKm">15</label>
-				</div>
-				<div class="form-group">
-					<label for="time"><wicket:message key="lbl.time" />:</label> 
-					<label wicket:id="time">2h 15'</label>
-					<label wicket:id="compareTime">15</label>
-				</div>
-				<div class="form-group">
-					<label for="numberActivities"><wicket:message key="lbl.numberActivities" />:</label> 
-					<label wicket:id="numberActivities">3</label>
-					<label wicket:id="compareNumAct">15</label>
-				</div>
-				<div class="form-group">
+					<input type="checkbox" wicket:id="compare" />
+					<label><wicket:message key="compare"/></label>
 					<button wicket:id="btnGetData">Get Data</button>
 				</div>
+
+				<hr />
+
+				<!-- km -->
+				<fieldset>
+					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
+					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+						<label for="km"><wicket:message key="lbl.km" />:</label>
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						 <label	wicket:id="km">15</label> 
+						 <label wicket:id="compareKm">15</label>
+					</div>
+					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
+					<!-- time -->
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">&nbsp;<!-- salto de linea --></div>
+					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
+					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+						<label for="time"><wicket:message key="lbl.time" />:</label> 
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<label wicket:id="time">2h 15'</label> 
+						<label wicket:id="compareTime">15</label>
+					</div>
+					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
+					
+					<!-- number activities -->
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">&nbsp;<!-- salto de linea --></div>
+					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
+					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+						<label for="numberActivities"><wicket:message key="lbl.numberActivities" />:</label> 
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<label wicket:id="numberActivities">3</label> 
+						<label wicket:id="compareNumAct">15</label>
+					</div>
+					<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">&nbsp;</div>
+				</fieldset>
+					
+						
 			</form>
 		</div>
 	</wicket:extend>
