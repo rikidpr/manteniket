@@ -3,6 +3,8 @@ package an.dpr.manteniket.pages;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -14,6 +16,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.validator.RangeValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,7 @@ public class ComponentsPage extends ManteniketPage {
     private TextField<String> txtName;
     private DropDownChoice<ComponentType> cmbType;
     private TextField<String> txtDescription;
+    private TextField<Integer> txtKmAlert;
 
     public ComponentsPage(){
 	this(null);
@@ -56,9 +60,11 @@ public class ComponentsPage extends ManteniketPage {
 	txtName.setRequired(true);
 	cmbType.setRequired(true);
 	txtDescription.setRequired(true);
+	txtKmAlert.setRequired(true);
 	
 	txtName.add(new StringValidator(3,50));
 	txtName.add(new StringValidator(3,300));
+	txtKmAlert.add(new RangeValidator<Integer>(1, 100000));
         add(new FeedbackPanel("feedback"));
     }
 
@@ -83,11 +89,13 @@ public class ComponentsPage extends ManteniketPage {
 	    }
 	    cmbType.setDefaultModel(typeModel);
 	    txtDescription.setModel(Model.of(comp.getDescription()));
+	    txtKmAlert.setModel(Model.of(comp.getKmAlert()));
 	} else {
 	    txtId.setModel(Model.of((long)0));
 	    txtName.setModel(Model.of(""));
 	    cmbType.setDefaultModel(new Model<CyclingType>());
 	    txtDescription.setModel(Model.of(""));
+	    txtKmAlert.setModel(Model.of(0));
 	}
     }
 
@@ -123,15 +131,28 @@ public class ComponentsPage extends ManteniketPage {
 	txtName.setType(String.class);
 	txtDescription = new TextField<String>("txtDesc");
 	txtDescription.setType(String.class);
+	txtKmAlert = new TextField<Integer>("kmAlert");
+	txtKmAlert.setType(Integer.class);
+	txtKmAlert.setOutputMarkupId(true);
 	
 	ChoiceRenderer<ComponentType> render = new ChoiceRenderer<ComponentType>("name");
 	List<ComponentType> list = Arrays.asList(ComponentType.values());
 	cmbType = new DropDownChoice<ComponentType>("cmbType", list, render);
-	
+	cmbType.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+	    private static final long serialVersionUID = 1L;
+
+	    @Override
+	    protected void onUpdate(AjaxRequestTarget target) {
+		ComponentType ct = cmbType.getModelObject();
+		txtKmAlert.setModel(Model.of(ct.getDefaultKmAlert()));
+		target.add(txtKmAlert);
+	    }
+	});
 	form.add(txtId);
 	form.add(txtName);
 	form.add(cmbType);
 	form.add(txtDescription);
+	form.add(txtKmAlert);
 	
 	add(form);
 	
@@ -147,6 +168,7 @@ public class ComponentsPage extends ManteniketPage {
 	comp.setName(txtName.getDefaultModelObjectAsString());
 	comp.setDescription(txtDescription.getDefaultModelObjectAsString());
 	comp.setType(cmbType.getDefaultModelObjectAsString());
+	comp.setKmAlert(txtKmAlert.getModelObject());
 	comp.setUser(getUser());
 	dao.save(comp);
 	setResponsePage(ComponentsListPage.class);

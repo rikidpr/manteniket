@@ -30,6 +30,7 @@ public class Component implements Serializable, ManteniketBean{
     private Set<ComponentUse> componentUses;
     private User user;
     private Date disabledDate;
+    private Integer kmAlert;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -107,5 +108,14 @@ public class Component implements Serializable, ManteniketBean{
 	} else {
 	    return false;
 	}
+    }
+
+    @Column(nullable=false)
+    public Integer getKmAlert() {
+        return kmAlert;
+    }
+
+    public void setKmAlert(Integer kmAlert) {
+        this.kmAlert = kmAlert;
     }
 }
