@@ -11,14 +11,10 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -31,12 +27,13 @@ import org.slf4j.LoggerFactory;
 import an.dpr.manteniket.bean.ActivitySummaryBean;
 import an.dpr.manteniket.bean.ActivityType;
 import an.dpr.manteniket.components.ComponentFactory;
+import an.dpr.manteniket.components.ManteniketModalPanel;
 import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.template.ManteniketPage;
 import an.dpr.manteniket.util.DateUtil;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
-import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
@@ -46,7 +43,6 @@ public class ActivitiesSummaryPage extends ManteniketPage {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ActivitiesSummaryPage.class);
     private static final SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
-    private static final DecimalFormat df = new DecimalFormat("#0.00");
 
     @SpringBean
     private IActivityDao dao;
@@ -59,12 +55,11 @@ public class ActivitiesSummaryPage extends ManteniketPage {
     private CheckBox chkFilterDates;//TODO bootstrapcheckbox (teniamos problemas)
     private DateTextField initDate;
     private DateTextField finishDate;
-    private BootstrapButton btnGetData;
-//    private AjaxSubmitLink link;
-    private BootstrapAjaxLink link;
+    private BootstrapAjaxButton link;
     private BootstrapForm form;
     
-    private ModalWindow modalResultados;
+    private ManteniketModalPanel<SummaryResultPanel> modalResultados;//wciket bootstrap
+    
     
     private boolean compare = false;
     private boolean filterDates = false;
@@ -76,11 +71,10 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 
     public ActivitiesSummaryPage(PageParameters params) {
 	initComponents();
-	try {
-	    defaultData();
-	} catch (Exception e) {
-	    log.error("Error loading data", e);
-	}
+	int year = Calendar.getInstance().get(Calendar.YEAR);
+	cmbYear.setModel(Model.of(year));
+	String month = sdf.format(new Date());
+	cmbMonth.setModel(Model.of(month));
     }
 
     private void initComponents() {
@@ -123,47 +117,25 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	chkCompare = new CheckBox("compare",new PropertyModel<Boolean>(this, "compare"));
 	form.add(chkCompare);
 
-
-	btnGetData = new BootstrapButton("btnGetData", Type.Default) {
+	add(form);
+	link = new BootstrapAjaxButton("link", Type.Default) {
 	    private static final long serialVersionUID = 1L;
 
 	    @Override
-	    public void onSubmit() {
-		reloadSummary(null);
-	    }
-	};
-	btnGetData.setLabel(new ResourceModel("btn.getData"));
-	form.add(btnGetData);
-	add(form);
-	
-//	link = new AjaxSubmitLink("link") {
-	link = new BootstrapAjaxLink("link", Type.Default) {
-	    @Override
-//	    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-	    public void onClick(AjaxRequestTarget target) {
+	    protected void onSubmit(AjaxRequestTarget target, Form<?> form){
 		reloadSummary(target);
 	    }
 	};
+	link.setLabel(new ResourceModel("btn.getData"));
 	form.add(link);
 	panelResultados();
     }
     
     private void panelResultados(){
-	modalResultados = new ModalWindow("modalResultados");
-	pnl = new SummaryResultPanel(modalResultados.getContentId());
-	
+	modalResultados = new ManteniketModalPanel<SummaryResultPanel>("modalResultados");
+	modalResultados.header(new ResourceModel("summary.tittle"));
+	pnl = new SummaryResultPanel(ManteniketModalPanel.getContentId());
 	modalResultados.setContent(pnl);
-        modalResultados.setTitle("i18 titulo.");
-        
-        modalResultados.setCloseButtonCallback(new ModalWindow.CloseButtonCallback()
-        {
-            public boolean onCloseButtonClicked(AjaxRequestTarget target)
-            {
-                return true;
-            }
-        });
-        
-	
 	add(modalResultados);
     }
     
@@ -188,25 +160,6 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	    list.add(i);
 	}
 	return list;
-    }
-
-    private void defaultData() throws ParseException, ManteniketException {
-	int year = Calendar.getInstance().get(Calendar.YEAR);
-	cmbYear.setModel(Model.of(year));
-	String month = sdf.format(new Date());
-	cmbMonth.setModel(Model.of(month));
-
-	ActivitySummaryBean params = new ActivitySummaryBean();
-	Date date = Calendar.getInstance().getTime();
-	params.setInitDate(DateUtil.firstDayOfMonth(date));
-	params.setFinishDate(DateUtil.lastDayOfMonth(date));
-	params.setType(null);
-	ActivitySummaryBean summary = dao.getActivitySummary(params);
-	pnl.setResultados(summary, null);
-    }
-    
-    public static void main(String args[]){
-	System.out.println(Boolean.TRUE.equals(null));
     }
 
     private void reloadSummary(AjaxRequestTarget target) {

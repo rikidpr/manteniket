@@ -49,6 +49,10 @@
 							<input type="checkbox" wicket:id="filterDates" />
 							<label><wicket:message key="set.custom.dates"/></label>
 						</div>
+						
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">&nbsp</div>
+						
+						<!--  init date -->
 						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
 						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 							<label for="initDate"><wicket:message key="init.date" /></label>
@@ -56,6 +60,10 @@
 						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
 							<input wicket:id="initDate" type="text" />
 						</div>
+						
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">&nbsp</div>
+						
+						<!--  finish date -->
 						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">&nbsp</div>
 						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 							<label for="finishDate"><wicket:message key="finish.date" /></label>
@@ -65,10 +73,13 @@
 						</div>
 				</fieldset>
 				<hr/>
-				<div class="form-group">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<input type="checkbox" wicket:id="compare" />
+					&nbsp;
 					<label><wicket:message key="compare"/></label>
-					<button wicket:id="btnGetData">Get Data</button>
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">&nbsp;</div>
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 					 <a wicket:id="link">modal</a>
 				</div>
 
