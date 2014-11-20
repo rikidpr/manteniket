@@ -1,6 +1,5 @@
 package an.dpr.manteniket.pages;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.template.ManteniketPage;
 import an.dpr.manteniket.util.DateUtil;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxButton;
-import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapAjaxLink;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
@@ -148,8 +146,6 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	    cal.set(Calendar.MONTH, i);
 	    list.add(sdf.format(cal.getTime()));
 	}
-	Date date = cal.getTime();
-	System.out.println(sdf.format(date));
 	return list;
     }
 

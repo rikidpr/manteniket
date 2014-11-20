@@ -187,7 +187,7 @@ public class ActivitiesDAO implements IActivityDao{
 	    km+=act.getKm();
 	    Calendar cal = Calendar.getInstance();
 	    cal.setTime(act.getDate());
-	    minutes += cal.get(Calendar.HOUR)*60+cal.get(Calendar.MINUTE);
+	    minutes += act.getMinutes();
 	    numberAct++;
 	}
 	

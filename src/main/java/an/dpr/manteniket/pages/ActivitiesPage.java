@@ -48,7 +48,9 @@ public class ActivitiesPage extends ManteniketPage {
 
     private TextField<Long> txtId;
     private DateTextField txtDate;
-    private TimeField txtTime;
+//    private TimeField txtTime;
+    private TextField<Integer> txtHours;
+    private TextField<Integer> txtMinutes;
     private TextField<Double> txtKm;
     private TextField<String> txtDesc;
     private DropDownChoice<Bici> cmbBike;
@@ -75,7 +77,9 @@ public class ActivitiesPage extends ManteniketPage {
 	if (act != null) {
 	    txtId.setModel(Model.of(act.getActivityId()));
 	    txtDate.setModel(Model.of(act.getDate()));
-	    txtTime.setModel(Model.of(act.getDate()));
+//	    txtTime.setModel(Model.of(act.getDate()));
+	    txtHours.setModel(Model.of(act.getHours()));
+	    txtMinutes.setModel(Model.of(act.getMinutes()%60));
 	    txtKm.setModel(Model.of(act.getKm()));
 	    txtHeartRate.setModel(Model.of(act.getHeartRate()));
 	    txtDesc.setModel(Model.of(act.getDescription()));
@@ -93,13 +97,14 @@ public class ActivitiesPage extends ManteniketPage {
 	    Calendar cal = Calendar.getInstance();
 	    cal.set(Calendar.HOUR, 0);
 	    cal.set(Calendar.MINUTE, 0);
-	    txtTime.setModel(Model.of(cal.getTime()));
+//	    txtTime.setModel(Model.of(cal.getTime()));
 	}
     }
 
     private void addValidations() {
 	txtDate.setRequired(true);
-	txtTime.setRequired(true);
+	txtHours.setRequired(true);
+	txtMinutes.setRequired(true);
 	cmbBike.setRequired(true);
 	txtKm.setRequired(true);
 	txtKm.add(new RangeValidator<Double>(0.1, 999.9));
@@ -160,10 +165,18 @@ public class ActivitiesPage extends ManteniketPage {
 	form.add(new Label("lblDate", new ResourceModel("lbl.date")));
 	form.add(txtDate);
 	
-	txtTime = new TimeField("txtTime", Model.of(Calendar.getInstance().getTime()));
-	txtTime.setAmOrPm(AM_PM.AM);
+//	txtTime = new TimeField("txtTime", Model.of(Calendar.getInstance().getTime()));
+//	txtTime.setAmOrPm(AM_PM.AM);
+//	form.add(txtTime);
+	
 	form.add(new Label("lblTime", new ResourceModel("lbl.time")));
-	form.add(txtTime);
+	txtHours = new TextField<Integer>("txtHours", Model.of(new Integer(0)));
+	txtHours.setType(Integer.class);
+	form.add(txtHours);
+	
+	txtMinutes= new TextField<Integer>("txtMinutes", Model.of(new Integer(0)));
+	txtMinutes.setType(Integer.class);
+	form.add(txtMinutes);
 	
 	List<Bici> bikes = bicisDao.findAll(getUser());
 	Model<Bici> choicesB = new Model<Bici>();
@@ -191,15 +204,18 @@ public class ActivitiesPage extends ManteniketPage {
 	Date fecha = (Date) txtDate.getDefaultModelObject();
 	Calendar cal = Calendar.getInstance();
 	cal.setTime(fecha);
-	Date hora = (Date) txtTime.getDefaultModelObject();
-	Calendar calHour = Calendar.getInstance();
-	calHour.setTime(hora);
+//	Date hora = (Date) txtTime.getDefaultModelObject();
+//	Calendar calHour = Calendar.getInstance();
+//	calHour.setTime(hora);
 	
-	cal.set(Calendar.HOUR, calHour.get(Calendar.HOUR));
-	cal.set(Calendar.MINUTE, calHour.get(Calendar.MINUTE));
+	cal.set(Calendar.HOUR, 0);//calHour.get(Calendar.HOUR));
+	cal.set(Calendar.MINUTE, 0);//, calHour.get(Calendar.MINUTE));
 	cal.set(Calendar.SECOND, 0);
 	cal.set(Calendar.MILLISECOND, 0);
 	act.setDate(cal.getTime());
+	int hours = txtHours.getModelObject();
+	int minutes = txtMinutes.getModelObject();
+	act.setMinutes((hours*60)+minutes);
 	
 	act.setDescription(txtDesc.getDefaultModelObjectAsString());
 	String idBike = cmbBike.getValue();
