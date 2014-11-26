@@ -1,8 +1,10 @@
 package an.dpr.manteniket.dao;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -17,9 +19,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
+import an.dpr.manteniket.domain.User;
 import an.dpr.manteniket.repository.BicisRepository;
 import an.dpr.manteniket.repository.ComponentUsesRepository;
 import an.dpr.manteniket.repository.ComponentesRepository;
@@ -37,6 +41,7 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired IBikesDAO bikesDao;
+    @Autowired IComponentsDAO componentsDao;
     private TransactionTemplate transactionTemplate;
     
     private TransactionTemplate getTransactionTemplate(){
@@ -242,4 +247,5 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	list = page.getContent();
 	return list;
     }
+
 }

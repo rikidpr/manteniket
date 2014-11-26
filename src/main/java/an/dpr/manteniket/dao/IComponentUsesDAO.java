@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
+import an.dpr.manteniket.domain.User;
 import an.dpr.manteniket.repository.ComponentUsesRepository;
 
 public interface IComponentUsesDAO {
@@ -33,5 +34,6 @@ public interface IComponentUsesDAO {
     long count(ComponentUse use);
 
     List<ComponentUse> find(ComponentUse filtro, Sort sort, int fromPage, int itemsPage);
+  
 
 }

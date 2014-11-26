@@ -4,27 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import an.dpr.manteniket.dao.IComponentsDAO;
+import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.template.ManteniketPage;
+import de.agilecoders.wicket.core.markup.html.bootstrap.block.LabelBehavior;
+import de.agilecoders.wicket.core.markup.html.bootstrap.block.LabelType;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.Carousel;
 import de.agilecoders.wicket.core.markup.html.bootstrap.carousel.CarouselImage;
 
 public class MainPage extends ManteniketPage {
 
     private static final Logger log = LoggerFactory.getLogger(MainPage.class);
-    private Label lblBienvenida;
+    private Label lblPrueba;
+    @SpringBean
+    private IComponentsDAO compDao;
 
     public MainPage() {
 	super();
-//	// getMenuPanel().setVisible(false);
-////	lblBienvenida = new Label("lblBienvenida", "epei a manteniket");
-//	log.debug("add label behaviour");
-//	Component comp = lblBienvenida;
-//	comp.add(new LabelBehavior(LabelType.Success));
-//	add(lblBienvenida);
+	StringBuilder msg = new StringBuilder("componentes en alerta de uso: ");
+	List<Component> alerts = compDao.getAlerts(getUser());
+	for(Component c : alerts){
+	    msg.append(c.getName());
+	    msg.append("; ");
+	}
+	lblPrueba = new Label("prueba", Model.of(msg.toString()));
+	log.debug("add label behaviour");
+	lblPrueba.add(new LabelBehavior(LabelType.Success));
+	add(lblPrueba);
+	
+	
 
 	List<CarouselImage> images = new ArrayList<CarouselImage>();
 	// ad images

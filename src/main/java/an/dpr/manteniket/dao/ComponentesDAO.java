@@ -1,7 +1,12 @@
 package an.dpr.manteniket.dao;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -13,7 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.domain.User;
@@ -32,6 +37,10 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 	    .getLogger(ComponentesDAO.class);
     @Autowired
     private ComponentesRepository repo;
+    @Autowired
+    private IActivityDao activityDao;
+    @Autowired
+    private IComponentUsesDAO componentUsesDAO;
     
     public Component save(Component comp){
 	return repo.save(comp);
@@ -154,6 +163,48 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 	    count = repo.count();
 	}
 	return count;
+    }
+    
+    public Double getKmComponent(Long idComp) {
+	Component pComp = new Component();
+	pComp.setId(idComp);
+	Component component = findOne(pComp.getId());
+	return getKmComponent(component);
+    }
+    
+    public Double getKmComponent(Component component) {
+	Double km = 0.0;
+	Iterator<ComponentUse> it = component.getComponentUses().iterator();
+	while (it.hasNext()) {
+	    ComponentUse use = it.next();
+	    Date fin = use.getFinish() != null ? use.getFinish() : new Date();
+	    List<Activity> list = activityDao.findByBikeAndDates(use.getBike(), use.getInit(), fin);
+	    for (Activity act : list) {
+		km += act.getKm();
+	    }
+	}
+	return km;
+    }
+    
+
+
+    @Override
+    public List<Component> getAlerts(User user) {
+	List<Component> ret = new ArrayList<Component>();
+	//select component from componentuse where sysdate between init and finish (los que estan en uso) 
+	List<ComponentUse> uses = componentUsesDAO.findByDate(Calendar.getInstance().getTime());
+	Set<Component> compSet= new HashSet<Component>();
+	for(ComponentUse cu : uses){
+	    compSet.add(cu.getComponent());
+	}
+	//se recorre el hasset, asi no saseguramos que no duplicamos info (component tiene mismo hascode si id=)
+	for(Component component : compSet){
+	    Double km = getKmComponent(component.getId());
+	    if (km > component.getKmAlert()){
+		ret.add(component);
+	    }
+	}
+	return ret;
     }
 
 

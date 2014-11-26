@@ -58,5 +58,5 @@ public interface ComponentUsesRepository extends
     List<ComponentUse> findAll(Sort sort);
     @Query("FROM ComponentUse cu")
     Page<ComponentUse> findAll(Pageable pageable);
-
+    
 }

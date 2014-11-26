@@ -22,6 +22,7 @@ import an.dpr.manteniket.domain.User;
 public class ReadCSVAndWriteDB {
 
     private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2014.csv";
+//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2013.tsv";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
     
     public static void main(String...args) throws Exception{
@@ -60,7 +61,7 @@ public class ReadCSVAndWriteDB {
 	    Date d = sdf.parse(split[0]);
 	    int minutes = Integer.valueOf(split[1])*60+Integer.valueOf(split[2]);
 	    double km = Double.valueOf(split[3]);
-	    short hr = Short.valueOf(split[4]);
+	    short hr = Short.valueOf(split[4].isEmpty() ? "0" : split[4]);
 	    short type = Short.valueOf(split[5]);
 	    String desc = split[6];
 	    if (type < 6){

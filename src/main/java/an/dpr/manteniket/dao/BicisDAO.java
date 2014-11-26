@@ -93,9 +93,11 @@ public class BicisDAO implements IBikesDAO {
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll(org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
-    public List<Bici> findAll(User user, final Sort sort, final Integer fromPage, final Integer numberOfResults){
+    public List<Bici> findAll(User user, final Sort sort, Integer fromPage, final Integer numberOfResults){
 	List<Bici> list;
 	if (fromPage != null){
+	    if (fromPage<0)
+		fromPage =0;
 	    Page<Bici> page = repo.findByUser(user,new PageRequest(fromPage, numberOfResults, sort));
 	    list = page.getContent();
 	} else {

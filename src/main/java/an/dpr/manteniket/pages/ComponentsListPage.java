@@ -141,7 +141,7 @@ public class ComponentsListPage extends ManteniketPage {
 	    public void populateItem(Item<ICellPopulator<Component>> cellItem, String componentId,
 		    IModel<Component> rowModel) {
 		Component component = rowModel.getObject();
-		Double km = getKmComponent(component);
+		Double km = dao.getKmComponent(component.getId());
 		Label lbl = new Label(componentId, Model.of(km));
 		cellItem.add(lbl);
 	    }
@@ -163,7 +163,7 @@ public class ComponentsListPage extends ManteniketPage {
 	    @Override
 	    protected void populateItem(Item<Component> item) {
 		Component component = item.getModelObject();
-		Double km = getKmComponent(component);
+		Double km = dao.getKmComponent(component);
 		RepeatingView rv = new RepeatingView("dataRow");
 		rv.add(new Label(rv.newChildId(), new PropertyModel(item.getModel(), "name")));
 		rv.add(new Label(rv.newChildId(), new PropertyModel(item.getModel(), "type")));
@@ -186,20 +186,21 @@ public class ComponentsListPage extends ManteniketPage {
 	add(new BootstrapPagingNavigator("pagingNavigator", dataView));
     }
 
-    private Double getKmComponent(Component pComp) {
-	Double km = 0.0;
-	Component component = dao.findOne(pComp.getId());
-	Iterator<ComponentUse> it = component.getComponentUses().iterator();
-	while (it.hasNext()) {
-	    ComponentUse use = it.next();
-	    Date fin = use.getFinish() != null ? use.getFinish() : new Date();
-	    List<Activity> list = actDao.findByBikeAndDates(use.getBike(), use.getInit(), fin);
-	    for (Activity act : list) {
-		km += act.getKm();
-	    }
-	}
-	return km;
-    }
+    //TODO EFICIENCIA CERO, refactor!
+//    private Double getKmComponent(Component pComp) {
+//	Double km = 0.0;
+//	Component component = dao.findOne(pComp.getId());
+//	Iterator<ComponentUse> it = component.getComponentUses().iterator();
+//	while (it.hasNext()) {
+//	    ComponentUse use = it.next();
+//	    Date fin = use.getFinish() != null ? use.getFinish() : new Date();
+//	    List<Activity> list = actDao.findByBikeAndDates(use.getBike(), use.getInit(), fin);
+//	    for (Activity act : list) {
+//		km += act.getKm();
+//	    }
+//	}
+//	return km;
+//    }
 
 }
 
