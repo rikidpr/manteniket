@@ -17,20 +17,20 @@
 	<import resource="classpath:repository-context.xml" />
 	<import resource="classpath:beans.xml" />
 	<!--  POSTGRES
+	 -->
 	<bean id="springConfiguredDataSource" class="org.postgresql.ds.PGSimpleDataSource">
 		<property name="databaseName" value="manteniket" />
 		<property name="serverName" value="localhost" />
 		<property name="user" value="postgres" />
 		<property name="password" value="postgres" />
 	</bean>
-	 -->
 	<!-- derby
-	 -->
 	<bean id="springConfiguredDataSource" class="org.apache.derby.jdbc.EmbeddedSimpleDataSource">
 		<property name="databaseName" value="/users/saez/workspace/andpr/Manteniket/manteniketdb" />
 		<property name="user" value="" />
 		<property name="password" value="" />
 	</bean>
+	 -->
 	
 	<bean id="ShiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />

@@ -201,6 +201,7 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 	for(Component component : compSet){
 	    Double km = getKmComponent(component.getId());
 	    if (km > component.getKmAlert()){
+		component.setKmActual(km);
 		ret.add(component);
 	    }
 	}

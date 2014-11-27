@@ -24,9 +24,11 @@ import org.slf4j.LoggerFactory;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
 import an.dpr.manteniket.bean.ComponentType;
 import an.dpr.manteniket.bean.CyclingType;
 import an.dpr.manteniket.bean.ManteniketContracts;
+import an.dpr.manteniket.components.ComponentFactory;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.template.ManteniketPage;
@@ -44,6 +46,7 @@ public class ComponentsPage extends ManteniketPage {
     private DropDownChoice<ComponentType> cmbType;
     private TextField<String> txtDescription;
     private TextField<Integer> txtKmAlert;
+    private DateTextField disabledDate;
 
     public ComponentsPage(){
 	this(null);
@@ -90,6 +93,7 @@ public class ComponentsPage extends ManteniketPage {
 	    cmbType.setDefaultModel(typeModel);
 	    txtDescription.setModel(Model.of(comp.getDescription()));
 	    txtKmAlert.setModel(Model.of(comp.getKmAlert()));
+	    disabledDate.setModel(Model.of(comp.getDisabledDate()));
 	} else {
 	    txtId.setModel(Model.of((long)0));
 	    txtName.setModel(Model.of(""));
@@ -134,6 +138,8 @@ public class ComponentsPage extends ManteniketPage {
 	txtKmAlert = new TextField<Integer>("kmAlert");
 	txtKmAlert.setType(Integer.class);
 	txtKmAlert.setOutputMarkupId(true);
+	disabledDate = ComponentFactory.datePickerBootstrap("disabledDate");
+	
 	
 	ChoiceRenderer<ComponentType> render = new ChoiceRenderer<ComponentType>("name");
 	List<ComponentType> list = Arrays.asList(ComponentType.values());
@@ -153,6 +159,7 @@ public class ComponentsPage extends ManteniketPage {
 	form.add(cmbType);
 	form.add(txtDescription);
 	form.add(txtKmAlert);
+	form.add(disabledDate);
 	
 	add(form);
 	
@@ -170,6 +177,8 @@ public class ComponentsPage extends ManteniketPage {
 	comp.setType(cmbType.getDefaultModelObjectAsString());
 	comp.setKmAlert(txtKmAlert.getModelObject());
 	comp.setUser(getUser());
+	if (disabledDate.getModel() != null)
+	    comp.setDisabledDate(disabledDate.getModel().getObject());
 	dao.save(comp);
 	setResponsePage(ComponentsListPage.class);
     }

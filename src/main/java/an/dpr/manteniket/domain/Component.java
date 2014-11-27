@@ -31,6 +31,7 @@ public class Component implements Serializable, ManteniketBean{
     private User user;
     private Date disabledDate;
     private Integer kmAlert;
+    private Double kmActual;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -118,6 +119,15 @@ public class Component implements Serializable, ManteniketBean{
     public void setKmAlert(Integer kmAlert) {
         this.kmAlert = kmAlert;
     }
+    
+    @Transient
+    public Double getKmActual() {
+	return kmActual;
+    }
+    
+    public void setKmActual(Double kmActual) {
+	this.kmActual = kmActual;
+    }
 
     @Override
     public int hashCode() {
@@ -173,4 +183,5 @@ public class Component implements Serializable, ManteniketBean{
 	    return false;
 	return true;
     }
+
 }

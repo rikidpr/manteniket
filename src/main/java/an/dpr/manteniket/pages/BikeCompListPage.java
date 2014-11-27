@@ -204,7 +204,7 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
     }
 
     private Sort defaultSort() {
-	return new Sort(Direction.ASC,"init");
+	return new Sort(Direction.DESC,"init");
     }
 
     @Override
