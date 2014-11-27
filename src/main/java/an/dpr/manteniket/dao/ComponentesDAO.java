@@ -29,7 +29,6 @@ import an.dpr.manteniket.repository.ComponentesRepository;
  * Dao del entity componentes
  * 
  * @author rsaez
- * TODO BUSCAR POR USUARIOOOOOO
  */
 public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 
@@ -76,10 +75,16 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
 	// TODO manejo excepciones sql
     }
 
+    @Override
     public List<Component> findAll() {
 	return repo.findAll();
-	// TODO manejo excepciones sql
     }
+
+    @Override
+    public List<Component> findAllActives(User user) {
+	return repo.findAllActives(user.getId());
+    }
+    
     public ComponentesRepository getRepo() {
 	return repo;
     }

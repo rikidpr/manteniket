@@ -6,13 +6,13 @@ import static an.dpr.manteniket.bean.ManteniketContracts.ENTITY;
 import static an.dpr.manteniket.bean.ManteniketContracts.ID;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilteredPropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterForm;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.FilterToolbar;
@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
@@ -39,7 +40,6 @@ import an.dpr.manteniket.components.converter.ManteniketDateConverter;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.dao.IComponentUsesDAO;
-import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
@@ -204,7 +204,8 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
     }
 
     private Sort defaultSort() {
-	return new Sort(Direction.DESC,"init");
+	List<Order> orders = Arrays.asList(new Order(Direction.DESC,"init"));
+	return new Sort(orders );
     }
 
     @Override

@@ -3,6 +3,7 @@ package an.dpr.manteniket.pages;
 import static an.dpr.manteniket.bean.ManteniketContracts.BTN_ADD;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
@@ -42,9 +44,7 @@ import an.dpr.manteniket.components.ManteniketTable;
 import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.dao.IComponentsDAO;
-import an.dpr.manteniket.domain.Activity;
 import an.dpr.manteniket.domain.Component;
-import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
@@ -56,6 +56,7 @@ public class ComponentsListPage extends ManteniketPage {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ComponentsListPage.class);
     static final String NAME = "name";
+    static final String DISABLED_DATE="disabledDate";
     static final String TYPE = "type";
     static final String KM = "km";
     static final int ITEMS_PAGE = 5;
@@ -186,27 +187,12 @@ public class ComponentsListPage extends ManteniketPage {
 	add(new BootstrapPagingNavigator("pagingNavigator", dataView));
     }
 
-    //TODO EFICIENCIA CERO, refactor!
-//    private Double getKmComponent(Component pComp) {
-//	Double km = 0.0;
-//	Component component = dao.findOne(pComp.getId());
-//	Iterator<ComponentUse> it = component.getComponentUses().iterator();
-//	while (it.hasNext()) {
-//	    ComponentUse use = it.next();
-//	    Date fin = use.getFinish() != null ? use.getFinish() : new Date();
-//	    List<Activity> list = actDao.findByBikeAndDates(use.getBike(), use.getInit(), fin);
-//	    for (Activity act : list) {
-//		km += act.getKm();
-//	    }
-//	}
-//	return km;
-//    }
-
 }
 
 class ComponentSortDataProvider extends SortableDataProvider<Component, String> implements
 	IFilterStateLocator<Component> {
 
+    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ComponentSortDataProvider.class);
     public IComponentsDAO dao;
     public Component filterState;
@@ -263,7 +249,11 @@ class ComponentSortDataProvider extends SortableDataProvider<Component, String> 
     }
 
     private Sort defaultSort() {
-	return new Sort(Sort.Direction.ASC, ComponentsListPage.NAME);
+	List<Order> orders = Arrays.asList(
+		new Order(Sort.Direction.DESC, ComponentsListPage.DISABLED_DATE),
+		new Order(Sort.Direction.ASC, ComponentsListPage.NAME)
+		);
+	return new Sort(orders );
     }
 
     @Override

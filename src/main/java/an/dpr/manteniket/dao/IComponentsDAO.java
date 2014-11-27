@@ -22,6 +22,7 @@ public interface IComponentsDAO {
     List<Component> findByType(User user, String tipoComponente);
 
     List<Component> findAll();
+    List<Component> findAllActives(User user);
     
     List<Component> find(Component filtro, Sort sort, int page, int numberOfResults);
 
@@ -33,4 +34,5 @@ public interface IComponentsDAO {
     public Double getKmComponent(Component component);
     
     public List<Component> getAlerts(User user);
+
 }

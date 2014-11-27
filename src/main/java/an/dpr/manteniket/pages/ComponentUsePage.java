@@ -15,16 +15,15 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.bean.ManteniketContracts.Entity;
 import an.dpr.manteniket.components.ComponentFactory;
-import an.dpr.manteniket.dao.ComponentesDAO;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.dao.IComponentUsesDAO;
+import an.dpr.manteniket.dao.IComponentsDAO;
 import an.dpr.manteniket.domain.Bici;
 import an.dpr.manteniket.domain.Component;
 import an.dpr.manteniket.domain.ComponentUse;
@@ -32,8 +31,6 @@ import an.dpr.manteniket.template.ManteniketPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextFieldConfig;
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextFieldConfig.TodayButton;
 
 /**
  * Page for the add and edit of uses of components.
@@ -46,7 +43,7 @@ public class ComponentUsePage extends ManteniketPage{
     @SpringBean
     private IComponentUsesDAO cuDao;
     @SpringBean
-    private ComponentesDAO compDao;
+    private IComponentsDAO compDao;
     @SpringBean
     private IBikesDAO bikeDao;
     private ComponentUse bean;
@@ -66,6 +63,20 @@ public class ComponentUsePage extends ManteniketPage{
     
     public ComponentUsePage(PageParameters params){
 	super();
+	Long id = null;
+	if (params!= null){
+	    id = !params.get(ManteniketContracts.ID).isEmpty() 
+		    ? params.get(ManteniketContracts.ID).toLongObject()
+			    : null;
+		    if (!params.get(ManteniketContracts.SOURCE_ID).isNull()
+			    && !params.get(ManteniketContracts.ENTITY).isNull()){
+			sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong(0);
+			entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
+		    }
+	}
+	if (id!=null){
+	    bean = cuDao.findOne(id);
+	}
 	initComponents(params);
 	loadData(params);
 	addValidations();
@@ -83,21 +94,7 @@ public class ComponentUsePage extends ManteniketPage{
     }
 
     private void loadData(PageParameters params) {
-	Long id = null;
 	Object refObj = getEntityRefObject(params);
-	if (params!= null){
-	    id = !params.get(ManteniketContracts.ID).isEmpty() 
-		    ? params.get(ManteniketContracts.ID).toLongObject()
-			    : null;
-		    if (!params.get(ManteniketContracts.SOURCE_ID).isNull()
-			    && !params.get(ManteniketContracts.ENTITY).isNull()){
-			sourceId = params.get(ManteniketContracts.SOURCE_ID).toLong(0);
-			entity = params.get(ManteniketContracts.ENTITY).toEnum(Entity.class);
-		    }
-	}
-	if (id!=null){
-	    bean = cuDao.findOne(id);
-	}
 	if (bean != null){
 	    txtId.setDefaultModel(Model.of(bean.getId()));
 	    txtInit.setDefaultModel(Model.of(bean.getInit()));
@@ -175,8 +172,22 @@ public class ComponentUsePage extends ManteniketPage{
         form.add(cmbBike);
 
         ChoiceRenderer<Component> compRender = new ChoiceRenderer<Component>("name", "id");
-        List<Component> components = compDao.findAll();
+        List<Component> components = compDao.findAllActives(getUser());
+        boolean activo = false;
+        if (bean != null){
+            for(Component c : components){
+        	if (c.getId().equals(bean.getComponent().getId())){
+        	    activo = true;
+        	}
+            }
+            if (!activo){
+        	components.add(bean.getComponent());
+            }
+        }
         cmbComp = new DropDownChoice<Component>("cmbComp", components, compRender);
+        if (!activo){
+            cmbComp.setEnabled(false);
+        }
         form.add(cmbComp);
         
         txtDesc = new TextArea<String>("txtDesc");
