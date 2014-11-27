@@ -22,17 +22,21 @@ public interface ComponentesRepository extends CrudRepository<Component, Long> {
     String NAME="NAME";
     String TYPE="TYPE";
     
-    String SELECT_USER_AND_NAME ="Select c from Component c where c.disabledDate is null and  c.user.id=:"+USER_ID+" AND c.name=:"+NAME;
-    String SELECT_USER_AND_TYPE ="Select c from Component c where c.disabledDate is null and  c.user.id=:"+USER_ID+" AND c.type=:"+TYPE;
-    String SELECT_USER = "Select c from Component c where c.disabledDate is null and  c.user.id=:"+USER_ID;
+    String SELECT_USER = "Select c from Component c where "+/*c.disabledDate is null and*/"  c.user.id=:"+USER_ID;
+    String SELECT_USER_AND_NAME ="Select c from Component c where "+/*c.disabledDate is null and*/"  c.user.id=:"+USER_ID+" AND c.name=:"+NAME;
+    String SELECT_USER_AND_TYPE ="Select c from Component c where "+/*c.disabledDate is null and*/"  c.user.id=:"+USER_ID+" AND c.type=:"+TYPE;
+    String SELECT_USER_ACTIVES="Select c from Component c where c.disabledDate is null and  c.user.id=:"+USER_ID;
     
-    String COUNT_USER_AND_TYPE ="Select count(c) from Component c where c.disabledDate is null and  c.user.id=:"+USER_ID+" AND c.type=:"+TYPE;
-    String COUNT_USER = "Select count(c) from Component c where c.disabledDate is null and  c.user.id=:"+USER_ID;
+    String COUNT_USER_AND_TYPE ="Select count(c) from Component c where "+/*c.disabledDate is null and*/"  c.user.id=:"+USER_ID+" AND c.type=:"+TYPE;
+    String COUNT_USER = "Select count(c) from Component c where "+/*c.disabledDate is null and*/"  c.user.id=:"+USER_ID;
 
     @Query(SELECT_USER_AND_NAME)
     Component findByUserIdAndName(@Param(USER_ID) Long userId, @Param(NAME) String name);
     
     List<Component> findAll();
+    
+    @Query(SELECT_USER_ACTIVES)
+    List<Component> findAllActives(@Param(USER_ID) Long userId);
     
     
     @Query(SELECT_USER)
@@ -54,5 +58,6 @@ public interface ComponentesRepository extends CrudRepository<Component, Long> {
     long countByUserId(@Param(USER_ID) Long userId);
     @Query(COUNT_USER_AND_TYPE)
     long countByUserIdAndType(@Param(USER_ID) Long userId, @Param(TYPE) String type);
+
     
 }

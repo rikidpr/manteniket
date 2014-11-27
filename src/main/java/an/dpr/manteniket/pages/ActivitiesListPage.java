@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.ChoiceFilteredPropertyColumn;
@@ -24,9 +25,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
+import an.dpr.manteniket.components.DatePropertyColumn;
 import an.dpr.manteniket.components.FontAwesomeIconTypeExt;
 import an.dpr.manteniket.components.ManteniketDataTable;
 import an.dpr.manteniket.components.ManteniketLinkColumn;
+import an.dpr.manteniket.components.converter.ManteniketDateConverter;
 import an.dpr.manteniket.dao.IActivityDao;
 import an.dpr.manteniket.dao.IBikesDAO;
 import an.dpr.manteniket.domain.Activity;
@@ -75,7 +78,9 @@ public class ActivitiesListPage extends ManteniketPage {
 	log.debug("inicio");
 
 	List<IColumn<Activity,String>> columns = new ArrayList<IColumn<Activity,String>>();
-	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.date"), "date", "date"));
+	DateConverter dateConverter = ManteniketDateConverter.getInstance();
+	columns.add(new DatePropertyColumn<Activity, String>(new ResourceModel("head.date"), "date", "date", dateConverter ));
+	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.time"), "time", "time"));
 	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.km"),"km","km"));	
 	//	columns.add(new PropertyColumn<Activity, String>(new ResourceModel("head.bike"),"bike.codBici","bike.codBici"));
 

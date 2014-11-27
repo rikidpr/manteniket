@@ -23,6 +23,8 @@ import an.dpr.manteniket.bean.ManteniketBean;
 @Table(name="bicis")
 public class Bici implements ManteniketBean, Serializable{
 
+    private static final long serialVersionUID = 1L;
+    
     private Long idBici;
     private String codBici;
     private String descripcion;
@@ -131,5 +133,74 @@ public class Bici implements ManteniketBean, Serializable{
 	} else {
 	    return false;
 	}
+    }
+
+    @Override
+    public String toString() {
+	return "Bici [idBici=" + idBici + ", codBici=" + codBici + ", descripcion=" + descripcion + ", tipo=" + tipo
+		+ ", user=" + user + ", obsolete=" + obsolete +  ", disabledDate=" + disabledDate + "]";
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((codBici == null) ? 0 : codBici.hashCode());
+	result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
+	result = prime * result + ((disabledDate == null) ? 0 : disabledDate.hashCode());
+	result = prime * result + ((idBici == null) ? 0 : idBici.hashCode());
+	result = prime * result + ((obsolete == null) ? 0 : obsolete.hashCode());
+	result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
+	result = prime * result + ((user == null) ? 0 : user.hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Bici other = (Bici) obj;
+	
+	if (codBici == null) {
+	    if (other.codBici != null)
+		return false;
+	} else if (!codBici.equals(other.codBici))
+	    return false;
+	
+	if (descripcion == null) {
+	    if (other.descripcion != null)
+		return false;
+	} else if (!descripcion.equals(other.descripcion))
+	    return false;
+	if (disabledDate == null) {
+	    if (other.disabledDate != null)
+		return false;
+	} else if (!disabledDate.equals(other.disabledDate))
+	    return false;
+	if (idBici == null) {
+	    if (other.idBici != null)
+		return false;
+	} else if (!idBici.equals(other.idBici))
+	    return false;
+	if (obsolete == null) {
+	    if (other.obsolete != null)
+		return false;
+	} else if (!obsolete.equals(other.obsolete))
+	    return false;
+	if (tipo == null) {
+	    if (other.tipo != null)
+		return false;
+	} else if (!tipo.equals(other.tipo))
+	    return false;
+	if (user == null) {
+	    if (other.user != null)
+		return false;
+	} else if (!user.equals(other.user))
+	    return false;
+	return true;
     }
 }

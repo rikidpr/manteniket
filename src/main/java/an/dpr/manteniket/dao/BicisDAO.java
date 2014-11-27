@@ -3,15 +3,21 @@ package an.dpr.manteniket.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import an.dpr.manteniket.bean.ManteniketContracts;
 import an.dpr.manteniket.domain.Bici;
+import an.dpr.manteniket.domain.ComponentUse;
 import an.dpr.manteniket.domain.User;
 import an.dpr.manteniket.exception.ManteniketException;
 import an.dpr.manteniket.repository.BicisRepository;
@@ -24,10 +30,21 @@ import an.dpr.manteniket.repository.BicisRepository;
  */
 public class BicisDAO implements IBikesDAO {
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    private TransactionTemplate transactionTemplate;
+    
     private static final Logger log = LoggerFactory.getLogger(BicisDAO.class);
     @Autowired
     private BicisRepository repo;
 
+    private TransactionTemplate getTransactionTemplate(){
+	if (transactionTemplate == null){
+	    transactionTemplate = new TransactionTemplate(transactionManager);
+	}
+	return transactionTemplate;
+    }
+    
     @Override
     public Bici findByIdBici(Long id) {
 	log.debug("params: id " + id);
@@ -55,22 +72,32 @@ public class BicisDAO implements IBikesDAO {
    	return list;
        }
     
-    public List<Bici> findAll(User user){
-	//sort por defecto
-	Sort sort = new Sort(Sort.Direction.ASC, "codBici");
-	Bici bici = new Bici();
-	bici.setUser(user);
-	Integer count = (int) count(bici);
-	return findAll(user, sort, 0, count );
+    public List<Bici> findAll(final User user){
+//	//sort por defecto
+//	return getTransactionTemplate().execute(
+//		new TransactionCallback<List<Bici>>(){
+//	    
+//	    @Override
+//	    public List<Bici> doInTransaction(TransactionStatus status) {
+		Sort sort = new Sort(Sort.Direction.ASC, "codBici");
+		Bici bici = new Bici();
+		bici.setUser(user);
+		Integer count = (int) count(bici);
+		return findAll(user, sort, 0, count );
+//	    }
+//	    
+//	});
     }
     
     
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IBikesDAO#findAll(org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
-    public List<Bici> findAll(User user, final Sort sort, final Integer fromPage, final Integer numberOfResults){
+    public List<Bici> findAll(User user, final Sort sort, Integer fromPage, final Integer numberOfResults){
 	List<Bici> list;
 	if (fromPage != null){
+	    if (fromPage<0)
+		fromPage =0;
 	    Page<Bici> page = repo.findByUser(user,new PageRequest(fromPage, numberOfResults, sort));
 	    list = page.getContent();
 	} else {
