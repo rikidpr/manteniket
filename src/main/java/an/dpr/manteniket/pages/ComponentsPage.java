@@ -1,6 +1,7 @@
 package an.dpr.manteniket.pages;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -100,6 +101,7 @@ public class ComponentsPage extends ManteniketPage {
 	    cmbType.setDefaultModel(new Model<CyclingType>());
 	    txtDescription.setModel(Model.of(""));
 	    txtKmAlert.setModel(Model.of(0));
+	    disabledDate.setModel(new Model<Date>());
 	}
     }
 
