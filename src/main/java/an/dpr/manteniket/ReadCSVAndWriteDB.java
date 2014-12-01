@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,18 +22,20 @@ import an.dpr.manteniket.domain.User;
 
 public class ReadCSVAndWriteDB {
 
-    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2014.csv";
-//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2013.tsv";
-//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2012.tsv";
-//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2011.tsv";
-//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2010.tsv";
-//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2009.tsv";
-    private static final SimpleDateFormat sdf2011 = new SimpleDateFormat("MM/dd/yyyy");
-    private static final SimpleDateFormat sdf2009 = new SimpleDateFormat("dd/MM/yy");
+    private static final String filePath14 = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2014.csv";
+    private static final String filePath13 = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2013.tsv";
+    private static final String filePath12 = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2012.tsv";
+    private static final String filePath11 = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2011.tsv";
+    private static final String filePath10 = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2010.tsv";
+    private static final String filePath09 = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2009.tsv";
+    private static final SimpleDateFormat sdf2012 = new SimpleDateFormat("MM/dd/yyyy");//2012 ->
+    private static final SimpleDateFormat sdf2009 = new SimpleDateFormat("dd/MM/yy");//2009
+    
+    
     
     public static void main(String...args) throws Exception{
-//	listBikes();
-	loadCSV();
+	int year = 2013;
+	loadCSV(year);
 //	countActivities(getManagerJPA());
     }
     
@@ -52,7 +55,8 @@ public class ReadCSVAndWriteDB {
 	}
     }
 
-    private static void loadCSV() throws IOException, ParseException{
+    private static void loadCSV(int year) throws IOException, ParseException{
+	String filePath = getPath(year);
 	File f = new File(filePath);	
 	BufferedReader bf = new BufferedReader(new FileReader(f));
 	String line;
@@ -64,8 +68,7 @@ public class ReadCSVAndWriteDB {
 	while((line = bf.readLine())!=null){
 	    String[] split = line.split("\\t");
 	    int index =0;
-	    Date d = sdf2011.parse(split[index++]);
-//	    Date d = sdf2009.parse(split[index++]);
+	    Date d = getSDF(year).parse(split[index++]);
 	    int minutes = 0;
 	    String stime = split[index];
 	    if (stime.contains("'") || stime.contains("h")){
@@ -107,18 +110,20 @@ public class ReadCSVAndWriteDB {
 	    try{
 		hr = Short.valueOf(split[index++]);
 	    } catch(Exception e){}
-	    //for 2009 format
-//	    index++;//saltamos la velocidad media
-//	    short type = Short.valueOf(split[index++]);
-//	    if (type == 2) 
-//		type = 4;
-//	    if (type == 0)
-//		type = 1;
-//	    if (type==1)
-//		type=2;
 	    
-	    //form 2010+ format
-	    short type = Short.valueOf(split[index++]);
+	    short type;
+	    if (year == 2009){
+		index++;//saltamos la velocidad media
+		type = Short.valueOf(split[index++]);
+		if (type == 2) 
+		    type = 4;
+		if (type == 0)
+		    type = 1;
+		if (type==1)
+		    type=2;
+	    } else {
+		type = Short.valueOf(split[index++]);
+	    }
 //	    
 	    //now, for all formats again
 	    String desc = "";
@@ -150,6 +155,42 @@ public class ReadCSVAndWriteDB {
 	manager.getTransaction().commit();
 	countActivities(manager);
 	System.out.println("done...");
+    }
+    
+    private static DateFormat getSDF(int year) {
+	switch (year){
+	case 2009: 
+	case 2010:
+	case 2011:
+	    return sdf2009;
+	default:
+	    return sdf2012;
+	}
+    }
+
+    private static String getPath(int year){
+	String filePath = null;
+	switch (year){
+	    case 2009:
+		filePath = filePath09;
+		break;
+	    case 2010:
+		filePath = filePath10;
+		break;
+	    case 2011:
+		filePath = filePath11;
+		break;
+	    case 2012:
+		filePath = filePath12;
+		break;
+	    case 2013:
+		filePath = filePath13;
+		break;
+	    case 2014:
+		filePath = filePath14;
+		break;
+	}
+	return filePath;
     }
     
     private static void countActivities(EntityManager manager) {
