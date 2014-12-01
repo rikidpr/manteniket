@@ -52,11 +52,11 @@ public interface ComponentUsesRepository extends
     @Query("select count(cu) FROM ComponentUse cu WHERE cu.component.name=:componentName")
     long countByComponentName(@Param("componentName") String componentName);
     
-    @Query("FROM ComponentUse cu")
-    List<ComponentUse> findAll();
-    @Query("FROM ComponentUse cu")
-    List<ComponentUse> findAll(Sort sort);
-    @Query("FROM ComponentUse cu")
-    Page<ComponentUse> findAll(Pageable pageable);
+    @Query("FROM ComponentUse cu WHERE cu.user =:user")
+    List<ComponentUse> find(@Param("user") Long user);
+    @Query("FROM ComponentUse cu WHERE cu.user =:user")
+    List<ComponentUse> find(@Param("user") Long user, Sort sort);
+    @Query("FROM ComponentUse cu WHERE cu.user =:user")
+    Page<ComponentUse> find(@Param("user") Long user, Pageable pageable);
     
 }
