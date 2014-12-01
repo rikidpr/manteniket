@@ -160,7 +160,6 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 
     private void reloadSummary(AjaxRequestTarget target) {
 	try {
-	    ActivitySummaryBean compare = null;
 	    ActivitySummaryBean summary = null;
 	    ActivityType type = (ActivityType) cmbType.getDefaultModelObject();
 
@@ -169,21 +168,8 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	    params = getSelectedDates(params);
 
 	    summary = dao.getActivitySummary(params);
-	    
-	    if (isCompare()){//FIXME PUSH TO NEW METHOD 
-		
-		Calendar cal= Calendar.getInstance();
-		//init -1year
-		cal.setTime(params.getInitDate());
-		cal.add(Calendar.YEAR, -1);
-		params.setInitDate(cal.getTime());
-		//finish -1year
-		cal.setTime(params.getFinishDate());
-		cal.add(Calendar.YEAR, -1);
-		params.setFinishDate(cal.getTime());
-		
-		compare = dao.getActivitySummary(params);
-	    }
+	    ActivitySummaryBean compare = null;
+	    compare = getCompareInfo(params);
 	    
 	    pnl.setResultados(summary, compare);
 	    modalResultados.show(target);
@@ -192,6 +178,24 @@ public class ActivitiesSummaryPage extends ManteniketPage {
 	} catch (ManteniketException e) {
 	    log.error("Error in reloadSummary", e);
 	}
+    }
+
+    private ActivitySummaryBean getCompareInfo(ActivitySummaryBean params) throws ManteniketException {
+	ActivitySummaryBean compare = null;
+	if (isCompare()) {// FIXME PUSH TO NEW METHOD
+	    Calendar cal = Calendar.getInstance();
+	    // init -1year
+	    cal.setTime(params.getInitDate());
+	    cal.add(Calendar.YEAR, -1);
+	    params.setInitDate(cal.getTime());
+	    // finish -1year
+	    cal.setTime(params.getFinishDate());
+	    cal.add(Calendar.YEAR, -1);
+	    params.setFinishDate(cal.getTime());
+
+	    compare = dao.getActivitySummary(params);
+	}
+	return compare;
     }
 
     private ActivitySummaryBean getSelectedDates(ActivitySummaryBean bean) throws ParseException {

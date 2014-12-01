@@ -100,7 +100,7 @@ public class ActivitiesListPage extends ManteniketPage {
 	columns.add(linkDelete);
 	
 	
-	ManteniketDataTable<Activity, String> table = new ManteniketDataTable<Activity, String>("table", columns,dataProvider, 10);
+	ManteniketDataTable<Activity, String> table = new ManteniketDataTable<Activity, String>("table", columns,dataProvider, ITEMS_PAGE.intValue());
 	table.add(new TableBehavior().striped());
 	form.add(table);
 
@@ -123,7 +123,7 @@ class ActivitySortData extends SortableDataProvider<Activity, String> implements
 	this.dao = dao;
 	filterState = filtroBase;
     }
-
+    
     @Override
     public Iterator<? extends Activity> iterator(long first, long count) {
 	int fromPage = 0;

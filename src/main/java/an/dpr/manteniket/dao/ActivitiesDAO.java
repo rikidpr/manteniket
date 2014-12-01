@@ -201,7 +201,7 @@ public class ActivitiesDAO implements IActivityDao{
 
     private List<Activity> getActivityListForSummary(ActivitySummaryBean params) {
 	if (params.getType() == null){
-	    return repo.findByDateBetween(params.getInitDate(), params.getFinishDate());
+	    return repo.findDatesAndDistinctType(params.getInitDate(), params.getFinishDate(), ActivityType.URBAN.getCode());
 	} else {
 	    return repo.findDatesAndType(params.getInitDate(), params.getFinishDate(), params.getType().getCode());
 	}

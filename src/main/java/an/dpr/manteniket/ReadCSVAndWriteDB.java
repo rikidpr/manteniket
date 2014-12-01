@@ -23,7 +23,12 @@ public class ReadCSVAndWriteDB {
 
     private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2014.csv";
 //    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - s2013.tsv";
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2012.tsv";
+//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2011.tsv";
+//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2010.tsv";
+//    private static final String filePath = "C:\\Users\\saez\\Documents\\riki\\CyclingCarretera - 2009.tsv";
+    private static final SimpleDateFormat sdf2011 = new SimpleDateFormat("MM/dd/yyyy");
+    private static final SimpleDateFormat sdf2009 = new SimpleDateFormat("dd/MM/yy");
     
     public static void main(String...args) throws Exception{
 //	listBikes();
@@ -54,16 +59,72 @@ public class ReadCSVAndWriteDB {
 	User user = new User();
 	user.setId(1L);
 	EntityManager manager = getManagerJPA();
-	countActivities(manager);
 	manager.getTransaction().begin();
+	int numLine=1;
 	while((line = bf.readLine())!=null){
 	    String[] split = line.split("\\t");
-	    Date d = sdf.parse(split[0]);
-	    int minutes = Integer.valueOf(split[1])*60+Integer.valueOf(split[2]);
-	    double km = Double.valueOf(split[3]);
-	    short hr = Short.valueOf(split[4].isEmpty() ? "0" : split[4]);
-	    short type = Short.valueOf(split[5]);
-	    String desc = split[6];
+	    int index =0;
+	    Date d = sdf2011.parse(split[index++]);
+//	    Date d = sdf2009.parse(split[index++]);
+	    int minutes = 0;
+	    String stime = split[index];
+	    if (stime.contains("'") || stime.contains("h")){
+		String[] tiempo = split[index++].split("h");
+		int hind=0;
+		int min = 0;
+		int hour = 0;
+		if (tiempo.length>1 || stime.contains("h")){
+		    try{
+			hour = Integer.valueOf(tiempo[hind++].trim());
+		    } catch(Exception e){}
+		}
+		if (tiempo.length>1 || stime.contains("'")){
+		    try{
+			String smin = tiempo[hind++].trim();
+			if (smin.contains("'")){
+			    smin = smin.substring(0, smin.length()-1);
+			} 
+			min = Integer.valueOf(smin);
+		    } catch(Exception e){}
+		}
+		minutes = hour*60+min;
+	    } else {
+		int min = 0;
+		int hour = 0;
+		try{
+		    hour = Integer.valueOf(split[index++]);
+		} catch(Exception e){}
+		try{
+		    min = Integer.valueOf(split[index++]);
+		} catch(Exception e){}
+		minutes = hour*60+min;
+	    }
+	    double km = 0;
+	    try{
+		km = Double.valueOf(split[index++]);
+	    } catch(Exception e){}
+	    short hr = 0;
+	    try{
+		hr = Short.valueOf(split[index++]);
+	    } catch(Exception e){}
+	    //for 2009 format
+//	    index++;//saltamos la velocidad media
+//	    short type = Short.valueOf(split[index++]);
+//	    if (type == 2) 
+//		type = 4;
+//	    if (type == 0)
+//		type = 1;
+//	    if (type==1)
+//		type=2;
+	    
+	    //form 2010+ format
+	    short type = Short.valueOf(split[index++]);
+//	    
+	    //now, for all formats again
+	    String desc = "";
+	    try{
+		desc = split[index++].substring(0,99);
+	    } catch(Exception e){}
 	    if (type < 6){
 		Activity act = new Activity();
 		act.setDate(d);
@@ -75,14 +136,15 @@ public class ReadCSVAndWriteDB {
 		act.setType(type);
 		act.setUser(user);
 		act.setBike(getBike(type, manager));
+		System.out.println(act);
 		try{
 		    manager.persist(act);
 		} catch(PersistenceException e){
 		    e.printStackTrace();
 		}
-		System.out.println("ADD");
+		System.out.println("ADD"+numLine++);
 	    } else {
-		System.out.println("pesas, skip");
+		System.out.println("pesas, skip"+numLine++);
 	    }
 	}
 	manager.getTransaction().commit();
