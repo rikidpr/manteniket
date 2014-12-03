@@ -29,7 +29,7 @@ import an.dpr.manteniket.repository.ComponentUsesRepository;
 import an.dpr.manteniket.repository.ComponentesRepository;
 import an.dpr.manteniket.util.DateUtil;
 
-public class ComponentUsesDAO implements IComponentUsesDAO {
+public class ComponentUsesDAO extends ManteniketDAO implements IComponentUsesDAO {
 
     private static final Logger log = LoggerFactory.getLogger(ComponentUsesDAO.class);
     @Autowired
@@ -38,18 +38,8 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
     private BicisRepository bikeRepo;
     @Autowired
     private ComponentesRepository compRepo;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
     @Autowired IBikesDAO bikesDao;
     @Autowired IComponentsDAO componentsDao;
-    private TransactionTemplate transactionTemplate;
-    
-    private TransactionTemplate getTransactionTemplate(){
-	if (transactionTemplate == null){
-	    transactionTemplate = new TransactionTemplate(transactionManager);
-	}
-	return transactionTemplate;
-    }
     
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IComponentUsesDAOo#findOne(java.lang.Long)
@@ -241,7 +231,7 @@ public class ComponentUsesDAO implements IComponentUsesDAO {
 	    page = repo.findByComponent(comp, pageRequest);
 	    
 	}  else {
-	    page = repo.findAll(pageRequest);
+	    page = repo.find(filtro.getUser().getId(), pageRequest);
 	    list = page.getContent();
 	}
 	list = page.getContent();
