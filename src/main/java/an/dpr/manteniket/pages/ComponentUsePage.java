@@ -183,6 +183,8 @@ public class ComponentUsePage extends ManteniketPage{
             if (!activo){
         	components.add(bean.getComponent());
             }
+        } else {
+            activo = true;
         }
         cmbComp = new DropDownChoice<Component>("cmbComp", components, compRender);
         if (!activo){

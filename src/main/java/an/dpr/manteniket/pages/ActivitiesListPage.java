@@ -128,7 +128,7 @@ class ActivitySortData extends SortableDataProvider<Activity, String> implements
     public Iterator<? extends Activity> iterator(long first, long count) {
 	int fromPage = 0;
 	if (first >= ActivitiesListPage.ITEMS_PAGE) {
-	    fromPage = ((int) (first/ActivitiesListPage.ITEMS_PAGE))-1;
+	    fromPage = ((int) (first/ActivitiesListPage.ITEMS_PAGE));
 	}
 	List<Activity> list = getList(getSort(), fromPage, ActivitiesListPage.ITEMS_PAGE.intValue());
 	return list.iterator();

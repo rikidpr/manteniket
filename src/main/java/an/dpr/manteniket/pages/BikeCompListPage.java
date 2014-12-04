@@ -180,7 +180,6 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
     }
 
     private List<ComponentUse> getList(SortParam<String> sortParam, int fromPage, int itemsPage) {
-	ComponentUse filtro = getFiltro();
 	Sort sort = null;
 	if (sortParam != null && 
 		(sortParam.getProperty().equals(BikeCompListPage.COMPONENT)
@@ -199,7 +198,7 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
 	} else {
 	    sort = defaultSort();
 	}
-	list = dao.find(filtro, sort, fromPage, itemsPage);
+	list = dao.find(filterState, sort, fromPage, itemsPage);
 	return list;
     }
 
@@ -210,24 +209,9 @@ class BikeCompDataProvider extends SortableDataProvider<ComponentUse, String> im
 
     @Override
     public long size() {
-	ComponentUse filtro = getFiltro();
-	return dao.count(filtro);
+	return dao.count(filterState);
     }
     
-    private ComponentUse getFiltro(){
-	ComponentUse filtro = null; 
-	if (filterState != null){
-	    Bici bike = filterState.getBike();
-	    Component comp = filterState.getComponent();
-	    if ((bike!= null && bike.getCodBici()!=null && !bike.getCodBici().isEmpty())
-		    ||
-		    (comp!=null && comp.getName()!= null && !comp.getName().isEmpty())){
-		filtro = filterState;
-	    }
-	}
-	return filtro;
-    }
-
     @Override
     public IModel<ComponentUse> model(ComponentUse object) {
 	return Model.of(object);
