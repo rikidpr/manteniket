@@ -65,13 +65,6 @@ public class MaintenanceDAOSpringDataJPA extends ManteniketDAO implements IMaint
 	return repo.countByUser(maintenance.getUser());
     }
 
-    /* (non-Javadoc)
-     * @see an.dpr.manteniket.dao.IMaintenanceDAO#countByBike(an.dpr.manteniket.domain.Bici)
-     */
-    @Override
-    public long countByBike(Bici bike) {
-	return repo.countByBike(bike);
-    }
 
     /* (non-Javadoc)
      * @see an.dpr.manteniket.dao.IMaintenanceDAO#countByComponent(an.dpr.manteniket.domain.Component)
@@ -88,13 +81,6 @@ public class MaintenanceDAOSpringDataJPA extends ManteniketDAO implements IMaint
     public List<Maintenance> find(final Maintenance maintenance, Sort sort, Integer fromPage, Integer numberOfResults) {
 	PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
 	Page<Maintenance> page = repo.findByUser(maintenance.getUser(), pageRequest);
-	return loadLazyComponent(page);
-    }
-
-    @Override
-    public List<Maintenance> findByBike(final Bici bike, Sort sort, Integer fromPage, Integer numberOfResults) {
-	final PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
-	Page<Maintenance> page = repo.findByBike(bike, pageRequest);
 	return loadLazyComponent(page);
     }
 

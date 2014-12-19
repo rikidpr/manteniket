@@ -113,4 +113,10 @@ public class Maintenance implements ManteniketBean, Serializable{
 	return true;
     }
 
+    @Override
+    public String toString() {
+	return "Maintenance [id=" + id + ", user=" + user + ", component=" + component + ", date=" + date
+		+ ", description=" + description + ", price=" + price + ", shop=" + shop + ", type=" + type + "]";
+    }
+
 }
