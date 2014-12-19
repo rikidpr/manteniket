@@ -1,5 +1,6 @@
 package an.dpr.manteniket.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,24 +13,28 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import an.dpr.manteniket.bean.ManteniketBean;
 
 @Entity
 @Table(name="maintenances")
-public class Maintenance {
+public class Maintenance implements ManteniketBean, Serializable{
     
+    private static final long serialVersionUID = 8166105088446235012L;
     private Long id;
     private User user;
     private Component component;
-    private Bici bike;
     private Date date;
     private String description;
     private Double price;
-    private String tienda;
-    private String tipo;
+    private String shop;
+    private String type;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column
+    @Override
     public Long getId() {
 	return id;
     }
@@ -54,15 +59,6 @@ public class Maintenance {
 
     public void setComponent(Component component) {
 	this.component = component;
-    }
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    public Bici getBike() {
-	return bike;
-    }
-
-    public void setBike(Bici bike) {
-	this.bike = bike;
     }
 
     @Column
@@ -94,21 +90,27 @@ public class Maintenance {
     }
 
     @Column
-    public String getTienda() {
-        return tienda;
+    public String getShop() {
+        return shop;
     }
 
-    public void setTienda(String tienda) {
-        this.tienda = tienda;
+    public void setShop(String shop) {
+        this.shop = shop;
     }
 
     @Column(nullable=false)
-    public String getTipo() {
-        return tipo;
+    public String getType() {
+        return type;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    @Transient
+    public boolean isEnabled() {
+	return true;
     }
 
 }

@@ -172,10 +172,7 @@ class BikeSortDataProvider extends SortableDataProvider<Bici, String> implements
 
     @Override
     public long size() {
-	Bici filtro = null;
-	if (filterState != null && filterState.getTipo() != null)
-	    filtro = filterState;
-	return dao.count(filtro);
+	return dao.count(filterState);
     }
 
     private Sort defaultSort() {

@@ -23,6 +23,7 @@
 	<bean id="activitiesDAO" class="an.dpr.manteniket.dao.ActivitiesDAO"/>
 	<bean id="componentUsesDAO" class="an.dpr.manteniket.dao.ComponentUsesDAO"/>
 	<bean id="userDAO" class="an.dpr.manteniket.dao.springdatajpa.UserDAOSpringDataJPA"/>
+	<bean id="maintenanceDAO" class="an.dpr.manteniket.dao.springdatajpa.MaintenanceDAOSpringDataJPA"/>
 	
 	
 </beans>

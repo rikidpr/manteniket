@@ -86,56 +86,33 @@ public class MaintenanceDAOSpringDataJPA extends ManteniketDAO implements IMaint
      */
     @Override
     public List<Maintenance> find(final Maintenance maintenance, Sort sort, Integer fromPage, Integer numberOfResults) {
-	final PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
-	return getTransactionTemplate().execute(new TransactionCallback<List<Maintenance>>(){
-
-	    @Override
-	    public List<Maintenance> doInTransaction(TransactionStatus status) {
-		List<Maintenance> list = null;
-		Page<Maintenance> page = repo.findByUser(maintenance.getUser(), pageRequest);
-		list = page.getContent();
-		for(Maintenance m : list){
-		    Hibernate.initialize(m.getBike());
-		    Hibernate.initialize(m.getComponent());
-		}
-		return list;
-	    }
-	
-	});
+	PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
+	Page<Maintenance> page = repo.findByUser(maintenance.getUser(), pageRequest);
+	return loadLazyComponent(page);
     }
 
     @Override
     public List<Maintenance> findByBike(final Bici bike, Sort sort, Integer fromPage, Integer numberOfResults) {
 	final PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
-	return getTransactionTemplate().execute(new TransactionCallback<List<Maintenance>>(){
-	    
-	    @Override
-	    public List<Maintenance> doInTransaction(TransactionStatus status) {
-		List<Maintenance> list = null;
-		Page<Maintenance> page = repo.findByBike(bike, pageRequest);
-		list = page.getContent();
-		for(Maintenance m : list){
-		    Hibernate.initialize(m.getBike());
-		    Hibernate.initialize(m.getComponent());
-		}
-		return list;
-	    }
-	    
-	});
+	Page<Maintenance> page = repo.findByBike(bike, pageRequest);
+	return loadLazyComponent(page);
     }
 
     @Override
     public List<Maintenance> findByComponent(final Component comp, Sort sort, Integer fromPage, Integer numberOfResults) {
-	final PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
+	PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
+	Page<Maintenance> page = repo.findByComponent(comp, pageRequest);
+	return loadLazyComponent(page);
+    }
+    
+    private List<Maintenance> loadLazyComponent(final Page<Maintenance> page){
 	return getTransactionTemplate().execute(new TransactionCallback<List<Maintenance>>(){
 	    
 	    @Override
 	    public List<Maintenance> doInTransaction(TransactionStatus status) {
 		List<Maintenance> list = null;
-		Page<Maintenance> page = repo.findByComponent(comp, pageRequest);
 		list = page.getContent();
 		for(Maintenance m : list){
-		    Hibernate.initialize(m.getBike());
 		    Hibernate.initialize(m.getComponent());
 		}
 		return list;
