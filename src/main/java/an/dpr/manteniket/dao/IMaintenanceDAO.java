@@ -15,11 +15,9 @@ public interface IMaintenanceDAO {
 
     Maintenance findById(Long maintenanceId);
     List<Maintenance> find(Maintenance maintenance, Sort sort, Integer fromPage, Integer numberOfResults);
-    List<Maintenance> findByBike(Bici bike, Sort sort, Integer fromPage, Integer numberOfResults);
     List<Maintenance> findByComponent(Component comp, Sort sort, Integer fromPage, Integer numberOfResults);
 
     long count(Maintenance maintenance);
-    long countByBike(Bici bike);
     long countByComponent(Component comp);
 
 }

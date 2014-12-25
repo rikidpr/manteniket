@@ -1,0 +1,55 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+<meta charset="utf-8" />
+<title>Manteniket</title>
+<link
+	href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular,bold'
+	rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="style.css" type="text/css" media="screen"
+	title="Stylesheet" />
+</head>
+<body>
+	<wicket:extend>
+		<div class="container">
+			<div wicket:id="feedback">
+				<ul class="feedbackPanel">
+					<li class="feedbackPanelERROR">
+						<span class="feedbackPanelERROR">Field 'Username' is required.</span>
+					</li>
+				</ul>
+			</div>
+			<form wicket:id="form">
+				<input wicket:id="txtId" type="text" />
+				<div class="form-group">
+					<label for="txtDate"><wicket:message key="lbl.date" /></label> 
+					<input class="form-control" wicket:id="txtDate"	type="text" size="10" />
+				</div>
+				<div class="form-group">
+					<label for="cmbType"><wicket:message key="lbl.component" /></label> 
+					<select class="form-control" wicket:id="cmbComponent"></select>
+				</div>
+				<div class="form-group">
+					<label for="cmbType"><wicket:message key="lbl.type" /></label> 
+					<select class="form-control" wicket:id="cmbType"></select>
+				</div>
+				<div class="form-group">
+					<label for="txtDesc"><wicket:message key="lbl.desc" /></label>
+					<input class="form-control" wicket:id="txtDesc" size="50" />
+				</div>
+				<div class="form-group">
+					<label for="txtDesc"><wicket:message key="lbl.price" /></label>
+					<input class="form-control" wicket:id="txtPrice" size="50" />
+				</div>
+				<div class="form-group">
+					<label for="txtDesc"><wicket:message key="lbl.shop" /></label>
+					<input class="form-control" wicket:id="txtShop" size="50" />
+				</div>
+				<div class="form-group">
+					<button wicket:id="saveBtn">Save</button>
+					<button wicket:id="retBtn">Return</button>
+				</div>
+			</form>
+		</div>
+	</wicket:extend>
+</body>
+</html>

@@ -13,13 +13,11 @@ import an.dpr.manteniket.domain.User;
 
 public interface MaintenancesRepository extends CrudRepository<Maintenance, Long> {
 
-    String BIKE = "bike";
     String COMPONENT = "component";
     String USER = "user";
     String COUNT ="SELECT count(m) ";
     
     String BY_USER = "FROM Maintenance m WHERE m.user=:"+USER;
-    String BY_BIKE = "FROM Maintenance m WHERE m.bike=:"+BIKE;
     String BY_COMPONENT = "FROM Maintenance m WHERE m.component=:"+COMPONENT;
     
     
@@ -28,11 +26,6 @@ public interface MaintenancesRepository extends CrudRepository<Maintenance, Long
     @Query(COUNT+BY_USER)
     long countByUser(@Param(USER) User user);
     
-    @Query(BY_BIKE)
-    Page<Maintenance> findByBike(@Param(BIKE) Bici bike, Pageable pageable);
-    @Query(COUNT+BY_BIKE)
-    long countByBike(@Param(BIKE) Bici bike);
-
     @Query(BY_COMPONENT)
     Page<Maintenance> findByComponent(@Param(COMPONENT) Component comp, Pageable pageable);
     @Query(COUNT+BY_COMPONENT)
