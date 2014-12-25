@@ -42,8 +42,8 @@ public class WicketApplication extends WebApplication {
      */
     @Override
     public void init() {
-	getComponentInstantiationListeners().add(
-		new SpringComponentInjector(this, context(), true));
+	SpringComponentInjector springInjector = new SpringComponentInjector(this, context(), true);
+	getComponentInstantiationListeners().add(springInjector);
 	super.init();
 	configureBootstrap();
 	addResourceReplacement(

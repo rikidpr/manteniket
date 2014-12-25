@@ -97,6 +97,7 @@ public class MaintenancesPage extends ManteniketPage {
 	
 	txtId = new TextField<Long>("txtId");
 	txtId.setType(Long.class);
+	txtId.setVisible(false);
 	form.add(txtId);
 
 	txtDesc = new TextField<String>("txtDesc");
@@ -118,9 +119,11 @@ public class MaintenancesPage extends ManteniketPage {
 	List<? extends MaintenanceType> mtChoices = Arrays.asList(MaintenanceType.values());
 	IChoiceRenderer<? super MaintenanceType> mtRender = new ChoiceRenderer<MaintenanceType>("name");
 	cmbType = new DropDownChoice<MaintenanceType>("cmbType", mtypeModel, mtChoices, mtRender);
+	form.add(cmbType);
 
 	cmbComp = getCmbComponente();
 	form.add(cmbComp);
+	add(form);
     }
 
     private DropDownChoice<Component> getCmbComponente() {
@@ -136,6 +139,8 @@ public class MaintenancesPage extends ManteniketPage {
 	    if (!activo) {
 		components.add(bean.getComponent());
 	    }
+	} else {
+	    activo = true;
 	}
 	DropDownChoice<Component> cmb = new DropDownChoice<Component>("cmbComp", components, compRender);
 	if (!activo) {
@@ -159,7 +164,7 @@ public class MaintenancesPage extends ManteniketPage {
 	    bean = new Maintenance();
 	    bean.setUser(getUser());
 	}
-	if (txtId.getDefaultModelObject() != null){
+	if (txtId.getDefaultModelObject() != null && !txtId.getDefaultModelObjectAsString().isEmpty()){
 	    bean.setId((Long)txtId.getDefaultModelObject());
 	}
 	bean.setComponent((Component)cmbComp.getDefaultModelObject());

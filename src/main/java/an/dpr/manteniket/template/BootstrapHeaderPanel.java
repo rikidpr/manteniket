@@ -15,6 +15,7 @@ import an.dpr.manteniket.pages.ActivitiesSummaryPage;
 import an.dpr.manteniket.pages.BicisListPage;
 import an.dpr.manteniket.pages.BikeCompListPage;
 import an.dpr.manteniket.pages.ComponentsListPage;
+import an.dpr.manteniket.pages.MaintenancesListPage;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons.Type;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.dropdown.DropDownButton;
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.dropdown.MenuBookmarkablePageLink;
@@ -59,6 +60,7 @@ public class BootstrapHeaderPanel extends Panel {
 	NavbarButton<BicisListPage> menuBikes;
 	NavbarButton<ComponentsListPage> menuComponents; 
 	NavbarButton<BikeCompListPage> menuUses; 
+	NavbarButton<MaintenancesListPage> menuMaintenances; 
 
 	menuSummary = new NavbarButton<ActivitiesSummaryPage>(ActivitiesSummaryPage.class, new ResourceModel("menu.summary"));
 	menuSummary.setIconType(FontAwesomeIconTypeExt.area_chart);
@@ -75,8 +77,11 @@ public class BootstrapHeaderPanel extends Panel {
 	menuUses= new NavbarButton<BikeCompListPage>(BikeCompListPage.class, new ResourceModel("menu.uses"));
 	menuUses.setIconType(FontAwesomeIconType.plus_circle);
 	
+	menuMaintenances= new NavbarButton<MaintenancesListPage>(MaintenancesListPage.class, new ResourceModel("menu.maintenances"));
+	menuMaintenances.setIconType(FontAwesomeIconType.wrench);
+	
 	List<INavbarComponent> list = NavbarComponents.transform(Navbar.ComponentPosition.RIGHT, 
-		menuActivities, menuBikes, menuComponents, menuUses, menuSummary);
+		menuActivities, menuBikes, menuComponents, menuUses, menuSummary, menuMaintenances);
 	navbar.addComponents(list);
     }
 
