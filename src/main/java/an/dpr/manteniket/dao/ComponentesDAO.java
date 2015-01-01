@@ -81,8 +81,19 @@ public class ComponentesDAO extends ManteniketDAO implements IComponentsDAO{
     }
 
     @Override
-    public List<Component> findAllActives(User user) {
-	return repo.findAllActives(user.getId());
+    public List<Component> findAllActives(final User user) {
+	return getTransactionTemplate().execute(new TransactionCallback<List<Component>>() {
+	    
+	    @Override
+	    public List<Component> doInTransaction(TransactionStatus status) {
+		List<Component> list = repo.findAllActives(user.getId());
+		for (Component comp : list){
+		    Hibernate.initialize(comp.getComponentUses());
+		}
+		return list;
+	    }
+	    
+	});
     }
     
     public ComponentesRepository getRepo() {

@@ -109,7 +109,7 @@ public class MaintenancesPage extends ManteniketPage {
 	form.add(txtShop);
 
 	txtPrice = new TextField<Double>("txtPrice");
-	txtShop.setType(Double.class);
+	txtPrice.setType(Double.class);
 	form.add(txtPrice);
 
 	txtDate = ComponentFactory.datePickerBootstrap("txtDate");

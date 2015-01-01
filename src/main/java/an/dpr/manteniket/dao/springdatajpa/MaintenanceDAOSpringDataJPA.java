@@ -78,25 +78,14 @@ public class MaintenanceDAOSpringDataJPA extends ManteniketDAO implements IMaint
      * @see an.dpr.manteniket.dao.IMaintenanceDAO#find(an.dpr.manteniket.domain.Maintenance, org.springframework.data.domain.Sort, java.lang.Integer, java.lang.Integer)
      */
     @Override
-    public List<Maintenance> find(final Maintenance maintenance, Sort sort, Integer fromPage, Integer numberOfResults) {
-	PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
-	Page<Maintenance> page = repo.findByUser(maintenance.getUser(), pageRequest);
-	return loadLazyComponent(page);
-    }
-
-    @Override
-    public List<Maintenance> findByComponent(final Component comp, Sort sort, Integer fromPage, Integer numberOfResults) {
-	PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
-	Page<Maintenance> page = repo.findByComponent(comp, pageRequest);
-	return loadLazyComponent(page);
-    }
-    
-    private List<Maintenance> loadLazyComponent(final Page<Maintenance> page){
+    public List<Maintenance> find(final Maintenance maintenance, final Sort sort, final Integer fromPage, final Integer numberOfResults) {
 	return getTransactionTemplate().execute(new TransactionCallback<List<Maintenance>>(){
 	    
 	    @Override
 	    public List<Maintenance> doInTransaction(TransactionStatus status) {
 		List<Maintenance> list = null;
+		PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
+		Page<Maintenance> page = repo.findByUser(maintenance.getUser(), pageRequest);
 		list = page.getContent();
 		for(Maintenance m : list){
 		    Hibernate.initialize(m.getComponent());
@@ -106,5 +95,25 @@ public class MaintenanceDAOSpringDataJPA extends ManteniketDAO implements IMaint
 	    
 	});
     }
+
+    @Override
+    public List<Maintenance> findByComponent(final Component comp, final Sort sort, final Integer fromPage, final Integer numberOfResults) {
+	return getTransactionTemplate().execute(new TransactionCallback<List<Maintenance>>(){
+	    
+	    @Override
+	    public List<Maintenance> doInTransaction(TransactionStatus status) {
+		List<Maintenance> list = null;
+		PageRequest pageRequest = new PageRequest(fromPage, numberOfResults, sort);
+		Page<Maintenance> page = repo.findByComponent(comp, pageRequest);
+		list = page.getContent();
+		for(Maintenance m : list){
+		    Hibernate.initialize(m.getComponent());
+		}
+		return list;
+	    }
+	    
+	});
+    }
+    
 
 }
