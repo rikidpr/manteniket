@@ -151,36 +151,36 @@ public class Component implements Serializable, ManteniketBean{
 		return false;
 	} else if (!description.equals(other.description))
 	    return false;
-	if (disabledDate == null) {
-	    if (other.disabledDate != null)
-		return false;
-	} else if (!disabledDate.equals(other.disabledDate))
-	    return false;
+//	if (disabledDate == null) {
+//	    if (other.disabledDate != null)
+//		return false;
+//	} else if (!disabledDate.equals(other.disabledDate))
+//	    return false;
 	if (id == null) {
 	    if (other.id != null)
 		return false;
 	} else if (!id.equals(other.id))
 	    return false;
-	if (kmAlert == null) {
-	    if (other.kmAlert != null)
-		return false;
-	} else if (!kmAlert.equals(other.kmAlert))
-	    return false;
-	if (name == null) {
-	    if (other.name != null)
-		return false;
-	} else if (!name.equals(other.name))
-	    return false;
-	if (type == null) {
-	    if (other.type != null)
-		return false;
-	} else if (!type.equals(other.type))
-	    return false;
-	if (user == null) {
-	    if (other.user != null)
-		return false;
-	} else if (!user.equals(other.user))
-	    return false;
+//	if (kmAlert == null) {
+//	    if (other.kmAlert != null)
+//		return false;
+//	} else if (!kmAlert.equals(other.kmAlert))
+//	    return false;
+//	if (name == null) {
+//	    if (other.name != null)
+//		return false;
+//	} else if (!name.equals(other.name))
+//	    return false;
+//	if (type == null) {
+//	    if (other.type != null)
+//		return false;
+//	} else if (!type.equals(other.type))
+//	    return false;
+//	if (user == null) {
+//	    if (other.user != null)
+//		return false;
+//	} else if (!user.equals(other.user))
+//	    return false;
 	return true;
     }
 

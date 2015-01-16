@@ -37,6 +37,8 @@
 		<spring-data-jpa.version>1.6.4.RELEASE</spring-data-jpa.version>
 		<jpa.version>2.0.0</jpa.version>
 		<hibernate.version>3.5.4-Final</hibernate.version>
+        <jackson.version>1.8.6</jackson.version>
+        <cxf.version>3.0.3</cxf.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
@@ -91,6 +93,19 @@
             <version>${wicket.bootsrap.version}</version>
         </dependency>
 		<!--FIN WICKET DEPENDENCIES -->
+		
+		<!-- REST Services -->
+		 <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+		<!-- fin REST Services -->
 
 		<!-- PERSISTENCIA -->
 		<dependency>

@@ -2,8 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd 
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 	
 	<!-- security 
 	 <bean id="messageDigest" class="an.dpr.manteniket.beansfactory.MessageDigestFactoryBean">
@@ -25,5 +27,13 @@
 	<bean id="userDAO" class="an.dpr.manteniket.dao.springdatajpa.UserDAOSpringDataJPA"/>
 	<bean id="maintenanceDAO" class="an.dpr.manteniket.dao.springdatajpa.MaintenanceDAOSpringDataJPA"/>
 	
-	
+	<!-- REST Services -->
+	 <jaxrs:server id="services" address="/">
+        <jaxrs:serviceBeans>
+            <bean class="an.dpr.manteniket.services.rest.CalendarRS"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/> 
+        </jaxrs:providers>
+    </jaxrs:server>
 </beans>
